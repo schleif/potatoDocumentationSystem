@@ -49,22 +49,23 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onNavigationDrawerItemSelected(int position) {
 
-        Fragment fragment = null;
+        Fragment fragment;
 
-        switch (position) {
-            case 0:
-                fragment = new TourFragment();
-                break;
-            case 1:
-                fragment = new MapFragment();
-                break;
-            case 2:
-                fragment = new SyncFragment();
-                break;
-            case 3:
-                fragment = new LatestFragment();
+        if(mNavigationDrawerFragment == null){
+            fragment = new LatestFragment();
+        }else{
+            //Item holen
+            NavigationItem item = (NavigationItem) mNavigationDrawerFragment.getAdapter().getItem(position);
 
+
+            //Dazugehöriges Fragment setzen
+            fragment = item.getFragment();
         }
+
+
+
+
+
         // update the main content by replacing fragments
         FragmentManager fragmentManager = getSupportFragmentManager();
         fragmentManager.beginTransaction()
