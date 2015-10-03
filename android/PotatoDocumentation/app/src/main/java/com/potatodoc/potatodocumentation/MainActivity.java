@@ -1,22 +1,17 @@
 package com.potatodoc.potatodocumentation;
 
-import android.app.Activity;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.app.ActionBar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.content.Context;
-import android.os.Build;
 import android.os.Bundle;
-import android.view.Gravity;
-import android.view.LayoutInflater;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.view.ViewGroup;
 import android.support.v4.widget.DrawerLayout;
-import android.widget.ArrayAdapter;
-import android.widget.TextView;
+
+import java.util.Stack;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationDrawerFragment.NavigationDrawerCallbacks {
@@ -48,43 +43,31 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onNavigationDrawerItemSelected(int position) {
+        //Call onSectionAttached to update the ActionBar Title
+        onSectionAttached(position + 1);
 
-        Fragment fragment;
-
-        if(mNavigationDrawerFragment == null){
-            fragment = new LatestFragment();
-        }else{
-            //Item holen
-            NavigationItem item = (NavigationItem) mNavigationDrawerFragment.getAdapter().getItem(position);
-
-
-            //Dazugehöriges Fragment setzen
-            fragment = item.getFragment();
-        }
-
-
-
-
+        //Selecting selected Fragment
+        Fragment fragment = NavigationItem.getAllNavigationItems().get(position).getFragment();
 
         // update the main content by replacing fragments
         FragmentManager fragmentManager = getSupportFragmentManager();
-        fragmentManager.beginTransaction()
-                .replace(R.id.container, fragment)
-                .commit();
+
+        //Make the backstack work right
+        String backStackName = fragment.getClass().getName();
+
+        Boolean isPopped = fragmentManager.popBackStackImmediate(backStackName, 0);
+
+        if(!isPopped){
+            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+            fragmentTransaction.replace(R.id.container, fragment);
+            fragmentTransaction.addToBackStack(backStackName);
+            fragmentTransaction.commit();
+        }
     }
 
     public void onSectionAttached(int number) {
-        switch (number) {
-            case 1:
-                mTitle = getString(R.string.title_section1);
-                break;
-            case 2:
-                mTitle = getString(R.string.title_section2);
-                break;
-            case 3:
-                mTitle = getString(R.string.title_section3);
-                break;
-        }
+        //Set the proper Title
+        mTitle = getString(NavigationItem.getAllNavigationItems().get(number - 1).getName());
     }
 
     public void restoreActionBar() {
@@ -121,5 +104,29 @@ public class MainActivity extends AppCompatActivity
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onBackPressed() {
+        if(getSupportFragmentManager().getBackStackEntryCount() == 1){
+            finish();
+        } else {
+            super.onBackPressed();
+        }
+    }
+
+    /**
+     * Changes the title of the ActionBar of the Activity.
+     * May be used to set the title from inside a fragment and/or update it when the back-button is pressed in the future.
+     *
+     * @param title The title to be set in teh ActionBar
+     */
+    @Override
+    public void setTitle(CharSequence title) {
+        super.setTitle(title);
+        //Change Title
+        mTitle = title;
+
+        restoreActionBar();
     }
 }

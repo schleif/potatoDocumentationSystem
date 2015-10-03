@@ -23,7 +23,7 @@ public class NavigationAdapter extends BaseAdapter {
         layoutInflater = LayoutInflater.from(context);
       
         //Items einfügen
-        navigationItemList = NavigationItem.getAllMenuItems();
+        navigationItemList = NavigationItem.getAllNavigationItems();
         
     }
     

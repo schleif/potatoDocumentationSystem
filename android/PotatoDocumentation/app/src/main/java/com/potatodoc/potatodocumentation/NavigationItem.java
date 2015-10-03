@@ -6,16 +6,18 @@ import android.support.v4.app.Fragment;
 
 /**
  * This class represents one item of the navigationbar of the app.
- * It consists of the name, the path of the icon and the fragment.
+ * It consists of the Id of the name, the Id of the icon and the fragment.
  *
  * Created by Ochi on 01.10.2015.
  */
 public class NavigationItem {
-    private String name;
+    private int name;
     private int icon;
     private Fragment fragment;
 
-    public NavigationItem(int icon, String name, Fragment fragment) {
+    private static List<NavigationItem> allNavigationItems;
+
+    public NavigationItem(int icon, int name, Fragment fragment) {
         this.icon = icon;
         this.name = name;
         this.fragment = fragment;
@@ -25,7 +27,7 @@ public class NavigationItem {
         return icon;
     }
 
-    public String getName() {
+    public int getName() {
         return name;
     }
 
@@ -34,18 +36,24 @@ public class NavigationItem {
     }
 
 
-    public static List<NavigationItem> getAllMenuItems(){
-        ArrayList<NavigationItem> navigationItems = new ArrayList<>();
+    public static List<NavigationItem> getAllNavigationItems(){
 
-        navigationItems.add(new NavigationItem(R.drawable.icon_tour, "Tour", new TourFragment()));
+        if(allNavigationItems == null) {
+            ArrayList<NavigationItem> navigationItems = new ArrayList<>();
 
-        navigationItems.add(new NavigationItem(R.drawable.icon_map, "Karte", new MapFragment()));
+            navigationItems.add(new NavigationItem(R.drawable.icon_tour, R.string.title_section1, new TourFragment()));
 
-        navigationItems.add(new NavigationItem(R.drawable.icon_sync, "Sync", new SyncFragment()));
+            navigationItems.add(new NavigationItem(R.drawable.icon_map, R.string.title_section2, new MapFragment()));
 
+            navigationItems.add(new NavigationItem(R.drawable.icon_sync, R.string.title_section3, new SyncFragment()));
 
+            navigationItems.add(new NavigationItem(R.drawable.icon_history, R.string.title_section4, new LatestFragment()));
 
-        return navigationItems;
+            allNavigationItems = navigationItems;
+
+        }
+
+        return allNavigationItems;
 
     }
 }
