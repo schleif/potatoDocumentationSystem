@@ -67,6 +67,8 @@ public class insertFrame extends JFrame {
     cp.add(erg);
     but.addActionListener(new ActionListener() { 
       public void actionPerformed(ActionEvent evt) { 
+        erg.setText("");
+        
         String url_str = "http://134.169.47.160/"
         + service + "?";
         Iterator itr1 = textAreas.listIterator();
