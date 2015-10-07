@@ -51,8 +51,12 @@
 		*/
 		function close() {
 			// closing db connection
-			$this->db->close();;
+			$this->db->close();
 		}
+                
+                function getDB(){
+                    return $this->db;
+                }
 		
 	}
 	

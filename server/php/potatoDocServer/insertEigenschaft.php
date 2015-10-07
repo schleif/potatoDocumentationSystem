@@ -14,11 +14,19 @@
 		require_once DB_CONNECT_PATH;
 		
 		//Establish db connection
-		$db = new DB_CONNECT();
+		$dbConnect = new DB_CONNECT();
+            
+                //Get the actual mysqli object
+                $db = $dbConnect->getDB();
+                
+		//Prepare the statement, bind arguments and execute
+		$statement = $db->prepare("INSERT INTO eigenschaft(eig_name) VALUES(?)");
+                
+                $statement->bind_param('s', $eig_name);
+                
+                $query_result = $statement->execute();
 		
-		//Insert a row
-		$query_result = $db->query("INSERT INTO eigenschaft(eig_name) VALUES('$eig_name')");
-		
+                //check success
 		if($query_result){
 			$response["success"] = 1;
 			$response["message"] = "Eigenschaft wurde erfolgreich eingefuegt.";
