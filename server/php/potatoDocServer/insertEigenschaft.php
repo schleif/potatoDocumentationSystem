@@ -17,7 +17,7 @@
 		$db = new DB_CONNECT();
 		
 		//Insert a row
-		$query_result = mysql_query("INSERT INTO eigenschaft(eig_name) VALUES('$eig_name')");
+		$query_result = $db->query("INSERT INTO eigenschaft(eig_name) VALUES('$eig_name')");
 		
 		if($query_result){
 			$response["success"] = 1;
