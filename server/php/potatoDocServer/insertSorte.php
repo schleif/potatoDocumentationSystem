@@ -8,7 +8,7 @@ require_once DB_FUNCTIONS;
 // attributes
 // (name, typ)
 $values = array(
-    'atr1' => 'eig_name'
+    'atr1' => 'sort_name'
 );
 
-insert('eigenschaft', $values);
+insert('sorte', $values);

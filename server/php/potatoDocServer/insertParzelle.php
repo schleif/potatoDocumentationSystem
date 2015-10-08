@@ -8,7 +8,9 @@ require_once DB_FUNCTIONS;
 // attributes
 // (name, typ)
 $values = array(
-    'atr1' => 'eig_name'
+    // 'atr1' => 'parz_id',
+    'atr2' => 'feld_nr',
+    'atr3' => 'sorte'
 );
 
-insert('eigenschaft', $values);
+insert('parzellen', $values);
