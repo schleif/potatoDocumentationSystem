@@ -6,9 +6,9 @@ define('DB_CONNECT_PATH', __DIR__ . '/db_connect.php');
 //JSON response
 $response = array();
 
-if (isset($_GET['eig_name'])) {
+if (isset($_GET['sort_name'])) {
 
-    $eig_name = $_GET['eig_name'];
+    $sort_name = $_GET['sort_name'];
 
     //Include needed db_connection class
     require_once DB_CONNECT_PATH;
@@ -20,9 +20,9 @@ if (isset($_GET['eig_name'])) {
     $db = $dbConnect->getDB();
 
     //Prepare the statement, bind arguments and execute
-    $statement = $db->prepare("INSERT INTO eigenschaft(eig_name) VALUES(?)");
+    $statement = $db->prepare("INSERT INTO sorte(sort_name) VALUES(?)");
 
-    $statement->bind_param('s', $eig_name);
+    $statement->bind_param('s', $sort_name);
 
     $query_result = $statement->execute();
 
@@ -41,4 +41,5 @@ if (isset($_GET['eig_name'])) {
     $response["message"] = "Nicht alle noetigen Parameter uebergeben!";
 
     echo json_encode($response);
-}	
+}
+	
