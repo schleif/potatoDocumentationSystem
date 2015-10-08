@@ -35,12 +35,12 @@ class DB_CONNECT {
      * Function to connect with the database defined in '/db_config.php';
      */
     function connect() {
-        
+
         // Connecting to mysql database
         try {
-           $this->db = new PDO('mysql:dbname=' . DB_DATABASE . ';host=' . DB_SERVER, DB_USER, DB_PASSWORD); 
+            $this->db = new PDO('mysql:host=127.0.0.1;dbname=potatoDB;charset=utf8', DB_USER, DB_PASSWORD);
         } catch (PDOException $ex) {
-           die('Unable to connect to database [' . $ex->getMessage() . ']');
+            die('Unable to connect to database [' . $ex->getMessage() . ']');
         }
 
         // returing connection cursor
@@ -58,5 +58,4 @@ class DB_CONNECT {
     function getDB() {
         return $this->db;
     }
-
 }

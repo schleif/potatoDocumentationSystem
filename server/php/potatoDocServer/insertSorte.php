@@ -1,45 +1,14 @@
 <?php
 
-//Path to the 'db_connection'-file
-define('DB_CONNECT_PATH', __DIR__ . '/db_connect.php');
+//The path to the db-config file
+define('DB_FUNCTIONS', __DIR__ . '/DB_FUNCTIONS.php');
 
-//JSON response
-$response = array();
+// import database connection variables
+require_once DB_FUNCTIONS;
+// attributes
+// (name, typ)
+$values = array(
+    'atr1' => 'sort_name'
+);
 
-if (isset($_GET['sort_name'])) {
-
-    $sort_name = $_GET['sort_name'];
-
-    //Include needed db_connection class
-    require_once DB_CONNECT_PATH;
-
-    //Establish db connection
-    $dbConnect = new DB_CONNECT();
-
-    //Get the actual mysqli object
-    $db = $dbConnect->getDB();
-
-    //Prepare the statement, bind arguments and execute
-    $statement = $db->prepare("INSERT INTO sorte(sort_name) VALUES(?)");
-
-    $statement->bind_param('s', $sort_name);
-
-    $query_result = $statement->execute();
-
-    //check success
-    if ($query_result) {
-        $response["success"] = 1;
-        $response["message"] = "Eigenschaft wurde erfolgreich eingefuegt.";
-    } else {
-        $response["success"] = 0;
-        $response["message"] = "Eigenschaft konnte nicht eingefuegt werden.";
-    }
-
-    echo json_encode($response);
-} else {
-    $response["success"] = 0;
-    $response["message"] = "Nicht alle noetigen Parameter uebergeben!";
-
-    echo json_encode($response);
-}
-	
+insert('sorte', $values);
