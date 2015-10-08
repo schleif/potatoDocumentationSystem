@@ -1,1 +1,5 @@
 *.~ava
+*.class
+*.lnk
+desktop/insertFrame$1.class
+*.class

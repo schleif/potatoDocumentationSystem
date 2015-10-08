@@ -74,14 +74,23 @@ public class insertFrame extends JFrame {
         Iterator itr1 = textAreas.listIterator();
         Iterator itr2 = textFields.listIterator();
         
+        boolean first = true;
         while (itr1.hasNext()) { 
           JTextArea ta = (JTextArea) itr1.next();
           JTextField tf = (JTextField) itr2.next();
+          if (first) {
+            url_str = url_str + ta.getText() + "=" + tf.getText();
+            first = false;
+          } else {
+            url_str = url_str + "&" + ta.getText() + "=" + tf.getText();
+          } // end of if-else
           
-          url_str = url_str + ta.getText() + "=" + tf.getText();
+          
+          
         } // end of while
         
         try {
+          System.out.println(url_str);
           URL url = new URL(url_str);
           HttpURLConnection conn = (HttpURLConnection) url.openConnection();
           InputStream res = conn.getInputStream();
@@ -112,10 +121,12 @@ public class insertFrame extends JFrame {
   
   public static void main(String[] args) {
     String[] values = {
-    "eig_name"
+    "parz_id",
+    "feld_nr",
+    "sorte"
     };
     
-    new insertFrame("insertFrame", values, "insertEigenschaft.php");
+    new insertFrame("insertFrame", values, "insertParzelle.php");
   } // end of main
   
   
