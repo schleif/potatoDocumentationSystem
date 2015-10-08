@@ -13,26 +13,27 @@ define('table_name', 'parzelle');
 // attributes
 // (name, typ)
 $values = array(
-    atr1 => 'parz_id',
-    atr2 => 'feld_nr',
-    atr3 => 'sorte'
+    'atr1' => 'parz_id',
+    'atr2' => 'feld_nr',
+    'atr3' => 'sorte'
 );
 
 // this params will bind to the query
 $bind_params = array();
 
-$isset = true;
+$isset_param = true;
 foreach ($values as $value) {
     // If all values set
-    if (!isset($_GET($value))) {
-        $isset = false;
+    if (!isset($_GET[$value])) {
+        $isset_param = false;
+        break;
     }
     
     //filling bind_params
-    array_push($bind_params, $_GET($value));
+    array_push($bind_params, $_GET[$value]);
 }
 
-if ($isset) {
+if ($isset_param) {
 
     //Include needed db_connection class
     require_once DB_CONNECT_PATH;
@@ -42,6 +43,8 @@ if ($isset) {
 
     //Get the actual mysqli object
     $db = $dbConnect->getDB();
+    
+    echo "Datenbank fertig";
 
     //Prepare the statement, bind arguments and execute
     $sql = "INSERT INTO " . table_name . "( ";
@@ -67,12 +70,16 @@ if ($isset) {
     }
     $sql .= " ) ";
     
+    echo $sql;
+    
     try {
         $stmt = $db->prepare($sql);
         $query_result = $stmt->execute($bind_params);
     } catch (PDOException $ex) {
         trigger_error('Wrong SQL: ' . $sql . ' Error: ' . $ex->getMessage(), E_USER_ERROR);
     }
+    
+    echo "statement ausgeführt";
 
     //check success
     if ($query_result) {
