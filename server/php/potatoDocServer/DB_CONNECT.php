@@ -1,7 +1,10 @@
 <?php
 
 //The path to the db-config file
-define('DB_CONFIG', __DIR__ . '/db_config.php');
+define('DB_CONFIG', __DIR__ . '/DB_CONFIG.php');
+
+// import database connection variables
+require_once DB_CONFIG;
 
 /**
  * A class to connect to to a MySQL-database.
@@ -32,12 +35,10 @@ class DB_CONNECT {
      * Function to connect with the database defined in '/db_config.php';
      */
     function connect() {
-        // import database connection variables
-        require_once DB_CONFIG;
-
+        
         // Connecting to mysql database
         try {
-           $this->db = new PDO('mysql:host=' . DB_SERVER . ';dbname=' - DB_DATABASE, DB_USER, DB_PASSWORD); 
+           $this->db = new PDO('mysql:dbname=' . DB_DATABASE . ';host=' . DB_SERVER, DB_USER, DB_PASSWORD); 
         } catch (PDOException $ex) {
            die('Unable to connect to database [' . $ex->getMessage() . ']');
         }

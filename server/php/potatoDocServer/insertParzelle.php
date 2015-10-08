@@ -1,7 +1,7 @@
 <?php
 
 //Path to the 'db_connection'-file
-define('DB_CONNECT_PATH', __DIR__ . '/db_connect.php');
+define('DB_CONNECT_PATH', __DIR__ . '/DB_CONNECT.php');
 
 //JSON response
 $response = array();

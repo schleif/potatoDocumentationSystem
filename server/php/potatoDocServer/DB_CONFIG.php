@@ -7,4 +7,4 @@
 define('DB_USER', "PotatoServer"); // db user
 define('DB_PASSWORD', "potato"); // db password
 define('DB_DATABASE', "potatoDB"); // db name
-define('DB_SERVER', "localhost"); // db server
+define('DB_SERVER', "127.0.0.1"); // db server

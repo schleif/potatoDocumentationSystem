@@ -14,14 +14,14 @@ SET time_zone = "+00:00";
 -- User: `potato`
 --
 
-CREATE USER IF NOT 'PotatoServer'@'localhost' IDENTIFIED BY 'potato';
+CREATE USER 'PotatoServer'@'localhost' IDENTIFIED BY 'potato';
 
 --
 -- GRANT
 --
 
 GRANT SELECT,INSERT,UPDATE,DELETE,CREATE,DROP
-    ON potato.*
+    ON potatoDB.*
     TO 'PotatoServer'@'localhost';
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
@@ -33,8 +33,8 @@ GRANT SELECT,INSERT,UPDATE,DELETE,CREATE,DROP
 -- Datenbank: `potato`
 --
 
-CREATE DATABASE IF NOT EXISTS potato;
-USE potato;
+CREATE DATABASE IF NOT EXISTS potatoDB;
+USE potatoDB;
 
 -- --------------------------------------------------------
 
