@@ -11,18 +11,10 @@ SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 SET time_zone = "+00:00";
 
 --
--- User: `potato`
+-- CREATE AND GRANT RIGHTS
 --
 
-CREATE USER 'PotatoServer'@'localhost' IDENTIFIED BY 'potato';
-
---
--- GRANT
---
-
-GRANT SELECT,INSERT,UPDATE,DELETE,CREATE,DROP
-    ON potatoDB.*
-    TO 'PotatoServer'@'localhost';
+GRANT ALL ON `potatoDB`.* to 'PotatoServer'@'localhost' identified by 'potato';
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -44,8 +36,8 @@ USE potatoDB;
 
 CREATE TABLE IF NOT EXISTS `aufgabe` (
   `aufg_name` varchar(255) NOT NULL,
-  `from` date NOT NULL,
-  `to` date NOT NULL
+  `from` BIGINT NOT NULL,
+  `to` BIGINT NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- --------------------------------------------------------
@@ -178,3 +170,42 @@ ADD CONSTRAINT `parzellen_ibfk_1` FOREIGN KEY (`sorte`) REFERENCES `sorte` (`sor
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+
+--
+-- Stored Procedures hinzufügen
+--
+CREATE PROCEDURE `insertEigenschaft`(
+    IN `name` VARCHAR(255) CHARSET utf8
+) NOT DETERMINISTIC MODIFIES SQL DATA SQL SECURITY DEFINER 
+INSERT INTO eigenschaft (eig_name) VALUES (name); 
+
+CREATE PROCEDURE `insertSorte`(
+    IN `name` VARCHAR(255) CHARSET utf8
+) NOT DETERMINISTIC MODIFIES SQL DATA SQL SECURITY DEFINER 
+INSERT INTO sorte (sort_name) VALUES (name); 
+
+CREATE PROCEDURE `insertParzelle`(
+    IN `id` INTEGER,
+    IN `nr` INTEGER,
+    IN `sorte` VARCHAR(255) CHARSET utf8
+) NOT DETERMINISTIC MODIFIES SQL DATA SQL SECURITY DEFINER 
+INSERT INTO parzellen (parz_id, feld_nr, sorte) VALUES (id, nr, sorte); 
+
+CREATE PROCEDURE `insertAufgabe`(
+    IN `name` VARCHAR(255) CHARSET utf8,
+    IN `f` BIGINT,
+    IN `t` BIGINT
+) NOT DETERMINISTIC MODIFIES SQL DATA SQL SECURITY DEFINER 
+INSERT INTO aufgabe (aufg_name, `from`, `to`) VALUES (`name`, `f`, `t`); 
+
+CREATE PROCEDURE `insertAufg_beinhaltet_eig`(
+    IN `name1` VARCHAR(255) CHARSET utf8,
+    IN `name2` VARCHAR(255) CHARSET utf8
+) NOT DETERMINISTIC MODIFIES SQL DATA SQL SECURITY DEFINER 
+INSERT INTO aufg_beinhaltet_eig (`aufg_name`, `eig_name`) VALUES (name1, name2); 
+
+CREATE PROCEDURE `insertAufg_gehoert_zu_parz`(
+    IN `name1` VARCHAR(255) CHARSET utf8,
+    IN `pid` INTEGER
+) NOT DETERMINISTIC MODIFIES SQL DATA SQL SECURITY DEFINER 
+INSERT INTO aufg_gehoert_zu_parz (`aufg_name`, `parz_id`) VALUES (name1, pid); 
