@@ -1,5 +1,40 @@
 <?php
 
+function select($procedure) {
+    //Path to the 'db_connection'-file
+    define('DB_CONNECT_PATH', __DIR__ . '/DB_CONNECT.php');
+
+    //JSON response
+    $response = array();
+
+    //Include needed db_connection class
+    require_once DB_CONNECT_PATH;
+
+    //Establish db connection
+    $dbConnect = new DB_CONNECT();
+
+    //Get the actual PDO object
+    $db = $dbConnect->getDB();
+
+    $sql = "Call $procedure ()";
+    try {
+        $stmt = $db->prepare($sql);
+        $query_result = $stmt->execute();
+    } catch (PDOException $ex) {
+        echo 'Wrong SQL: ' . $sql . ' Error: ' . $ex->getMessage();
+    }
+    $first = true;
+    if ($query_result) {
+        while($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+            $newLine = "";
+            foreach($row as $value) {
+                $newLine .= "$value;";
+            }
+            echo $newLine;
+        }
+    }
+}
+
 /**
  * Function inserts in specified table the specified values;
  * @param type $tableName
@@ -39,7 +74,7 @@ function insert($tableName, $values) {
         //Establish db connection
         $dbConnect = new DB_CONNECT();
 
-        //Get the actual mysqli object
+        //Get the actual PDO object
         $db = $dbConnect->getDB();
 
         //Prepare the statement, bind arguments and execute
@@ -96,8 +131,8 @@ function insert($tableName, $values) {
  * and checks if all needed GET parameters - given in the array 
  * $values - are set.
  */
-function insertCall($procedure, $values){
-	  //Path to the 'db_connection'-file
+function insertCall($procedure, $values) {
+    //Path to the 'db_connection'-file
     define('DB_CONNECT_PATH', __DIR__ . '/DB_CONNECT.php');
 
     //JSON response
@@ -111,7 +146,7 @@ function insertCall($procedure, $values){
     $bind_params = array();
 
     $isset_param = true;
-	
+
     foreach ($values as $value) {
         // If all values set
         if (!isset($_GET[$value])) {

@@ -126,7 +126,7 @@ ALTER TABLE `eigenschaft`
 -- Indizes für die Tabelle `parzellen`
 --
 ALTER TABLE `parzellen`
-  ADD PRIMARY KEY (`parz_id`), ADD UNIQUE KEY `feld_nr` (`feld_nr`), ADD KEY `sorte` (`sorte`);
+  ADD PRIMARY KEY (`parz_id`), ADD KEY `sorte` (`sorte`);
 
 --
 -- Indizes für die Tabelle `sorte`
@@ -209,3 +209,5 @@ CREATE PROCEDURE `insertAufg_gehoert_zu_parz`(
     IN `pid` INTEGER
 ) NOT DETERMINISTIC MODIFIES SQL DATA SQL SECURITY DEFINER 
 INSERT INTO aufg_gehoert_zu_parz (`aufg_name`, `parz_id`) VALUES (name1, pid); 
+
+CREATE PROCEDURE `selectParzellen`() NOT DETERMINISTIC CONTAINS SQL SQL SECURITY DEFINER SELECT * FROM parzellen;
