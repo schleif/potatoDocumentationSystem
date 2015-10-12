@@ -7,7 +7,6 @@ package potatodocumentation.administration;
 
 import javafx.application.Application;
 import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.scene.Scene;
 import javafx.scene.layout.FlowPane;
 import javafx.stage.Stage;
@@ -23,7 +22,6 @@ import java.net.URL;
 import java.io.InputStream;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
- 
 
 /**
  *
@@ -81,13 +79,18 @@ public class newProperty extends Application {
         if (!propName.equals("Name...")) {
             String url_str = "http://134.169.47.160/insertEigenschaft.php?";
             url_str = url_str + "eig_name=" + propName;
-
+            
+            
+            // TODO: Conntection Class with file based Connection Handling
             try {
                 URL url = new URL(url_str);
                 HttpURLConnection conn = (HttpURLConnection) 
                         url.openConnection();
                 InputStream res = conn.getInputStream();
-                System.out.println(new BufferedReader(new InputStreamReader(res)).readLine());
+                System.out.println(
+                        new BufferedReader(
+                                new InputStreamReader(res)
+                        ).readLine());
             } catch (Exception e) {
                 e.printStackTrace();
             }
