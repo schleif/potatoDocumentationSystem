@@ -3,3 +3,6 @@
 *.lnk
 desktop/insertFrame$1.class
 *.class
+/desktop/JavaFXApplication1/nbproject/private/
+*.properties
+desktop/potatoDocumentation Administration/nbproject/private/private.xml
