@@ -5,10 +5,19 @@
  */
 package potatodocumentation.administration;
 
-import java.util.Scanner;
+import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
 import javafx.application.Application;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -52,7 +61,6 @@ public class CreateNewTask extends Application {
         flow.setHgap(4);
 
         // Adding the Components
-
         Scene scene = new Scene(flow, 300, 250);
 
         primaryStage.setTitle("Hello World!");
@@ -81,29 +89,61 @@ public class CreateNewTask extends Application {
 
     private ComboBox initReapeatCB() {
         // Adding Options
-        ObservableList<String> options = 
-               FXCollections.observableArrayList(
-                       "Einmalig",
-                       "Jeden Tag",
-                       "Jede Woche",
-                       "Jeden Monat",
-                       "Jedes Jahr"
-               );
+        ObservableList<String> options
+                = FXCollections.observableArrayList(
+                        "Einmalig",
+                        "Jeden Tag",
+                        "Jede Woche",
+                        "Jeden Monat",
+                        "Jedes Jahr"
+                );
         return new ComboBox(options);
     }
 
     private ComboBox initPropertyCB() {
-        Connection conn = new Connection("selectEigenschaft");
-        Scanner s = new Scanner(conn.getInputStream());
+        Connection conn = new Connection("selectEigenschaft.php");
+        // Getting JsonObject
+        String jsonStr = "";
+        try {
+            jsonStr
+                    = new BufferedReader(
+                            new InputStreamReader(
+                                    conn.getInputStream()))
+                    .readLine();
+        } catch (IOException e) {
+            // No connection
+            e.printStackTrace();
+        }
+
         
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+
+        return new ComboBox();
+        // throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     private Button initCancelButton() {
+        Button btn = new Button();
+        btn.setText("Abbrechen");
+        btn.setOnAction((ActionEvent event) -> {
+            onCancelClicked();
+        });
+        return btn;
+    }
+
+    private void onCancelClicked() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     private Button initOkButton() {
+        Button btn = new Button();
+        btn.setText("Ok");
+        btn.setOnAction((ActionEvent event) -> {
+            onOkClicked();
+        });
+        return btn;
+    }
+
+    private void onOkClicked() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
