@@ -211,3 +211,5 @@ CREATE PROCEDURE `insertAufg_gehoert_zu_parz`(
 INSERT INTO aufg_gehoert_zu_parz (`aufg_name`, `parz_id`) VALUES (name1, pid); 
 
 CREATE PROCEDURE `selectParzellen`() NOT DETERMINISTIC CONTAINS SQL SQL SECURITY DEFINER SELECT * FROM parzellen;
+
+CREATE PROCEDURE `selectEigenschaft`() NOT DETERMINISTIC CONTAINS SQL SQL SECURITY DEFINER SELECT * FROM eigenschaft;
