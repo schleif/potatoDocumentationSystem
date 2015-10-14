@@ -53,7 +53,7 @@ public class CreateNewTask extends Application {
 
         // Adding the Components
 
-        Scene scene = new Scene(root, 300, 250);
+        Scene scene = new Scene(flow, 300, 250);
 
         primaryStage.setTitle("Hello World!");
         primaryStage.setScene(scene);
