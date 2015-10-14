@@ -6,10 +6,7 @@
 package com.potatodocumentation.administration;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
@@ -17,22 +14,18 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import java.util.regex.Pattern;
 import javafx.application.Application;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
-import javafx.scene.control.ButtonType;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
+import javafx.scene.control.ListView;
+import javafx.scene.control.SelectionMode;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.FlowPane;
 import javafx.stage.Stage;
@@ -49,9 +42,10 @@ public class CreateNewTask extends Application {
     DatePicker toDP;
     Label repeatLabel;
     ComboBox repeatCB;
-    ComboBox propertyCB;
     Button okButton;
     Button cancelButton;
+    ListView<String> propertyList;
+    Label multiSelectLabel;
 
     @Override
     public void start(Stage primaryStage) {
@@ -62,9 +56,10 @@ public class CreateNewTask extends Application {
         toDP = initToDP();
         repeatLabel = initRepeatLabel();
         repeatCB = initReapeatCB();
-        propertyCB = initPropertyCB();
         okButton = initOkButton();
         cancelButton = initCancelButton();
+        propertyList = initPropertyList();
+        multiSelectLabel = initMultiSelectLabel();
 
         // Init the Layout
         FlowPane flow = new FlowPane();
@@ -73,15 +68,17 @@ public class CreateNewTask extends Application {
         flow.setHgap(4);
 
         // Adding the Components
-        Scene scene = new Scene(flow, 300, 250);
+        Scene scene = new Scene(flow, 250, 450);
         flow.getChildren().add(nameField);
         flow.getChildren().add(fromDP);
         flow.getChildren().add(toDP);
         flow.getChildren().add(repeatLabel);
         flow.getChildren().add(repeatCB);
-        flow.getChildren().add(propertyCB);
+        flow.getChildren().add(multiSelectLabel);
+        flow.getChildren().add(propertyList);
         flow.getChildren().add(okButton);
         flow.getChildren().add(cancelButton);
+        
         
 
         primaryStage.setTitle("Neue Aufgabe hinzufügen");
@@ -121,8 +118,74 @@ public class CreateNewTask extends Application {
         return new ComboBox(options);
     }
 
-    private ComboBox initPropertyCB(){
-        Connection conn = new Connection("selectEigenschaft.php");
+    private Button initCancelButton() {
+        Button btn = new Button();
+        btn.setText("Abbrechen");
+        btn.setOnAction((ActionEvent event) -> {
+            onCancelClicked();
+        });
+        return btn;
+    }
+
+    private void onCancelClicked() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    private Button initOkButton() {
+        Button btn = new Button();
+        btn.setText("Ok");
+        btn.setOnAction((ActionEvent event) -> {
+            onOkClicked();
+        });
+        return btn;
+    }
+
+    private void onOkClicked() {
+        //check if name is valid
+         String propName = nameField.getText();
+         boolean nameIsValid = !propName.equals("Name...");
+         
+         //check if dates are set
+         boolean timeIsset = (toDP.getValue() != null) && (fromDP.getValue() != null);
+         
+         //check if propeties are selected and get them
+        ObservableList<String> properties = propertyList.getSelectionModel().getSelectedItems();
+        boolean propsSelected  = (properties != null) && !(properties.isEmpty());
+
+        if (nameIsValid && timeIsset && propsSelected) {
+
+            HashMap<String, String> values = new HashMap<>();
+            values.put("aufg_name", propName);
+            
+            //Get the dates with the default timezone
+            LocalDate localDate = fromDP.getValue();
+            Instant instant = Instant.from(localDate.atStartOfDay(ZoneId.systemDefault()));
+            Date date = Date.from(instant);
+            Long fromMillis = date.getTime();
+            
+            localDate = toDP.getValue();
+            instant = Instant.from(localDate.atStartOfDay(ZoneId.systemDefault()));
+            date = Date.from(instant);
+            Long toMillis = date.getTime();
+            
+            //Get all selected properties
+            for(String s : properties){
+                System.out.println(s);
+            };
+            
+            //TODO: Check other fields
+        }
+        
+        //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    private TextField initNameField() {
+        return new TextField("Name...");
+    }
+
+    private ListView<String> initPropertyList() {
+        
+       Connection conn = new Connection("selectEigenschaft.php");
         // Mapping Json to Map<>
         ObjectMapper mapper = new ObjectMapper();
         
@@ -150,62 +213,24 @@ public class CreateNewTask extends Application {
             }
         }
 
-        return new ComboBox(propertyList);
-        // throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        ListView listView = new ListView<>(propertyList);
+        
+        //Allow Multiselect
+        listView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+        //Set the size so 10 items
+        listView.setPrefHeight(10 * (24 + 2) );
+        //Change the width
+        listView.setPrefWidth(100);
+        
+        return listView;
+        
+       // throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
-    private Button initCancelButton() {
-        Button btn = new Button();
-        btn.setText("Abbrechen");
-        btn.setOnAction((ActionEvent event) -> {
-            onCancelClicked();
-        });
-        return btn;
-    }
-
-    private void onCancelClicked() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    private Button initOkButton() {
-        Button btn = new Button();
-        btn.setText("Ok");
-        btn.setOnAction((ActionEvent event) -> {
-            onOkClicked();
-        });
-        return btn;
-    }
-
-    private void onOkClicked() {
-         String propName = nameField.getText();
-         
-         boolean nameIsValid = !propName.equals("Name...");
-         boolean timeIsset = (toDP.getValue() != null) && (fromDP.getValue() != null);
-
-        if (nameIsValid && timeIsset) {
-
-            HashMap<String, String> values = new HashMap<>();
-            values.put("aufg_name", propName);
-            
-            //Get the dates with the default timezone
-            LocalDate localDate = fromDP.getValue();
-            Instant instant = Instant.from(localDate.atStartOfDay(ZoneId.systemDefault()));
-            Date date = Date.from(instant);
-            Long fromMillis = date.getTime();
-            
-            localDate = toDP.getValue();
-            instant = Instant.from(localDate.atStartOfDay(ZoneId.systemDefault()));
-            date = Date.from(instant);
-            Long toMillis = date.getTime();
-            
-            //TODO: Check other fields
-        }
+    private Label initMultiSelectLabel() {
+        return new Label("Für Mehrfachauswahl STRG gedrückt halten:");
         
         //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    private TextField initNameField() {
-        return new TextField("Name...");
     }
 
 }
