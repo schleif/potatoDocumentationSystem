@@ -5,10 +5,10 @@
  * @param String $sql Statement
  * @return type 
  */
-function connectPrepareResult($sql) {    
+function connectPrepareResult($sql, $bindparams) {
     //Path to the 'db_connection'-file
     define('DB_CONNECT_PATH', __DIR__ . '/DB_CONNECT.php');
-    
+
     //Include needed db_connection class
     require_once DB_CONNECT_PATH;
 
@@ -17,15 +17,19 @@ function connectPrepareResult($sql) {
 
     //Get the actual PDO object
     $db = $dbConnect->getDB();
-    
+
     // Prepare and execute
     try {
         $stmt = $db->prepare($sql);
-        $query_result = $stmt->execute();
+        if (isset($bindparams)) {
+            $query_result = $stmt->execute($bindparams);
+        } else {
+            $query_result = $stmt->execute();
+        }
     } catch (PDOException $ex) {
         echo 'Wrong SQL: ' . $sql . ' Error: ' . $ex->getMessage();
     }
-    
+
     return array($stmt, $query_result);
 }
 
@@ -36,8 +40,8 @@ function select($procedure) {
     //Defining Statement
     $sql = "Call $procedure ()";
 
-    $res = connectPrepareResult($sql);
-    
+    $res = connectPrepareResult($sql, null);
+
     // Processing result
     if ($res[1]) {
         //If the query was executed successfully
@@ -116,8 +120,8 @@ function insert($tableName, $values) {
         }
         $sql .= " ) ";
 
-        $res = connectPrepareResult($sql);
-        
+        $res = connectPrepareResult($sql, $bind_params);
+
         //check success
         if ($res[1]) {
             $response["success"] = 1;
@@ -180,10 +184,10 @@ function insertCall($procedure, $values) {
         }
         $sql .= " ) ";
 
-        $res = connectPrepareResult($sql);
-        
+        $res = connectPrepareResult($sql, $bind_params);
+
         //check success
-        if (res[1]) {
+        if ($res[1]) {
             $response["success"] = 1;
             $response["message"] = "Eigenschaft wurde erfolgreich eingefuegt.";
         } else {

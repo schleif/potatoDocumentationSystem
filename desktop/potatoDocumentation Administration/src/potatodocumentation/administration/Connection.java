@@ -22,7 +22,7 @@ import java.util.Map;
  */
 public class Connection {
 
-    private final static String HOST = "http://localhost/";
+    private final static String HOST = "http://134.169.47.160/";
     // 
     URL serviceURL;
     HttpURLConnection serviceConn;
@@ -53,7 +53,7 @@ public class Connection {
      * @param values HashMap Key: Attributename and Values: Value
      */
     public Connection(String service, HashMap<String, String> values) {
-        String urlString = HOST + service +"?";
+        String urlString = HOST + service + "?";
 
         // Iterating thru the HashMap
         // Building the url
@@ -70,6 +70,8 @@ public class Connection {
             }
 
         }
+        
+        System.out.println(urlString);
         
         try {
             this.serviceURL = new URL(urlString);
