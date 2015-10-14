@@ -5,3 +5,4 @@ desktop/insertFrame$2.class
 desktop/potatoDocumentation Administration/build/classes/potatodocumentation/administration/DefineParcel.class
 *.class
 desktop/insertFrame.java
+/desktop/TestDesktopApp/target/
