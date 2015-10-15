@@ -12,7 +12,6 @@ import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.io.IOException;
 
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
@@ -38,10 +37,6 @@ public class Connection {
         String urlString = HOST + service;
         try {
             this.serviceURL = new URL(urlString);
-            this.serviceConn = (HttpURLConnection) serviceURL.openConnection();
-            this.res = this.serviceConn.getInputStream();
-        } catch (MalformedURLException ex) {
-            ex.printStackTrace();
         } catch (IOException ex) {
             ex.printStackTrace();
         }
@@ -52,7 +47,7 @@ public class Connection {
      * @param service the webserivce name
      * @param values HashMap Key: Attributename and Values: Value
      */
-    public Connection(String service, HashMap<String, String> values) {
+    public Connection(String service, Map<String, String> values) {
         String urlString = HOST + service + "?";
 
         // Iterating thru the HashMap
@@ -75,21 +70,28 @@ public class Connection {
         
         try {
             this.serviceURL = new URL(urlString);
-            this.serviceConn = (HttpURLConnection) serviceURL.openConnection();
-            this.res = this.serviceConn.getInputStream();
-        } catch (MalformedURLException ex) {
-            ex.printStackTrace();
         } catch (IOException ex) {
             ex.printStackTrace();
         }
     }
 
-    public InputStream getInputStream() {
+    public InputStream getInputStream() throws IOException {
+        if(this.res == null){
+            this.res = getServiceConn().getInputStream();
+        }
         return this.res;
     }
     
     public URL getServiceURL(){
         return this.serviceURL;
+    }
+    
+    public HttpURLConnection getServiceConn() throws IOException{
+        if(this.serviceConn == null){
+            this.serviceConn = (HttpURLConnection) this.serviceURL.openConnection();
+        }
+        
+        return this.serviceConn;
     }
 
 }

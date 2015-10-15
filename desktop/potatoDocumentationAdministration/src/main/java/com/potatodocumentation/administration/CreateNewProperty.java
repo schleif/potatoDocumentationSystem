@@ -5,6 +5,8 @@
  */
 package com.potatodocumentation.administration;
 
+import com.potatodocumentation.administration.utils.JsonUtils;
+import static com.potatodocumentation.administration.utils.JsonUtils.getJsonSuccessStatus;
 import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.scene.Scene;
@@ -25,7 +27,6 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.HashMap;
-
 
 /**
  *
@@ -87,19 +88,12 @@ public class CreateNewProperty extends Application {
             HashMap<String, String> values = new HashMap<>();
             values.put("eig_name", propName);
 
-            Connection conn = new Connection("insertEigenschaft.php", values);
-            InputStream res = conn.getInputStream();
+            boolean success = getJsonSuccessStatus("insertEigenschaft.php", values);
 
-            String out = "Error occured :/";
-            try {
-                out = new BufferedReader(
-                        new InputStreamReader(res)
-                ).readLine();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            String status = "Eigenschaft wurde " + (success ? "" : "nicht ")
+                    + "erfolgreich eingefügt!";
 
-            Alert alert = new Alert(AlertType.INFORMATION, out);
+            Alert alert = new Alert(AlertType.INFORMATION, status);
 
             alert.showAndWait()
                     .filter(response -> response == ButtonType.OK);

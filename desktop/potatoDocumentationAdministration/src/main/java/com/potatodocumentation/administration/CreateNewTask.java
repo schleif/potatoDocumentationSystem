@@ -5,8 +5,7 @@
  */
 package com.potatodocumentation.administration;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import java.io.IOException;
+import static com.potatodocumentation.administration.utils.JsonUtils.getJsonResultArray;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
@@ -68,7 +67,7 @@ public class CreateNewTask extends Application {
         flow.setHgap(4);
 
         // Adding the Components
-        Scene scene = new Scene(flow, 250, 450);
+        Scene scene = new Scene(flow, 300, 450);
         flow.getChildren().add(nameField);
         flow.getChildren().add(fromDP);
         flow.getChildren().add(toDP);
@@ -78,8 +77,6 @@ public class CreateNewTask extends Application {
         flow.getChildren().add(propertyList);
         flow.getChildren().add(okButton);
         flow.getChildren().add(cancelButton);
-        
-        
 
         primaryStage.setTitle("Neue Aufgabe hinzufügen");
         primaryStage.setScene(scene);
@@ -142,41 +139,39 @@ public class CreateNewTask extends Application {
 
     private void onOkClicked() {
         //check if name is valid
-         String propName = nameField.getText();
-         boolean nameIsValid = !propName.equals("Name...");
-         
-         //check if dates are set
-         boolean timeIsset = (toDP.getValue() != null) && (fromDP.getValue() != null);
-         
-         //check if propeties are selected and get them
+        String propName = nameField.getText();
+        boolean nameIsValid = !propName.equals("Name...");
+
+        //check if dates are set
+        boolean timeIsset = (toDP.getValue() != null) && (fromDP.getValue() != null);
+
+        //check if propeties are selected and get them
         ObservableList<String> properties = propertyList.getSelectionModel().getSelectedItems();
-        boolean propsSelected  = (properties != null) && !(properties.isEmpty());
+        boolean propsSelected = (properties != null) && !(properties.isEmpty());
 
         if (nameIsValid && timeIsset && propsSelected) {
 
             HashMap<String, String> values = new HashMap<>();
             values.put("aufg_name", propName);
-            
+
             //Get the dates with the default timezone
             LocalDate localDate = fromDP.getValue();
             Instant instant = Instant.from(localDate.atStartOfDay(ZoneId.systemDefault()));
             Date date = Date.from(instant);
             Long fromMillis = date.getTime();
-            
+
             localDate = toDP.getValue();
             instant = Instant.from(localDate.atStartOfDay(ZoneId.systemDefault()));
             date = Date.from(instant);
             Long toMillis = date.getTime();
-            
+
             //Get all selected properties
-            for(String s : properties){
+            for (String s : properties) {
                 System.out.println(s);
-            };
-            
+            }
+
             //TODO: Check other fields
         }
-        
-        //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     private TextField initNameField() {
@@ -184,53 +179,34 @@ public class CreateNewTask extends Application {
     }
 
     private ListView<String> initPropertyList() {
-        
-       Connection conn = new Connection("selectEigenschaft.php");
-        // Mapping Json to Map<>
-        ObjectMapper mapper = new ObjectMapper();
-        
-        Map<String, Object> result = null;
-        
-        try {
-            result = mapper.readValue(conn.getServiceURL(), Map.class);
-        } catch (IOException ex) {
-            ex.printStackTrace();
-        }
-        
-        //check is succeded
-        boolean success = (result != null) && (result.get("success").equals(1));
-        
-        //Create List of all properties
-        ObservableList<String> propertyList = FXCollections.observableArrayList();
-        
-        if(success){
-            //Get all results
-            ArrayList<Map<String,Object>> resultList = (ArrayList<Map<String,Object>>) result.get("Result");
 
-            //Run through all results and add them to list
-            for(Map<String,Object> property : resultList){
-                propertyList.add((String) property.get("eig_name"));
+        //Create List of all properties
+        ObservableList<String> observables = FXCollections.observableArrayList();
+
+        //Get all properties from the serviceURL
+        ArrayList<Map<String, Object>> jsonResult = getJsonResultArray("selectEigenschaft.php");
+
+        if (jsonResult != null) {
+            //Add all properties to the ObservableList
+            for (Map<String, Object> property : jsonResult) {
+                observables.add((String) property.get("eig_name"));
             }
         }
 
-        ListView listView = new ListView<>(propertyList);
-        
+        ListView listView = new ListView<>(observables);
+
         //Allow Multiselect
         listView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
         //Set the size so 10 items
-        listView.setPrefHeight(10 * (24 + 2) );
+        listView.setPrefHeight(10 * (24 + 2));
         //Change the width
-        listView.setPrefWidth(100);
-        
+        listView.setPrefWidth(150);
+
         return listView;
-        
-       // throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     private Label initMultiSelectLabel() {
         return new Label("Für Mehrfachauswahl STRG gedrückt halten:");
-        
-        //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
 }
