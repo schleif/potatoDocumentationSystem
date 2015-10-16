@@ -81,6 +81,9 @@ public class CreateNewTask extends Application {
         primaryStage.setTitle("Neue Aufgabe hinzufügen");
         primaryStage.setScene(scene);
         primaryStage.show();
+        
+        //Make sure no field is focused per default
+        flow.requestFocus();
     }
 
     /**
@@ -91,11 +94,15 @@ public class CreateNewTask extends Application {
     }
 
     private DatePicker initFromDP() {
-        return new DatePicker();
+        DatePicker datePicker = new DatePicker();
+        datePicker.setPromptText("Startdatum");
+        return datePicker;
     }
 
     private DatePicker initToDP() {
-        return new DatePicker();
+        DatePicker datePicker = new DatePicker();
+        datePicker.setPromptText("Enddatum");
+        return datePicker;
     }
 
     private Label initRepeatLabel() {
@@ -112,7 +119,12 @@ public class CreateNewTask extends Application {
                         "Jeden Monat",
                         "Jedes Jahr"
                 );
-        return new ComboBox(options);
+        ComboBox comboBox = new ComboBox(options);
+        
+        //Select first item in List
+        comboBox.getSelectionModel().selectFirst();
+        
+        return comboBox;
     }
 
     private Button initCancelButton() {
@@ -140,7 +152,7 @@ public class CreateNewTask extends Application {
     private void onOkClicked() {
         //check if name is valid
         String propName = nameField.getText();
-        boolean nameIsValid = !propName.equals("Name...");
+        boolean nameIsValid = !propName.isEmpty();
 
         //check if dates are set
         boolean timeIsset = (toDP.getValue() != null) && (fromDP.getValue() != null);
@@ -148,22 +160,30 @@ public class CreateNewTask extends Application {
         //check if propeties are selected and get them
         ObservableList<String> properties = propertyList.getSelectionModel().getSelectedItems();
         boolean propsSelected = (properties != null) && !(properties.isEmpty());
+        
+        //check if repeat CB is selected
+        String repeat = (String) repeatCB.getValue();
 
         if (nameIsValid && timeIsset && propsSelected) {
-
+            
+            //Prepare the get-paramter
             HashMap<String, String> values = new HashMap<>();
             values.put("aufg_name", propName);
 
-            //Get the dates with the default timezone
+            //Get the dates within the default timezone
             LocalDate localDate = fromDP.getValue();
             Instant instant = Instant.from(localDate.atStartOfDay(ZoneId.systemDefault()));
             Date date = Date.from(instant);
             Long fromMillis = date.getTime();
+            values.put("from", fromMillis.toString());
 
             localDate = toDP.getValue();
             instant = Instant.from(localDate.atStartOfDay(ZoneId.systemDefault()));
             date = Date.from(instant);
             Long toMillis = date.getTime();
+            values.put("to", toMillis.toString());
+            
+            
 
             //Get all selected properties
             for (String s : properties) {
@@ -175,7 +195,9 @@ public class CreateNewTask extends Application {
     }
 
     private TextField initNameField() {
-        return new TextField("Name...");
+        TextField textField = new TextField();
+        textField.setPromptText("Name");
+        return textField;
     }
 
     private ListView<String> initPropertyList() {
