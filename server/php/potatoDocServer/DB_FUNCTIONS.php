@@ -1,22 +1,26 @@
 <?php
 
+//Path to the 'db_connection'-file
+define('DB_CONNECT_PATH', __DIR__ . '/DB_CONNECT.php');
+
+//Include needed db_connection class
+require_once DB_CONNECT_PATH;
+
+
+//Establish db connection
+$dbConnect = new DB_CONNECT();
+
+//Get the actual PDO object
+$db = $dbConnect->getDB();
+
 /**
  * Processing the sql Statement gives result Array back.
  * @param String $sql Statement
  * @return type 
  */
 function connectPrepareResult($sql, $bindparams) {
-    //Path to the 'db_connection'-file
-    define('DB_CONNECT_PATH', __DIR__ . '/DB_CONNECT.php');
 
-    //Include needed db_connection class
-    require_once DB_CONNECT_PATH;
-
-    //Establish db connection
-    $dbConnect = new DB_CONNECT();
-
-    //Get the actual PDO object
-    $db = $dbConnect->getDB();
+    global $db;
 
     // Prepare and execute
     try {
@@ -149,10 +153,6 @@ function insertCall($procedure, $values) {
     //JSON response
     $response = array();
 
-    // the values of the sql table
-    // table name
-    define('PROCEDURE_NAME', $procedure);
-
     // this params will bind to the query
     $bind_params = array();
 
@@ -171,7 +171,7 @@ function insertCall($procedure, $values) {
 
     if ($isset_param) {
         //Prepare the statement, bind arguments and execute
-        $sql = "CALL " . PROCEDURE_NAME . " ( ";
+        $sql = "CALL " . $procedure . " ( ";
         $first = true;
         foreach ($values as $value) {
             //Appending value
@@ -179,7 +179,7 @@ function insertCall($procedure, $values) {
                 $sql .= '?';
                 $first = false;
             } else {
-                $sql .= ", " . $value;
+                $sql .= ", ?";
             }
         }
         $sql .= " ) ";
@@ -195,11 +195,12 @@ function insertCall($procedure, $values) {
             $response["message"] = "Eigenschaft konnte nicht eingefuegt werden.";
         }
 
-        echo json_encode($response);
+        return json_encode($response);
+        
     } else {
         $response["success"] = 0;
         $response["message"] = "Nicht alle noetigen Parameter uebergeben!";
 
-        echo json_encode($response);
+        return json_encode($response);
     }
 }

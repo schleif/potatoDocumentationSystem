@@ -2,6 +2,7 @@ com\potatodocumentation\administration\CreateNewTask.class
 com\potatodocumentation\administration\utils\JsonUtils.class
 com\potatodocumentation\administration\FXMLController.class
 com\potatodocumentation\administration\PotatoDocumentationAdministration.class
+com\potatodocumentation\administration\utils\DateUtils.class
 com\potatodocumentation\administration\Connection.class
 com\potatodocumentation\administration\DefineParcel.class
 com\potatodocumentation\administration\CreateNewProperty.class

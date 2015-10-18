@@ -1,7 +1,7 @@
 <?php
 
 //The path to the db-config file
-define('DB_FUNCTIONS', __DIR__ . '/DB_FUNCTIONS.php');
+defined('DB_FUNCTIONS') || define('DB_FUNCTIONS', __DIR__ . '/DB_FUNCTIONS.php');
 
 // import database connection variables
 require_once DB_FUNCTIONS;
@@ -12,4 +12,9 @@ $values = array(
     'atr2' => 'eig_name'
 );
 
-insert('aufg_beinhaltet_eig', $values);
+$jsonResult = insertCall('insertAufg_beinhaltet_eig', $values);
+
+//only print result if this file is not included (part of a transaction)
+if(!isset($printDirect)){
+    echo $jsonResult;
+}

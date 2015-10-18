@@ -35,10 +35,21 @@ USE potatoDB;
 --
 
 CREATE TABLE IF NOT EXISTS `aufgabe` (
-  `aufg_name` varchar(255) NOT NULL,
-  `from` BIGINT NOT NULL,
-  `to` BIGINT NOT NULL
+  `aufg_name` varchar(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+-- --------------------------------------------------------
+
+--
+-- Tabellenstruktur für Tabelle `aufg_termin`
+--
+
+CREATE TABLE IF NOT EXISTS `aufg_termin` (
+  `aufg_name` varchar(255) NOT NULL,
+  `fromDate` DATE NOT NULL,
+  `toDate` DATE NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
 
 -- --------------------------------------------------------
 
@@ -103,6 +114,12 @@ CREATE TABLE IF NOT EXISTS `sorte` (
 --
 ALTER TABLE `aufgabe`
   ADD PRIMARY KEY (`aufg_name`);
+  
+--
+-- Indizes für die Tabelle `aufgabe`
+--
+ALTER TABLE `aufg_termin`
+  ADD PRIMARY KEY (`aufg_name`, `fromDate`, `toDate`);
 
 --
 -- Indizes für die Tabelle `aufg_beinhaltet_eig`
@@ -146,6 +163,12 @@ ALTER TABLE `parzellen`
 --
 -- Constraints der exportierten Tabellen
 --
+
+--
+-- Constraints der Tabelle `aufg_termin`
+--
+ALTER TABLE `aufg_termin`
+ADD CONSTRAINT `aufg_termin_ibfk_1` FOREIGN KEY (`aufg_name`) REFERENCES `aufgabe` (`aufg_name`) ON DELETE NO ACTION ON UPDATE CASCADE;
 
 --
 -- Constraints der Tabelle `aufg_beinhaltet_eig`
@@ -192,11 +215,16 @@ CREATE PROCEDURE `insertParzelle`(
 INSERT INTO parzellen (parz_id, feld_nr, sorte) VALUES (id, nr, sorte); 
 
 CREATE PROCEDURE `insertAufgabe`(
-    IN `name` VARCHAR(255) CHARSET utf8,
-    IN `f` BIGINT,
-    IN `t` BIGINT
+    IN `name` VARCHAR(255) CHARSET utf8
 ) NOT DETERMINISTIC MODIFIES SQL DATA SQL SECURITY DEFINER 
-INSERT INTO aufgabe (aufg_name, `from`, `to`) VALUES (`name`, `f`, `t`); 
+INSERT INTO aufgabe (aufg_name) VALUES (`name`); 
+
+CREATE PROCEDURE `insertAufg_termin`(
+	IN `name` VARCHAR(255) CHARSET utf8,
+	IN `f` DATE,
+	IN `t` DATE
+) NOT DETERMINISTIC MODIFIES SQL DATA SQL SECURITY DEFINER 
+INSERT INTO aufg_termin (aufg_name, fromDate, toDate) VALUES (name, f, t); 
 
 CREATE PROCEDURE `insertAufg_beinhaltet_eig`(
     IN `name1` VARCHAR(255) CHARSET utf8,

@@ -5,21 +5,26 @@
  */
 package com.potatodocumentation.administration;
 
-import static com.potatodocumentation.administration.utils.JsonUtils.getJsonResultArray;
-import java.time.Instant;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import static com.potatodocumentation.administration.utils.DateUtils.*;
+import static com.potatodocumentation.administration.utils.JsonUtils.*;
 import java.time.LocalDate;
-import java.time.ZoneId;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.application.Application;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
@@ -81,7 +86,7 @@ public class CreateNewTask extends Application {
         primaryStage.setTitle("Neue Aufgabe hinzufügen");
         primaryStage.setScene(scene);
         primaryStage.show();
-        
+
         //Make sure no field is focused per default
         flow.requestFocus();
     }
@@ -120,10 +125,10 @@ public class CreateNewTask extends Application {
                         "Jedes Jahr"
                 );
         ComboBox comboBox = new ComboBox(options);
-        
+
         //Select first item in List
         comboBox.getSelectionModel().selectFirst();
-        
+
         return comboBox;
     }
 
@@ -160,37 +165,47 @@ public class CreateNewTask extends Application {
         //check if propeties are selected and get them
         ObservableList<String> properties = propertyList.getSelectionModel().getSelectedItems();
         boolean propsSelected = (properties != null) && !(properties.isEmpty());
-        
-        //check if repeat CB is selected
+
+        //get repeatCB value
         String repeat = (String) repeatCB.getValue();
 
         if (nameIsValid && timeIsset && propsSelected) {
-            
-            //Prepare the get-paramter
-            HashMap<String, String> values = new HashMap<>();
-            values.put("aufg_name", propName);
 
-            //Get the dates within the default timezone
-            LocalDate localDate = fromDP.getValue();
-            Instant instant = Instant.from(localDate.atStartOfDay(ZoneId.systemDefault()));
-            Date date = Date.from(instant);
-            Long fromMillis = date.getTime();
-            values.put("from", fromMillis.toString());
+            //Prepare the get-paramter as json
+            HashMap<String, Object> jsonValues = new HashMap<>();
+            jsonValues.put("aufg_name", propName);
 
-            localDate = toDP.getValue();
-            instant = Instant.from(localDate.atStartOfDay(ZoneId.systemDefault()));
-            date = Date.from(instant);
-            Long toMillis = date.getTime();
-            values.put("to", toMillis.toString());
-            
-            
+            //Add all selected properties
+            jsonValues.put("eigenschaften", properties);
 
-            //Get all selected properties
-            for (String s : properties) {
-                System.out.println(s);
+            jsonValues.put("dates", getAllDates());
+
+            //Create JSON
+            ObjectMapper mapper = new ObjectMapper();
+
+            String jsonRequest = null;
+            try {
+                jsonRequest = mapper.writeValueAsString(jsonValues);
+            } catch (JsonProcessingException ex) {
+                Logger.getLogger(CreateNewTask.class.getName()).log(Level.SEVERE, null, ex);
             }
 
-            //TODO: Check other fields
+            //Send to server
+            HashMap<String, String> values = new HashMap<>();
+            values.put("json", jsonRequest);
+
+            boolean success = getJsonSuccessStatus("insertAufgabeComplete.php", values);
+
+            //Show success status
+            String status = "Eigenschaft wurde " + (success ? "" : "nicht ")
+                    + "erfolgreich eingefügt!";
+
+            Alert alert = new Alert(AlertType.INFORMATION, status);
+
+            alert.showAndWait()
+                    .filter(response -> response == ButtonType.OK);
+
+            //TODO: Send JSON to server and process it
         }
     }
 
@@ -229,6 +244,129 @@ public class CreateNewTask extends Application {
 
     private Label initMultiSelectLabel() {
         return new Label("Für Mehrfachauswahl STRG gedrückt halten:");
+    }
+
+    private ArrayList<String> getAllDates() {
+
+        ArrayList<String> allDates = new ArrayList<>();
+
+        //Get Dates from DP's
+        LocalDate fromDate = fromDP.getValue();
+        LocalDate toDate = toDP.getValue();
+
+        //Add first day
+        allDates.add(fromDate.toString());
+
+        //Keep track if the length of the list is Odd
+        boolean isOdd = true;
+
+        //Get repeatCB Value
+        String repeat = (String) repeatCB.getValue();
+
+        switch (repeat) {
+            case "Jeden Tag": {
+                //Start one day after teh initial day
+                LocalDate tempDate = fromDate;
+                allDates.add(tempDate.toString());
+                isOdd = !isOdd;
+                
+                tempDate = tempDate.plusDays(1);
+
+                //Iterate until last day is reached
+                while (tempDate.compareTo(toDate) < 0) {
+                    //add all day twice
+                    allDates.add(tempDate.toString());
+                    allDates.add(tempDate.toString());
+                    tempDate = tempDate.plusDays(1);
+                }
+                break;
+            }
+            case "Jede Woche": {
+
+                //Go to the end of the week
+                LocalDate tempDate = goToDay(7, fromDate);
+
+                boolean isEnd = true;
+
+                while (tempDate.compareTo(toDate) < 0) {
+                    allDates.add(tempDate.toString());
+                    isOdd = !isOdd;
+
+                    if (isEnd) {
+                        //go to first day of next week
+                        tempDate = tempDate.plusDays(1);
+                    } else {
+                        //go to last day of week
+                        tempDate = goToDay(7, tempDate);
+                    }
+
+                    isEnd = !isEnd;
+                }
+
+                break;
+            }
+            case "Jeden Monat": {
+
+                //Go to the end of the month
+                LocalDate tempDate = goToLastDayOfMonth(fromDate);
+
+                boolean isEnd = true;
+
+                while (tempDate.compareTo(toDate) < 0) {
+                    allDates.add(tempDate.toString());
+                    isOdd = !isOdd;
+
+                    //Check if needed to go to beggining or end
+                    if (isEnd) {
+                        //go to first day of next month
+                        tempDate = tempDate.plusDays(1);
+                    } else {
+                        //go to last day of month
+                        tempDate = goToLastDayOfMonth(tempDate);
+                    }
+
+                    isEnd = !isEnd;
+                }
+
+                break;
+            }
+
+            case "Jedes Jahr": {
+
+                //Go to the end of the year
+                LocalDate tempDate = goToLastDayOfYear(fromDate);
+
+                boolean isEnd = true;
+
+                while (tempDate.compareTo(toDate) < 0) {
+                    allDates.add(tempDate.toString());
+                    isOdd = !isOdd;
+
+                    //Check if needed to go to beggining or end
+                    if (isEnd) {
+                        //go to first day of next year
+                        tempDate = tempDate.plusDays(1);
+                    } else {
+                        //go to last day of year
+                        tempDate = goToLastDayOfYear(tempDate);
+                    }
+
+                    isEnd = !isEnd;
+                }
+
+                break;
+            }
+        }
+
+        //Might have to add the last date twice:
+        //If toDate is the first day of a of the choosen period type
+        if (!isOdd) {
+            allDates.add(toDate.toString());
+        }
+        //add the last day
+        allDates.add(toDate.toString());
+
+        return allDates;
     }
 
 }

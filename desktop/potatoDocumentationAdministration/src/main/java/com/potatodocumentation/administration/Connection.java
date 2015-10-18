@@ -11,9 +11,13 @@ import java.net.URL;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 
 import java.util.Iterator;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -54,20 +58,24 @@ public class Connection {
         // Building the url
         Iterator ite = values.entrySet().iterator();
         boolean firstChar = true;
-        while (ite.hasNext()) {
-            if (firstChar) {
-                Map.Entry pair = (Map.Entry) ite.next();
-                urlString += pair.getKey() + "=" + pair.getValue();
-                firstChar = false;
-            } else {
-                Map.Entry pair = (Map.Entry) ite.next();
-                urlString += "&" + pair.getKey() + "=" + pair.getValue();
-            }
+        try {
+            while (ite.hasNext()) {
+                if (firstChar) {
+                    Map.Entry pair = (Map.Entry) ite.next();
+                    urlString += pair.getKey() + "=" + URLEncoder.encode((String) pair.getValue(), "UTF-8");
+                    firstChar = false;
+                } else {
+                    Map.Entry pair = (Map.Entry) ite.next();
+                    urlString += "&" + pair.getKey() + "=" + URLEncoder.encode((String) pair.getValue(), "UTF-8");
+                }
 
+            }
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
         }
-        
+
         System.out.println(urlString);
-        
+
         try {
             this.serviceURL = new URL(urlString);
         } catch (IOException ex) {
@@ -76,21 +84,21 @@ public class Connection {
     }
 
     public InputStream getInputStream() throws IOException {
-        if(this.res == null){
+        if (this.res == null) {
             this.res = getServiceConn().getInputStream();
         }
         return this.res;
     }
-    
-    public URL getServiceURL(){
+
+    public URL getServiceURL() {
         return this.serviceURL;
     }
-    
-    public HttpURLConnection getServiceConn() throws IOException{
-        if(this.serviceConn == null){
+
+    public HttpURLConnection getServiceConn() throws IOException {
+        if (this.serviceConn == null) {
             this.serviceConn = (HttpURLConnection) this.serviceURL.openConnection();
         }
-        
+
         return this.serviceConn;
     }
 

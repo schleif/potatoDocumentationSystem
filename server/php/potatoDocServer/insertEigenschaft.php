@@ -1,8 +1,7 @@
 <?php
 
 //Path to the 'db_connection'-file
-define('DB_FUNCTIONS', __DIR__ . '/DB_FUNCTIONS.php');
-
+defined('DB_FUNCTIONS') || define('DB_FUNCTIONS', __DIR__ . '/DB_FUNCTIONS.php');
 
 //JSON response
 require_once DB_FUNCTIONS;
@@ -12,4 +11,9 @@ $values = array(
     'atr1' => 'eig_name'
 );
 
-insertCall('insertEigenschaft', $values);
+$jsonResult = insertCall('insertEigenschaft', $values);
+
+//only print result if this file is not included (part of a transaction)
+if(!isset($printDirect)){
+    echo $jsonResult;
+}
