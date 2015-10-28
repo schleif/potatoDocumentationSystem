@@ -38,7 +38,7 @@ import javafx.stage.Stage;
  *
  * @author fiel
  */
-public class CreateNewTask extends Application {
+public class CreateNewTask extends Stage {
 
     // Components
     TextField nameField;
@@ -51,8 +51,8 @@ public class CreateNewTask extends Application {
     ListView<String> propertyList;
     Label multiSelectLabel;
 
-    @Override
-    public void start(Stage primaryStage) {
+    public CreateNewTask() {
+        super();
 
         //Init the components
         nameField = initNameField();
@@ -83,19 +83,11 @@ public class CreateNewTask extends Application {
         flow.getChildren().add(okButton);
         flow.getChildren().add(cancelButton);
 
-        primaryStage.setTitle("Neue Aufgabe hinzufügen");
-        primaryStage.setScene(scene);
-        primaryStage.show();
+        this.setTitle("Neue Aufgabe hinzufügen");
+        this.setScene(scene);
 
         //Make sure no field is focused per default
         flow.requestFocus();
-    }
-
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String[] args) {
-        launch(args);
     }
 
     private DatePicker initFromDP() {

@@ -241,3 +241,17 @@ INSERT INTO aufg_gehoert_zu_parz (`aufg_name`, `parz_id`) VALUES (name1, pid);
 CREATE PROCEDURE `selectParzellen`() NOT DETERMINISTIC CONTAINS SQL SQL SECURITY DEFINER SELECT * FROM parzellen;
 
 CREATE PROCEDURE `selectEigenschaft`() NOT DETERMINISTIC CONTAINS SQL SQL SECURITY DEFINER SELECT * FROM eigenschaft;
+
+CREATE PROCEDURE `selectAufgabe`() NOT DETERMINISTIC CONTAINS SQL SQL SECURITY DEFINER SELECT * FROM aufgabe;
+
+CREATE PROCEDURE `selectEigenschaftByAufgabe`(IN `aufgabenName` VARCHAR(255))
+    NO SQL
+SELECT eig_name FROM aufg_beinhaltet_eig
+WHERE aufg_name = aufgabenName;
+
+CREATE PROCEDURE `selectDateByAufgabe`(IN `aufgabenName` VARCHAR(255))
+    NO SQL
+SELECT fromDate, toDate
+FROM aufg_termin
+WHERE aufg_name = aufgabenName
+ORDER BY fromDate ASC;

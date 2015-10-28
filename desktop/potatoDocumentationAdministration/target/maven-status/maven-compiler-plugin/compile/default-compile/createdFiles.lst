@@ -1,8 +1,16 @@
 com\potatodocumentation\administration\CreateNewTask.class
+com\potatodocumentation\administration\AufgabenPane$1.class
+com\potatodocumentation\administration\MenuPane$1.class
 com\potatodocumentation\administration\utils\JsonUtils.class
 com\potatodocumentation\administration\FXMLController.class
 com\potatodocumentation\administration\PotatoDocumentationAdministration.class
+com\potatodocumentation\administration\AufgabenPane.class
 com\potatodocumentation\administration\utils\DateUtils.class
 com\potatodocumentation\administration\Connection.class
 com\potatodocumentation\administration\DefineParcel.class
+com\potatodocumentation\administration\AufgabenPane$2.class
 com\potatodocumentation\administration\CreateNewProperty.class
+com\potatodocumentation\administration\AufgabenPane$2$1.class
+com\potatodocumentation\administration\MainApplication.class
+com\potatodocumentation\administration\MenuPane.class
+com\potatodocumentation\administration\MenuButton.class

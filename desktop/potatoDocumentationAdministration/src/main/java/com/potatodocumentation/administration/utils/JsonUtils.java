@@ -11,6 +11,8 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Map;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 
 /**
  * @author Ochi
@@ -130,13 +132,13 @@ public class JsonUtils {
      * Work similiar to 
      * {@link #getJsonResultArray(java.lang.String, java.util.Map, java.lang.String, java.lang.Object, java.lang.String) }
      * , except just the SuccessStatus is returned.
-     * 
+     *
      * @param serviceURL
      * @param params
      * @param successTag
      * @param successIndicator
      * @return The SuccessStatus
-     * 
+     *
      */
     public static boolean getJsonSuccessStatus(String serviceURL,
             Map<String, String> params, String successTag, Object successIndicator) {
@@ -176,8 +178,9 @@ public class JsonUtils {
      * successTag = "success"
      * successIndicator = 1
      * </pre>
+     *
      * @param serviceURL
-     * @return 
+     * @return
      */
     public static boolean getJsonSuccessStatus(String serviceURL) {
         return getJsonSuccessStatus(serviceURL, null, "success", 1);
@@ -192,12 +195,33 @@ public class JsonUtils {
      * successTag = "success"
      * successIndicator = 1
      * </pre>
+     *
      * @param serviceURL
-     * @return 
+     * @return
      */
     public static boolean getJsonSuccessStatus(String serviceURL,
             Map<String, String> params) {
         return getJsonSuccessStatus(serviceURL, params, "success", 1);
+    }
+
+    public static ObservableList<String> getJsonResultObservableList(
+            String key, String serviceURL, Map<String, String> params) {
+
+        ObservableList<String> observables = FXCollections.observableArrayList();
+
+        ArrayList<Map<String, Object>> jsonResult
+                = getJsonResultArray(serviceURL, params);
+
+        if (jsonResult != null) {
+            jsonResult.stream().forEach((value) -> {
+                observables.add((String) value.get(key));
+            });
+        } else {
+            observables.add("Ladefehler!");
+        }
+        
+        return observables;
+
     }
 
 }

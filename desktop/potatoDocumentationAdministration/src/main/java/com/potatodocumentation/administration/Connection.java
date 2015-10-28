@@ -9,15 +9,12 @@ package com.potatodocumentation.administration;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.io.InputStream;
-import java.net.MalformedURLException;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 
 import java.util.Iterator;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  *
