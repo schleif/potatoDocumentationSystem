@@ -11,10 +11,29 @@ and open the template in the editor.
 #detailBox{
     -fx-background-color: #e8e8e8;
     -fx-border-style: solid;
-    -fx-border-width: 1px;
+    -fx-border-width: 1;
     -fx-border-color: #999999;
+}
+
+.ListView{
+    -fx-background-radius: 10.0;
 }
 
 .VBox {
     -fx-background-color: #cccccc;
+}
+
+#deleteButton{
+    -fx-base: red;
+    -fx-background-radius: 20;
+}
+
+#updateButton{
+    -fx-base: blue;
+    -fx-background-radius: 20;
+}
+
+#createButton{
+    -fx-base: green;
+    -fx-background-radius: 20;
 }

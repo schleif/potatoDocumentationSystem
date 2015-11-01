@@ -9,6 +9,11 @@ import static com.potatodocumentation.administration.utils.JsonUtils.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javafx.animation.Animation;
+import javafx.animation.Interpolator;
+import javafx.animation.RotateTransition;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -17,14 +22,19 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.scene.control.Button;
+import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
+import javafx.scene.effect.GaussianBlur;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
+import javafx.util.Duration;
 
 /**
  *
@@ -47,7 +57,6 @@ public class AufgabenPane extends HBox {
     AnchorPane detailBoxHeader;
     Button updateButton;
     Button deleteButton;
-    Button editButton;
     Button createButton;
     private String activeTask;
 
@@ -66,7 +75,6 @@ public class AufgabenPane extends HBox {
 
         //OptionBox
         detailLabel = initDetailLabel();
-        editButton = initEditButton();
         deleteButton = initDeleteButton();
         detailBoxHeader = initDetailBoxHeader();
 
@@ -193,7 +201,6 @@ public class AufgabenPane extends HBox {
         updateDateList();
         updateParzellenList();
 
-        editButton.setDisable(false);
         deleteButton.setDisable(false);
 
         detailLabel.setText("Details (" + activeTask + ")");
@@ -254,24 +261,25 @@ public class AufgabenPane extends HBox {
 
     }
 
-    private Button initEditButton() {
-        Button button = new Button("Bearbeiten");
-
-        button.setDisable(true);
-
-        return button;
-    }
-
     private Button initDeleteButton() {
-        Button button = new Button("Löschen");
+        Image deleteIcon = new Image(getClass().getResourceAsStream("/drawables/deleteIcon.png"),
+                16.0, 16.0, true, true);
 
+        Button button = new Button("Löschen", new ImageView(deleteIcon));
+        button.setContentDisplay(ContentDisplay.RIGHT);
         button.setDisable(true);
+        button.setId("deleteButton");
 
         return button;
     }
 
     private Button initCreateButton() {
-        Button button = new Button("Neue Aufgabe erstellen");
+        Image createIcon = new Image(getClass().getResourceAsStream("/drawables/createIcon.png"),
+                16.0, 16.0, true, true);
+
+        Button button = new Button("Neue Aufgabe erstellen", new ImageView(createIcon));
+        button.setContentDisplay(ContentDisplay.RIGHT);
+        button.setId("createButton");
 
         button.setOnAction(new EventHandler<ActionEvent>() {
 
@@ -279,7 +287,7 @@ public class AufgabenPane extends HBox {
             public void handle(ActionEvent event) {
                 CreateNewTask stage = new CreateNewTask();
                 stage.initModality(Modality.APPLICATION_MODAL);
-                
+
                 //Refresh the TaskList after the window is closed
                 stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
 
@@ -297,10 +305,9 @@ public class AufgabenPane extends HBox {
 
     private AnchorPane initDetailBoxHeader() {
         AnchorPane anchorPane
-                = new AnchorPane(detailLabel, editButton, deleteButton);
+                = new AnchorPane(detailLabel, deleteButton);
 
         AnchorPane.setLeftAnchor(detailLabel, 10.0);
-        AnchorPane.setRightAnchor(editButton, 20.0 + 70);
         AnchorPane.setRightAnchor(deleteButton, 10.0);
 
         anchorPane.getChildren().stream().forEach((child) -> {
@@ -334,7 +341,33 @@ public class AufgabenPane extends HBox {
     }
 
     private Button initUpdateButton() {
-        Button button = new Button("Update");
+
+        Image updateIcon = new Image(getClass().getResourceAsStream("/drawables/updateIcon.png"),
+                16.0, 16.0, true, true);
+        
+        ImageView imageView = new ImageView(updateIcon);
+
+        Button button = new Button("Neu Laden", imageView);
+        button.setContentDisplay(ContentDisplay.RIGHT);
+        button.setId("updateButton");
+
+        button.setOnAction(new EventHandler<ActionEvent>() {
+
+            @Override
+            public void handle(ActionEvent event) {
+                
+                updateTaskList();
+                
+                //Rotate the icon
+                RotateTransition rotate = new RotateTransition(Duration.seconds(2), imageView);
+                rotate.setByAngle(360.0);
+                rotate.setCycleCount(1);
+                rotate.setInterpolator(Interpolator.EASE_BOTH);
+                rotate.play();
+                
+                
+            }
+        });
 
         return button;
     }
@@ -345,5 +378,6 @@ public class AufgabenPane extends HBox {
 
         taskList.setItems(tasks);
     }
+
 
 }
