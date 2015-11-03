@@ -11,6 +11,7 @@ com\potatodocumentation\administration\MainApplication.class
 com\potatodocumentation\administration\MenuPane.class
 com\potatodocumentation\administration\MenuButton.class
 com\potatodocumentation\administration\AufgabenPane$1.class
+com\potatodocumentation\administration\FootPane.class
 com\potatodocumentation\administration\FXMLController.class
 com\potatodocumentation\administration\PotatoDocumentationAdministration.class
 com\potatodocumentation\administration\utils\DateUtils.class

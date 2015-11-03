@@ -5,7 +5,6 @@
  */
 package com.potatodocumentation.administration;
 
-import java.util.TreeMap;
 import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
@@ -22,17 +21,21 @@ public class MainApplication extends Application {
     MenuPane menu;
     BorderPane mainPane;
     Pane contentPane;
+    Pane footer;
 
     @Override
     public void start(Stage primaryStage) throws Exception {
         mainPane = new BorderPane();
 
         menu = new MenuPane(this);
-        contentPane = new AufgabenPane();
+        contentPane = new AufgabenPane();        
+        footer = new FootPane();
 
         //Add panes/nodes
         mainPane.setLeft(menu);
-        mainPane.setCenter(contentPane);
+        mainPane.setCenter(contentPane);        
+        mainPane.setBottom(footer);
+        
         
         BorderPane.setMargin(contentPane, new Insets(10, 10, 10, 10));
         
@@ -44,6 +47,11 @@ public class MainApplication extends Application {
         primaryStage.setTitle("PotatoDocumetation");
         primaryStage.setScene(scene);
         primaryStage.show();
+        
+        //Tests
+        FootPane castFooter = (FootPane) footer;
+        castFooter.setWork(false);
+        // castFooter.setWork(true);
 
     }
     
