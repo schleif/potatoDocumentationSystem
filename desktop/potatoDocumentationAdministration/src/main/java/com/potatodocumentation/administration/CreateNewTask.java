@@ -20,6 +20,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.geometry.Insets;
+import javafx.geometry.Orientation;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
@@ -32,6 +33,7 @@ import javafx.scene.control.ListView;
 import javafx.scene.control.SelectionMode;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.FlowPane;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 /**
@@ -66,13 +68,14 @@ public class CreateNewTask extends Stage {
         multiSelectLabel = initMultiSelectLabel();
 
         // Init the Layout
-        FlowPane flow = new FlowPane();
+        VBox flow = new VBox();
+        // flow.setOrientation(Orientation.VERTICAL);
         flow.setPadding(new Insets(5, 5, 5, 5));
-        flow.setVgap(4);
-        flow.setHgap(4);
+        // flow.setVgap(4);
+        // flow.setHgap(4);
 
         // Adding the Components
-        Scene scene = new Scene(flow, 300, 450);
+        Scene scene = new Scene(flow, 300, 400);
         flow.getChildren().add(nameField);
         flow.getChildren().add(fromDP);
         flow.getChildren().add(toDP);
@@ -80,8 +83,17 @@ public class CreateNewTask extends Stage {
         flow.getChildren().add(repeatCB);
         flow.getChildren().add(multiSelectLabel);
         flow.getChildren().add(propertyList);
-        flow.getChildren().add(okButton);
-        flow.getChildren().add(cancelButton);
+
+        // Button Box
+        FlowPane buttonLine = new FlowPane();
+        buttonLine.setOrientation(Orientation.HORIZONTAL);
+        buttonLine.setPadding(new Insets(5, 5, 5, 5));
+        buttonLine.setVgap(4);
+        buttonLine.setHgap(4);
+        buttonLine.getChildren().add(okButton);
+        buttonLine.getChildren().add(cancelButton);
+        
+        flow.getChildren().add(buttonLine);
 
         this.setTitle("Neue Aufgabe hinzufügen");
         this.setScene(scene);
@@ -134,7 +146,8 @@ public class CreateNewTask extends Stage {
     }
 
     private void onCancelClicked() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        this.close();
+//throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     private Button initOkButton() {
@@ -261,7 +274,7 @@ public class CreateNewTask extends Stage {
                 LocalDate tempDate = fromDate;
                 allDates.add(tempDate.toString());
                 isOdd = !isOdd;
-                
+
                 tempDate = tempDate.plusDays(1);
 
                 //Iterate until last day is reached

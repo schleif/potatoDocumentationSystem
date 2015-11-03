@@ -61,11 +61,11 @@ public class MenuPane extends TilePane {
     public static ArrayList<MenuButton> menuButtons() {
         ArrayList<MenuButton> menuButtons = new ArrayList<>();
         
-        FlowPane flow = new FlowPane();
-        flow.getChildren().add(new Label("Test"));
+        //Testing FootPane;
+        FootPane fp = new FootPane();    
         
         menuButtons.add(new MenuButton("Aufgaben", null, new AufgabenPane()));
-        menuButtons.add(new MenuButton("Test", null, flow));
+        menuButtons.add(new MenuButton("Test", null, fp));
         
         return menuButtons;
     }
