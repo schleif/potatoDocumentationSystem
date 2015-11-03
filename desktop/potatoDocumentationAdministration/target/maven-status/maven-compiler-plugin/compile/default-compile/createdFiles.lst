@@ -1,6 +1,7 @@
 com\potatodocumentation\administration\CreateNewTask.class
 com\potatodocumentation\administration\utils\QrUtils.class
 com\potatodocumentation\administration\MenuPane$1.class
+com\potatodocumentation\administration\utils\ThreadUtils$1.class
 com\potatodocumentation\administration\AufgabenPane$3.class
 com\potatodocumentation\administration\utils\JsonUtils.class
 com\potatodocumentation\administration\AufgabenPane.class
@@ -14,6 +15,7 @@ com\potatodocumentation\administration\AufgabenPane$1.class
 com\potatodocumentation\administration\FootPane.class
 com\potatodocumentation\administration\FXMLController.class
 com\potatodocumentation\administration\PotatoDocumentationAdministration.class
+com\potatodocumentation\administration\utils\ThreadUtils.class
 com\potatodocumentation\administration\utils\DateUtils.class
 com\potatodocumentation\administration\AufgabenPane$2.class
 com\potatodocumentation\administration\CreateNewProperty.class

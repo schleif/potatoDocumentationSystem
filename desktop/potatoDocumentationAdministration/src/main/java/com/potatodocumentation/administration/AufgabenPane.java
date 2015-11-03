@@ -6,14 +6,13 @@
 package com.potatodocumentation.administration;
 
 import static com.potatodocumentation.administration.utils.JsonUtils.*;
+import com.potatodocumentation.administration.utils.ThreadUtils;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javafx.animation.Animation;
 import javafx.animation.Interpolator;
 import javafx.animation.RotateTransition;
+import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -25,14 +24,12 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
-import javafx.scene.effect.GaussianBlur;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
-import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import javafx.util.Duration;
 
@@ -94,7 +91,7 @@ public class AufgabenPane extends HBox {
         getChildren().add(detailBox);
 
         //Update TaskList on startup
-        updateTaskList();
+        ThreadUtils.runAsTask(() -> updateTaskList());
 
     }
 
@@ -197,27 +194,47 @@ public class AufgabenPane extends HBox {
     private void onTaskListValueChanged() {
         activeTask = taskList.getSelectionModel().getSelectedItem();
 
-        updatePropertyList();
-        updateDateList();
-        updateParzellenList();
+        if (activeTask == null) {
+            return;
+        }
+        ThreadUtils.runAsTask(() -> updatePropertyList());
+        ThreadUtils.runAsTask(() -> updateDateList());
+        ThreadUtils.runAsTask(() -> updateParzellenList());
 
         deleteButton.setDisable(false);
 
-        detailLabel.setText("Details (" + activeTask + ")");
+        detailLabel.setText("Details (" + activeTask +")");
     }
 
-    private void updatePropertyList() {
+    /**
+     * This method should be called in another Task since it establishes a
+     * network connection! Therefore it uses Platform.runLater() to update the
+     * UI of the Application.
+     */
+    private Void updatePropertyList() {
+        ObservableList<String> items = FXCollections.observableArrayList("Lädt...");
+        Platform.runLater(() -> propertyList.setItems(items));
+
         HashMap params = new HashMap();
         params.put("aufg_name", activeTask);
 
         ObservableList<String> newItems = getJsonResultObservableList(
                 "eig_name", "selectEigenschaftByAufgabe.php", params);
 
-        propertyList.setItems(newItems);
+        Platform.runLater(() -> propertyList.setItems(newItems));
 
+        return null;
     }
 
-    private void updateDateList() {
+    /**
+     * This method should be called in another Task since it establishes a
+     * network connection! Therefore it uses Platform.runLater() to update the
+     * UI of the Application.
+     */
+    private Void updateDateList() {
+        ObservableList<String> items = FXCollections.observableArrayList("Lädt...");
+        Platform.runLater(() -> dateList.setItems(items));
+
         HashMap params = new HashMap();
 
         params.put("aufg_name", activeTask);
@@ -239,10 +256,20 @@ public class AufgabenPane extends HBox {
             newItems.add("Ladefehler!");
         }
 
-        dateList.setItems(newItems);
+        Platform.runLater(() -> dateList.setItems(newItems));
+
+        return null;
     }
 
-    private void updateParzellenList() {
+    /**
+     * This method should be called in another Task since it establishes a
+     * network connection! Therefore it uses Platform.runLater() to update the
+     * UI of the Application.
+     */
+    private Void updateParzellenList() {
+        ObservableList<String> items = FXCollections.observableArrayList("Lädt...");
+        Platform.runLater(() -> parzellenList.setItems(items));
+
         HashMap params = new HashMap();
 
         params.put("aufg_name", activeTask);
@@ -250,7 +277,9 @@ public class AufgabenPane extends HBox {
         ObservableList<String> newItems = getJsonResultObservableList(
                 "eig_name", "selectParzellenByAufgabe.php", params);
 
-        parzellenList.setItems(newItems);
+        Platform.runLater(() -> parzellenList.setItems(newItems));
+
+        return null;
     }
 
     private Label initDetailLabel() {
@@ -293,7 +322,7 @@ public class AufgabenPane extends HBox {
 
                     @Override
                     public void handle(WindowEvent event) {
-                        updateTaskList();
+                        ThreadUtils.runAsTask(() -> updateTaskList());
                     }
                 });
                 stage.show();
@@ -344,7 +373,7 @@ public class AufgabenPane extends HBox {
 
         Image updateIcon = new Image(getClass().getResourceAsStream("/drawables/updateIcon.png"),
                 16.0, 16.0, true, true);
-        
+
         ImageView imageView = new ImageView(updateIcon);
 
         Button button = new Button("Neu Laden", imageView);
@@ -355,29 +384,40 @@ public class AufgabenPane extends HBox {
 
             @Override
             public void handle(ActionEvent event) {
-                
-                updateTaskList();
-                
+
+                ThreadUtils.runAsTask(() -> updateTaskList());
+
                 //Rotate the icon
                 RotateTransition rotate = new RotateTransition(Duration.seconds(2), imageView);
                 rotate.setByAngle(360.0);
                 rotate.setCycleCount(1);
                 rotate.setInterpolator(Interpolator.EASE_BOTH);
                 rotate.play();
-                
-                
+
             }
         });
 
         return button;
     }
 
-    private void updateTaskList() {
+    /**
+     * This method should be called in another Task since it establishes a
+     * network connection! Therefore it uses Platform.runLater() to update the
+     * UI of the Application.
+     */
+    private Void updateTaskList() {
+        Platform.runLater(() -> updateButton.setDisable(true));
+
+        ObservableList<String> items = FXCollections.observableArrayList("Lädt...");
+        Platform.runLater(() -> taskList.setItems(items));
+
         ObservableList<String> tasks
                 = getJsonResultObservableList("aufg_name", "selectAufgabe.php", null);
 
-        taskList.setItems(tasks);
-    }
+        Platform.runLater(() -> taskList.setItems(tasks));
+        Platform.runLater(() -> updateButton.setDisable(false));
 
+        return null;
+    }
 
 }
