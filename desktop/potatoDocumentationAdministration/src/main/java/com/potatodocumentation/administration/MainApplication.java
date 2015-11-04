@@ -48,7 +48,8 @@ public class MainApplication extends Application {
         primaryStage.setScene(scene);
         primaryStage.show();
         
-        //Tests
+        //Test if footer works 
+        // Unfortunally java based the footer has to be casted to own class
         FootPane castFooter = (FootPane) footer;
         castFooter.setWork(false);
         // castFooter.setWork(true);

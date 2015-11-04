@@ -83,7 +83,7 @@ public class CreateNewProperty extends Application {
 
     private void onOkClicked() {
         String propName = name.getText();
-        if (!propName.equals("Name...")) {
+        if (!propName.equals("Name...") && !propName.equals("")) {
 
             HashMap<String, String> values = new HashMap<>();
             values.put("eig_name", propName);

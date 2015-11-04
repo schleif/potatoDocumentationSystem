@@ -64,7 +64,10 @@ public class MenuPane extends TilePane {
         //Testing FootPane;
         FootPane fp = new FootPane();    
         
+        // Adding Buttons
         menuButtons.add(new MenuButton("Aufgaben", null, new AufgabenPane()));
+        menuButtons.add(new MenuButton("Eigenschaften", null, new PropertyPane()));
+        menuButtons.add(new MenuButton("Sorten", null, new PotatoSpeciesPane()));
         menuButtons.add(new MenuButton("Test", null, fp));
         
         return menuButtons;
