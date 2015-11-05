@@ -9,6 +9,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import static com.potatodocumentation.administration.utils.DateUtils.*;
 import static com.potatodocumentation.administration.utils.JsonUtils.*;
+import com.potatodocumentation.administration.utils.ThreadUtils;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -16,6 +17,7 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -65,6 +67,7 @@ public class CreateNewTask extends Stage {
         okButton = initOkButton();
         cancelButton = initCancelButton();
         propertyList = initPropertyList();
+        ThreadUtils.runAsTask(() -> updatePropertyList());
         multiSelectLabel = initMultiSelectLabel();
 
         // Init the Layout
@@ -221,21 +224,7 @@ public class CreateNewTask extends Stage {
     }
 
     private ListView<String> initPropertyList() {
-
-        //Create List of all properties
-        ObservableList<String> observables = FXCollections.observableArrayList();
-
-        //Get all properties from the serviceURL
-        ArrayList<Map<String, Object>> jsonResult = getJsonResultArray("selectEigenschaft.php");
-
-        if (jsonResult != null) {
-            //Add all properties to the ObservableList
-            for (Map<String, Object> property : jsonResult) {
-                observables.add((String) property.get("eig_name"));
-            }
-        }
-
-        ListView listView = new ListView<>(observables);
+        ListView listView = new ListView<>();
 
         //Allow Multiselect
         listView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
@@ -372,6 +361,29 @@ public class CreateNewTask extends Stage {
         allDates.add(toDate.toString());
 
         return allDates;
+    }
+
+    private Void updatePropertyList() {
+        //Indicate Loading
+        ObservableList<String> indicateLoading = FXCollections.observableArrayList("Lädt...");
+        Platform.runLater(() -> propertyList.setItems(indicateLoading));
+        
+        //Create List of all properties
+        ObservableList<String> observables = FXCollections.observableArrayList();
+
+        //Get all properties from the serviceURL
+        ArrayList<Map<String, Object>> jsonResult = getJsonResultArray("selectEigenschaft.php");
+
+        if (jsonResult != null) {
+            //Add all properties to the ObservableList
+            for (Map<String, Object> property : jsonResult) {
+                observables.add((String) property.get("eig_name"));
+            }
+        }
+        
+        Platform.runLater(() -> propertyList.setItems(observables));
+        
+        return null;
     }
 
 }

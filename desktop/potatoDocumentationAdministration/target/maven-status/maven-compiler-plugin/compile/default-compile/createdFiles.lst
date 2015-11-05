@@ -3,6 +3,7 @@ com\potatodocumentation\administration\utils\QrUtils.class
 com\potatodocumentation\administration\PropertyPane.class
 com\potatodocumentation\administration\MenuPane$1.class
 com\potatodocumentation\administration\CreateNewProp.class
+com\potatodocumentation\administration\utils\ThreadUtils$1.class
 com\potatodocumentation\administration\AufgabenPane$3.class
 com\potatodocumentation\administration\PotatoSpeciesPane.class
 com\potatodocumentation\administration\utils\JsonUtils.class
@@ -22,6 +23,7 @@ com\potatodocumentation\administration\PropertyPane$1$1.class
 com\potatodocumentation\administration\FXMLController.class
 com\potatodocumentation\administration\PotatoDocumentationAdministration.class
 com\potatodocumentation\administration\PotatoSpeciesPane$1$1.class
+com\potatodocumentation\administration\utils\ThreadUtils.class
 com\potatodocumentation\administration\CreateNewSort.class
 com\potatodocumentation\administration\PropertyPane$2.class
 com\potatodocumentation\administration\utils\DateUtils.class

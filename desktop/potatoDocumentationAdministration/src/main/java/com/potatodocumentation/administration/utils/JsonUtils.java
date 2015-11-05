@@ -7,10 +7,14 @@ package com.potatodocumentation.administration.utils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.potatodocumentation.administration.Connection;
+import com.potatodocumentation.administration.MainApplication;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
@@ -55,6 +59,10 @@ public class JsonUtils {
      */
     public static ArrayList<Map<String, Object>> getJsonResultArray(String serviceURL,
             Map<String, String> params, String successTag, Object successIndicator, String resultTag) {
+        //Indicate network usage
+        MainApplication mainApp = MainApplication.getInstance();
+        mainApp.showLoadBar(true);
+        
         //Create connection to get URL
         Connection connection;
         if (params == null) {
@@ -84,6 +92,8 @@ public class JsonUtils {
         if (success) {
             resultList = (ArrayList<Map<String, Object>>) jsonResult.get(resultTag);
         }
+        
+        mainApp.showLoadBar(false);
 
         return resultList;
     }

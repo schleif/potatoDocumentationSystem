@@ -16,7 +16,7 @@ import javafx.scene.layout.HBox;
  * @author fiel
  */
 class FootPane extends HBox {
-    
+
     ImageView icon;
     Label processLabel;
 
@@ -24,19 +24,21 @@ class FootPane extends HBox {
         super(2);
         this.setFillHeight(true);
         this.setAlignment(Pos.BOTTOM_RIGHT);
-        
+
         //Initialize nodes
         icon = initIcon();
         processLabel = initProcessLabel();
-        
-        getChildren().add(icon);
+
         getChildren().add(processLabel);
+        getChildren().add(icon);
+        
+        setWork(false);
     }
 
     private ImageView initIcon() {
         Image ico = new Image(
                 getClass().getResourceAsStream("/drawables/loadIcon20.gif")
-                // 16.0, 16.0, true, true
+        // 16.0, 16.0, true, true
         );
         ImageView iv = new ImageView(ico);
         iv.setSmooth(true);
@@ -47,15 +49,10 @@ class FootPane extends HBox {
     private Label initProcessLabel() {
         return new Label("Beschäftigt...");
     }
-    
+
     public void setWork(boolean isWorking) {
-        if(isWorking) {
-            processLabel.setText("Beschäftigt...");
-            icon.setImage(new Image(getClass().getResourceAsStream("/drawables/loadIcon20.gif")));
-        } else {
-            processLabel.setText("");
-            icon.setImage(null);
-        }
+        processLabel.setVisible(isWorking);
+        icon.setVisible(isWorking);
     }
-    
+
 }

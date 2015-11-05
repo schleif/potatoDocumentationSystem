@@ -17,7 +17,9 @@ import javafx.stage.Stage;
  * @author Ochi
  */
 public class MainApplication extends Application {
-
+    
+    private static MainApplication instance;
+    
     MenuPane menu;
     BorderPane mainPane;
     Pane contentPane;
@@ -25,17 +27,19 @@ public class MainApplication extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception {
+        //set the global instance
+        instance = this;
+        
         mainPane = new BorderPane();
-
+        
+        footer = new FootPane();
         menu = new MenuPane(this);
         contentPane = new AufgabenPane();        
-        footer = new FootPane();
 
         //Add panes/nodes
+        mainPane.setBottom(footer);
         mainPane.setLeft(menu);
         mainPane.setCenter(contentPane);        
-        mainPane.setBottom(footer);
-        
         
         BorderPane.setMargin(contentPane, new Insets(10, 10, 10, 10));
         
@@ -53,12 +57,19 @@ public class MainApplication extends Application {
         FootPane castFooter = (FootPane) footer;
         castFooter.setWork(false);
         // castFooter.setWork(true);
-
     }
     
     public void setContent(Pane contentPane){
         this.contentPane = contentPane;
         mainPane.setCenter(contentPane);
+    }
+    
+    public void showLoadBar(boolean isLoading){
+        ((FootPane) footer).setWork(isLoading);
+    }
+    
+    public static MainApplication getInstance(){
+        return instance;
     }
     
     public static void main(String[] args){
