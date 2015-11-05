@@ -9,6 +9,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import static com.potatodocumentation.administration.utils.JsonUtils.getJsonSuccessStatus;
 import java.util.HashMap;
+import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.event.ActionEvent;
@@ -21,6 +22,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
@@ -36,8 +38,12 @@ class CreateNewSort extends Stage {
     Button okButton;
     TextArea moreNames;
     Button more;
-    
+    Button cancel;
+
     VBox box;
+
+    // State: if on should inserted or more
+    boolean oneSort = true;
 
     public CreateNewSort() {
         super();
@@ -47,6 +53,7 @@ class CreateNewSort extends Stage {
         okButton = initOkButton();
         moreNames = initMoreNames();
         more = initMoreButton();
+        cancel = initCancelButton();
 
         // Init Layout
         box = new VBox();
@@ -56,7 +63,15 @@ class CreateNewSort extends Stage {
         Scene scene = new Scene(box, 300, 400);
         box.getChildren().add(description);
         box.getChildren().add(nameField);
-        box.getChildren().add(okButton);
+        
+        //Show Buttons in row
+        HBox buttonBox = new HBox();
+        buttonBox.setPadding(new Insets(5, 5, 5, 5));
+        buttonBox.setSpacing(5);
+        buttonBox.getChildren().add(okButton);
+        buttonBox.getChildren().add(cancel);
+                
+        box.getChildren().add(buttonBox);
         box.getChildren().add(more);
 
         this.setTitle("Neue Sorte hinzufügen");
@@ -67,9 +82,12 @@ class CreateNewSort extends Stage {
     }
 
     private TextField initNameField() {
-        TextField tf = new TextField("Name...");
+        String defaultText = "Name...";
+        TextField tf = new TextField(defaultText);
         tf.setOnMouseClicked((MouseEvent event) -> {
-            tf.setText("");
+            if (tf.getText().equals(defaultText)) {
+               tf.setText(""); 
+            }            
         });
         return tf;
     }
@@ -83,40 +101,49 @@ class CreateNewSort extends Stage {
     }
 
     private void onOkClicked() {
-        String sortName = nameField.getText();
-        // Break if name is not set
-        if (sortName.isEmpty()) {
-            return;
+        if (oneSort) {
+            insertSort(nameField.getText());
+        } else {
+            String values = moreNames.getText();
+            if (values.isEmpty() || values.equals("Sorte1"
+                    + "\n"
+                    + "Sorte2")) {
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.showAndWait()
+                        .filter(response -> response == ButtonType.OK);
+                return;
+            }
+            Scanner sc = new Scanner(values);
+            while (sc.hasNext()) {
+                String sortName = sc.nextLine();
+                insertSort(sortName);
+            }
         }
+    }
 
-        //Prepare the get-paramter as json
-        HashMap<String, Object> jsonValues = new HashMap<>();
-        jsonValues.put("sort_name", sortName);
+    private void insertSort(String sortName) {
+        if (!sortName.equals("Name...") && !sortName.equals("")) {
 
-        //Create JSON
-        ObjectMapper mapper = new ObjectMapper();
-        String jsonRequest = null;
-        try {
-            jsonRequest = mapper.writeValueAsString(jsonValues);
-        } catch (JsonProcessingException ex) {
-            Logger.getLogger(CreateNewTask.class.getName()).log(Level.SEVERE, null, ex);
+            HashMap<String, String> values = new HashMap<>();
+            values.put("sort_name", sortName);
+
+            boolean success = getJsonSuccessStatus("insertSorte.php", values);
+
+            String status = "Sorte wurde " + (success ? "" : "nicht ")
+                    + "erfolgreich eingefügt!";
+
+            if (success) {
+                new Alert(Alert.AlertType.INFORMATION, status).showAndWait()
+                        .filter(response -> response == ButtonType.OK);
+            } else {
+                new Alert(Alert.AlertType.ERROR).showAndWait()
+                        .filter(response -> response == ButtonType.OK);
+            }
+        } else {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.showAndWait()
+                    .filter(response -> response == ButtonType.OK);
         }
-
-        //Send to server
-        HashMap<String, String> values = new HashMap<>();
-        values.put("json", jsonRequest);
-
-        boolean success = getJsonSuccessStatus("insertSorte.php", values);
-
-        //Show success status
-        String status = "Eigenschaft wurde " + (success ? "" : "nicht ")
-                + "erfolgreich eingefügt!";
-
-        Alert alert = new Alert(Alert.AlertType.INFORMATION, status);
-
-        alert.showAndWait()
-                .filter(response -> response == ButtonType.OK);
-
     }
 
     private Label initDescripLabel() {
@@ -125,12 +152,14 @@ class CreateNewSort extends Stage {
     }
 
     private TextArea initMoreNames() {
-        String defStr = "Sorte1;"
-        + "\n"
-        + "Sorte2;";
+        String defStr = "Sorte1"
+                + "\n"
+                + "Sorte2";
         TextArea ta = new TextArea(defStr);
         ta.setOnMouseClicked((MouseEvent event) -> {
-            ta.setText("");
+            if(ta.getText().equals(defStr)) {
+                ta.setText("");
+            }            
         });
         return ta;
     }
@@ -146,5 +175,19 @@ class CreateNewSort extends Stage {
     private void onMoreClicked() {
         box.getChildren().remove(1);
         box.getChildren().add(1, moreNames);
+        box.getChildren().remove(3);
+        oneSort = false;
+    }
+
+    private Button initCancelButton() {
+        Button but = new Button("Abbrechen");
+        but.setOnAction((ActionEvent event) -> {
+            onCancelClicked();
+        });
+        return but;
+    }
+
+    private void onCancelClicked() {
+        this.close();
     }
 }

@@ -22,6 +22,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
@@ -37,6 +38,7 @@ class CreateNewProp extends Stage {
     Button okButton;
     TextArea moreNames;
     Button more;
+    Button cancel;
 
     VBox box;
 
@@ -51,6 +53,7 @@ class CreateNewProp extends Stage {
         okButton = initOkButton();
         moreNames = initMoreNames();
         more = initMoreButton();
+        cancel = initCancelButton();
 
         // Init Layout
         box = new VBox();
@@ -60,7 +63,15 @@ class CreateNewProp extends Stage {
         Scene scene = new Scene(box, 300, 400);
         box.getChildren().add(description);
         box.getChildren().add(nameField);
-        box.getChildren().add(okButton);
+        
+        //Show Buttons in row
+        HBox buttonBox = new HBox();
+        buttonBox.setPadding(new Insets(5, 5, 5, 5));
+        buttonBox.setSpacing(5);
+        buttonBox.getChildren().add(okButton);
+        buttonBox.getChildren().add(cancel);   
+        
+        box.getChildren().add(buttonBox);
         box.getChildren().add(more);
 
         this.setTitle("Neue Eigenschaft hinzufügen");
@@ -73,7 +84,9 @@ class CreateNewProp extends Stage {
     private TextField initNameField() {
         TextField tf = new TextField("Name...");
         tf.setOnMouseClicked((MouseEvent event) -> {
-            tf.setText("");
+            if (tf.getText().equals("Name...")) {
+                tf.setText("");
+            }
         });
         return tf;
     }
@@ -98,6 +111,7 @@ class CreateNewProp extends Stage {
 
                 alert.showAndWait()
                         .filter(response -> response == ButtonType.OK);
+                return;
             }
             Scanner sc = new Scanner(values);
             while (sc.hasNext()) {
@@ -141,7 +155,9 @@ class CreateNewProp extends Stage {
                 + "Eigenschaft2";
         TextArea ta = new TextArea(defStr);
         ta.setOnMouseClicked((MouseEvent event) -> {
-            ta.setText("");
+            if (ta.getText().equals(defStr)) {
+                ta.setText("");
+            }
         });
         return ta;
     }
@@ -157,6 +173,19 @@ class CreateNewProp extends Stage {
     private void onMoreClicked() {
         box.getChildren().remove(1);
         box.getChildren().add(1, moreNames);
+        box.getChildren().remove(3);
         oneProp = false;
+    }
+
+    private Button initCancelButton() {
+        Button but = new Button("Abbrechen");
+        but.setOnAction((ActionEvent event) -> {
+            onCancelClicked();
+        });
+        return but;
+    }
+
+    private void onCancelClicked() {
+        this.close();
     }
 }

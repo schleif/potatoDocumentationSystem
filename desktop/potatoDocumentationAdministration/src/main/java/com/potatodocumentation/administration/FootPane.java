@@ -37,7 +37,7 @@ class FootPane extends HBox {
 
     private ImageView initIcon() {
         Image ico = new Image(
-                getClass().getResourceAsStream("/drawables/loadIcon20.gif")
+                getClass().getResourceAsStream("/drawables/loadIcon2_16x16.gif")
         // 16.0, 16.0, true, true
         );
         ImageView iv = new ImageView(ico);
@@ -50,7 +50,11 @@ class FootPane extends HBox {
         return new Label("Beschäftigt...");
     }
 
-    public void setWork(boolean isWorking) {
+    /**
+     * This functions is the main controll Element for the Footer.
+     * @param isWorking true if the bar should shown
+     */
+    public final void setWork(boolean isWorking) {
         processLabel.setVisible(isWorking);
         icon.setVisible(isWorking);
     }

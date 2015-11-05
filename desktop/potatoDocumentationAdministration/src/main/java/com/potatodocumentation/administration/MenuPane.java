@@ -62,7 +62,8 @@ public class MenuPane extends TilePane {
         ArrayList<MenuButton> menuButtons = new ArrayList<>();
         
         //Testing FootPane;
-        FootPane fp = new FootPane();    
+        FootPane fp = new FootPane();
+        fp.setWork(true);
         
         // Adding Buttons
         menuButtons.add(new MenuButton("Aufgaben", null, new AufgabenPane()));

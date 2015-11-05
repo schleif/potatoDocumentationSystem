@@ -54,8 +54,8 @@ public class MainApplication extends Application {
         
         //Test if footer works 
         // Unfortunally java based the footer has to be casted to own class
-        FootPane castFooter = (FootPane) footer;
-        castFooter.setWork(false);
+        //FootPane castFooter = (FootPane) footer;
+        // castFooter.setWork(false);
         // castFooter.setWork(true);
     }
     
