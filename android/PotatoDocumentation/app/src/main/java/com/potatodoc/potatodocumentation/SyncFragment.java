@@ -11,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+<<<<<<< HEAD
 import android.widget.TextView;
 
 import com.potatodoc.potatodocumentation.data.localDB;
@@ -32,6 +33,8 @@ import javax.net.ssl.SSLSession;
 import javax.net.ssl.SSLSocket;
 import javax.net.ssl.SSLSocketFactory;
 import javax.net.ssl.TrustManagerFactory;
+=======
+>>>>>>> origin/android
 
 /**
  * Created by fiel on 30.09.2015.
