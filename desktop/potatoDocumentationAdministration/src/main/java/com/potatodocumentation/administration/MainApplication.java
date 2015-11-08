@@ -69,6 +69,10 @@ public class MainApplication extends Application {
         ((FootPane) footer).setWork(isLoading);
     }
     
+    public void updateConnections(){
+        ((FootPane) footer).updateConnections();
+    }
+    
     public static MainApplication getInstance(){
         return instance;
     }

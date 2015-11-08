@@ -5,6 +5,8 @@
  */
 package com.potatodocumentation.administration;
 
+import com.potatodocumentation.administration.utils.JsonUtils;
+import javafx.application.Platform;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
@@ -47,7 +49,7 @@ class FootPane extends HBox {
     }
 
     private Label initProcessLabel() {
-        return new Label("Beschäftigt...");
+        return new Label("Beschäftigt");
     }
 
     /**
@@ -57,6 +59,11 @@ class FootPane extends HBox {
     public final void setWork(boolean isWorking) {
         processLabel.setVisible(isWorking);
         icon.setVisible(isWorking);
+    }
+
+    void updateConnections() {
+        Platform.runLater(() -> processLabel.setText("Beschäftigt(" + JsonUtils.getOpenConnections() 
+                + " Verbindungen)"));
     }
 
 }

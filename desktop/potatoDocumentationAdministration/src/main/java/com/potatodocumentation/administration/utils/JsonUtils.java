@@ -21,7 +21,7 @@ import javafx.collections.ObservableList;
  */
 public class JsonUtils {
     
-    private static AtomicInteger openConnections = new AtomicInteger(0);
+    private static final AtomicInteger openConnections = new AtomicInteger(0);
 
     /**
      * Converts a JsonArray from a given URL with the given JsonTag
@@ -63,7 +63,7 @@ public class JsonUtils {
         MainApplication mainApp = MainApplication.getInstance();
         mainApp.showLoadBar(true);
         openConnections.incrementAndGet();
-        System.out.println("Start: " + openConnections.get());
+        mainApp.updateConnections();
         
         //Create connection to get URL
         Connection connection;
@@ -97,9 +97,9 @@ public class JsonUtils {
         if(openConnections.decrementAndGet() <= 0){
             mainApp.showLoadBar(false);
         }
-        System.out.println("Ende: " + openConnections.get());
-        
+        mainApp.updateConnections();
 
+        
         return resultList;
     }
 
@@ -236,6 +236,10 @@ public class JsonUtils {
         
         return observables;
 
+    }
+
+    public static int getOpenConnections() {
+        return openConnections.get();
     }
 
 }

@@ -145,7 +145,7 @@ public class PropertyPane extends HBox {
         VBox taskVBox = new VBox(10);
         taskVBox.getChildren().addAll(taskLabel, taskList);
 
-        detailSouth.getChildren().addAll(taskList);
+        detailSouth.getChildren().addAll(taskVBox);
 
         detailSouth.getChildren().stream().forEach((child) -> {
             HBox.setMargin(child, new Insets(10));
