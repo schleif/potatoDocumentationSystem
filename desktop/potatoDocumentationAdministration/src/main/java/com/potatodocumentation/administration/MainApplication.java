@@ -62,6 +62,7 @@ public class MainApplication extends Application {
     public void setContent(Pane contentPane){
         this.contentPane = contentPane;
         mainPane.setCenter(contentPane);
+        BorderPane.setMargin(contentPane, new Insets(10, 10, 10, 10));
     }
     
     public void showLoadBar(boolean isLoading){

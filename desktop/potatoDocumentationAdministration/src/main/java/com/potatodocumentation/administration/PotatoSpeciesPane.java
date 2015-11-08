@@ -6,18 +6,18 @@
 package com.potatodocumentation.administration;
 
 import static com.potatodocumentation.administration.utils.JsonUtils.getJsonResultObservableList;
+import com.potatodocumentation.administration.utils.ThreadUtils;
 import javafx.animation.Interpolator;
 import javafx.animation.RotateTransition;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.scene.control.Button;
 import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
-import javafx.scene.control.ListView.EditEvent;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
@@ -65,7 +65,7 @@ public class PotatoSpeciesPane extends VBox {
         this.getChildren().add(box);
 
         // finishing tasks
-        updateSpecies();
+        ThreadUtils.runAsTask(() -> updateSpecies());
     }
     
     private ListView<String> initSpeciesList() {
@@ -81,11 +81,13 @@ public class PotatoSpeciesPane extends VBox {
         return listView;
     }
     
-    private void updateSpecies() {
+    private Void updateSpecies() {
         ObservableList<String> species
                 = getJsonResultObservableList("sort_name", "selectSorte.php", null);
         
-        speciesList.setItems(species);
+        Platform.runLater(() -> speciesList.setItems(species));
+        
+        return null;
     }
     
     private Button initCreateButton() {
@@ -96,23 +98,14 @@ public class PotatoSpeciesPane extends VBox {
         button.setContentDisplay(ContentDisplay.RIGHT);
         button.setId("createButton");
         
-        button.setOnAction(new EventHandler<ActionEvent>() {
-            
-            @Override
-            public void handle(ActionEvent event) {
-                CreateNewSort stage = new CreateNewSort();
-                stage.initModality(Modality.APPLICATION_MODAL);
-
-                //Refresh the TaskList after the window is closed
-                stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
-                    
-                    @Override
-                    public void handle(WindowEvent event) {
-                        updateSpecies();
-                    }
-                });
-                stage.show();
-            }
+        button.setOnAction((ActionEvent event) -> {
+            CreateNewSort stage = new CreateNewSort();
+            stage.initModality(Modality.APPLICATION_MODAL);
+            //Refresh the TaskList after the window is closed
+            stage.setOnCloseRequest((WindowEvent event1) -> {
+                updateSpecies();
+            });
+            stage.show();
         });
         
         return button;
@@ -149,22 +142,15 @@ public class PotatoSpeciesPane extends VBox {
         button.setContentDisplay(ContentDisplay.RIGHT);
         button.setId("updateButton");
 
-        button.setOnAction(new EventHandler<ActionEvent>() {
-
-            @Override
-            public void handle(ActionEvent event) {
-                
-                updateSpecies();
-                
-                //Rotate the icon
-                RotateTransition rotate = new RotateTransition(Duration.seconds(2), imageView);
-                rotate.setByAngle(360.0);
-                rotate.setCycleCount(1);
-                rotate.setInterpolator(Interpolator.EASE_BOTH);
-                rotate.play();
-                
-                
-            }
+        button.setOnAction((ActionEvent event) -> {
+            updateSpecies();
+            
+            //Rotate the icon
+            RotateTransition rotate = new RotateTransition(Duration.seconds(2), imageView);
+            rotate.setByAngle(360.0);
+            rotate.setCycleCount(1);
+            rotate.setInterpolator(Interpolator.EASE_BOTH);
+            rotate.play();
         });
 
         return button;

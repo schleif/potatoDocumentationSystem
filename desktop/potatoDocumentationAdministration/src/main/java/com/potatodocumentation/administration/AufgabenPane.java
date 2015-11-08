@@ -100,12 +100,8 @@ public class AufgabenPane extends HBox {
         ListView<String> listView = new ListView<>();
 
         //Add listener on change of selected value
-        listView.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
-
-            @Override
-            public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-                onTaskListValueChanged();
-            }
+        listView.getSelectionModel().selectedItemProperty().addListener((ObservableValue<? extends String> observable, String oldValue, String newValue) -> {
+            onTaskListValueChanged();
         });
 
         return listView;
@@ -310,23 +306,15 @@ public class AufgabenPane extends HBox {
         button.setContentDisplay(ContentDisplay.RIGHT);
         button.setId("createButton");
 
-        button.setOnAction(new EventHandler<ActionEvent>() {
-
-            @Override
-            public void handle(ActionEvent event) {
-                CreateNewTask stage = new CreateNewTask();
-                stage.initModality(Modality.APPLICATION_MODAL);
-
-                //Refresh the TaskList after the window is closed
-                stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
-
-                    @Override
-                    public void handle(WindowEvent event) {
-                        ThreadUtils.runAsTask(() -> updateTaskList());
-                    }
-                });
-                stage.show();
-            }
+        button.setOnAction((ActionEvent event) -> {
+            CreateNewTask stage = new CreateNewTask();
+            stage.initModality(Modality.APPLICATION_MODAL);
+            
+            //Refresh the TaskList after the window is closed
+            stage.setOnCloseRequest((WindowEvent event1) -> {
+                ThreadUtils.runAsTask(() -> updateTaskList());
+            });
+            stage.show();
         });
 
         return button;
@@ -380,21 +368,15 @@ public class AufgabenPane extends HBox {
         button.setContentDisplay(ContentDisplay.RIGHT);
         button.setId("updateButton");
 
-        button.setOnAction(new EventHandler<ActionEvent>() {
-
-            @Override
-            public void handle(ActionEvent event) {
-
-                ThreadUtils.runAsTask(() -> updateTaskList());
-
-                //Rotate the icon
-                RotateTransition rotate = new RotateTransition(Duration.seconds(2), imageView);
-                rotate.setByAngle(360.0);
-                rotate.setCycleCount(1);
-                rotate.setInterpolator(Interpolator.EASE_BOTH);
-                rotate.play();
-
-            }
+        button.setOnAction((ActionEvent event) -> {
+            ThreadUtils.runAsTask(() -> updateTaskList());
+            
+            //Rotate the icon
+            RotateTransition rotate = new RotateTransition(Duration.seconds(2), imageView);
+            rotate.setByAngle(360.0);
+            rotate.setCycleCount(1);
+            rotate.setInterpolator(Interpolator.EASE_BOTH);
+            rotate.play();
         });
 
         return button;

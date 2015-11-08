@@ -71,7 +71,6 @@ public class Connection {
             e.printStackTrace();
         }
 
-        System.out.println(urlString);
 
         try {
             this.serviceURL = new URL(urlString);

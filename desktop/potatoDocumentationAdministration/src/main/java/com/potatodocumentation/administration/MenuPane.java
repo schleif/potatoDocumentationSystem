@@ -7,11 +7,8 @@ package com.potatodocumentation.administration;
 
 import java.util.ArrayList;
 import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.geometry.Orientation;
 import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.TilePane;
 
 /**
@@ -46,12 +43,8 @@ public class MenuPane extends TilePane {
             button.setId("menuButton");
 
             //set onClick event
-            button.setOnAction(new EventHandler<ActionEvent>() {
-                
-                @Override
-                public void handle(ActionEvent event) {
-                    mainApp.setContent(button.getPane());
-                }
+            button.setOnAction((ActionEvent event) -> {
+                mainApp.setContent(button.getPane());
             });
             
             getChildren().add(button);

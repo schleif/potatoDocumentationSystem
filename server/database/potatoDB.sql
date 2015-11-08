@@ -255,3 +255,7 @@ SELECT fromDate, toDate
 FROM aufg_termin
 WHERE aufg_name = aufgabenName
 ORDER BY fromDate ASC;
+
+CREATE PROCEDURE `selectAufgabeByEigenschaft` ( IN `eigName` VARCHAR( 255 ) CHARSET utf8 ) NOT DETERMINISTIC NO SQL SQL SECURITY DEFINER SELECT DISTINCT aufg_name
+FROM aufg_beinhaltet_eig
+WHERE eig_name = eigName;
