@@ -80,7 +80,7 @@ public class PotatoSpeciesPane extends HBox {
         getChildren().add(detailBox);
 
         //Update TaskList on startup
-        ThreadUtils.runAsTask(() -> updatePropertyList());
+        ThreadUtils.runAsTask(() -> updateSpeciesList());
 
     }
 
@@ -156,7 +156,7 @@ public class PotatoSpeciesPane extends HBox {
         if (activeSpecies == null) {
             return;
         }
-        ThreadUtils.runAsTask(() -> updateTaskList());
+        ThreadUtils.runAsTask(() -> updateParcelList());
 
         deleteButton.setDisable(false);
 
@@ -168,7 +168,7 @@ public class PotatoSpeciesPane extends HBox {
      * network connection! Therefore it uses Platform.runLater() to update the
      * UI of the Application.
      */
-    private Void updatePropertyList() {
+    private Void updateSpeciesList() {
         
         Platform.runLater(() -> updateButton.setDisable(true));
         
@@ -216,17 +216,17 @@ public class PotatoSpeciesPane extends HBox {
                 16.0, 16.0, true, true);
 
         Button button = new Button(
-                "Neue Eigenschaft erstellen", new ImageView(createIcon));
+                "Neue Sorte erstellen", new ImageView(createIcon));
         button.setContentDisplay(ContentDisplay.RIGHT);
         button.setId("createButton");
 
         button.setOnAction((ActionEvent event) -> {
-            CreateNewProp stage = new CreateNewProp();
+            CreateNewSort stage = new CreateNewSort();
             stage.initModality(Modality.APPLICATION_MODAL);
             
             //Refresh the TaskList after the window is closed
             stage.setOnCloseRequest((WindowEvent event1) -> {
-                ThreadUtils.runAsTask(() -> updatePropertyList());
+                ThreadUtils.runAsTask(() -> updateSpeciesList());
             });
             stage.show();
         });
@@ -284,7 +284,7 @@ public class PotatoSpeciesPane extends HBox {
         button.setId("updateButton");
 
         button.setOnAction((ActionEvent event) -> {
-            ThreadUtils.runAsTask(() -> updatePropertyList());
+            ThreadUtils.runAsTask(() -> updateSpeciesList());
             
             //Rotate the icon
             RotateTransition rotate =
@@ -303,18 +303,18 @@ public class PotatoSpeciesPane extends HBox {
      * network connection! Therefore it uses Platform.runLater() to update the
      * UI of the Application.
      */
-    private Void updateTaskList() {
+    private Void updateParcelList() {
         ObservableList<String> items =
                 FXCollections.observableArrayList("Lädt...");
         Platform.runLater(() -> parcelList.setItems(items));
         
         HashMap params = new HashMap();
-        params.put("eig_name", activeSpecies);
+        params.put("sorte", activeSpecies);
 
         ObservableList<String> tasks
                 = getJsonResultObservableList(
-                        "aufg_name",
-                        "selectAufgabeByEigenschaft.php",
+                        "parz_id",
+                        "selectParzelleBySorte.php",
                         params);
 
         Platform.runLater(() -> parcelList.setItems(tasks));
