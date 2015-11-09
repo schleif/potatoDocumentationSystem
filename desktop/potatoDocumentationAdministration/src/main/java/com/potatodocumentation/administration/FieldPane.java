@@ -5,6 +5,15 @@
  */
 package com.potatodocumentation.administration;
 
+import com.potatodocumentation.administration.utils.JsonUtils;
+import static com.potatodocumentation.administration.utils.JsonUtils.getJsonResultObservableList;
+import com.potatodocumentation.administration.utils.ThreadUtils;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+import javafx.application.Platform;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.geometry.Insets;
 import javafx.scene.control.Button;
@@ -17,8 +26,7 @@ import javafx.scene.layout.FlowPane;
 public class FieldPane extends FlowPane {
 
     Button createField = new Button("+");
-
-    int count = 0;
+    ObservableList<String> field;
 
     public FieldPane() {
         super();
@@ -30,11 +38,7 @@ public class FieldPane extends FlowPane {
         createField.setOnAction((ActionEvent event) -> {
             onPlusClicked();
         });
-        count++;
-        for (int i = 1; i <= 3; i++) {
-            newField(i);
-            count++;
-        }
+        ThreadUtils.runAsTask(() -> updateFieldList());
     }
 
     private void newField(int index) {
@@ -45,7 +49,21 @@ public class FieldPane extends FlowPane {
     }
 
     private void onPlusClicked() {
-        newField(count++);
+        JsonUtils.getJsonSuccessStatus("insertFeld.php");
+        ThreadUtils.runAsTask(() -> updateFieldList());
+    }
+
+    private Void updateFieldList() {
+        ObservableList<String> newItems = getJsonResultObservableList(
+                "feld_id", "selectFeld.php", null);
+        field = newItems.sorted();
+        this.getChildren().clear();
+        this.getChildren().add(createField);
+        Iterator<String> fieldIte = field.iterator();
+        while (fieldIte.hasNext()) {
+            newField(Integer.parseInt(fieldIte.next()));
+        }
+        return null;
     }
 
 }
