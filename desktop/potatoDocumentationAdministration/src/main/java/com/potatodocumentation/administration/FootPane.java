@@ -62,8 +62,10 @@ class FootPane extends HBox {
     }
 
     void updateConnections() {
-        Platform.runLater(() -> processLabel.setText("Beschäftigt(" + JsonUtils.getOpenConnections() 
-                + " Verbindungen)"));
+        Platform.runLater(()
+                -> processLabel.setText(
+                        "Beschäftigt(" + JsonUtils.getOpenConnections() 
+                        + " Verbindungen)"));
     }
 
 }

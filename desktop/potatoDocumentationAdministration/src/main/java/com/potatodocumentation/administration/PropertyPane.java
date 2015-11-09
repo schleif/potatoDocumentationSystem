@@ -112,17 +112,17 @@ public class PropertyPane extends HBox {
 
         //Add listener on change of selected value
         listView.getSelectionModel().selectedItemProperty()
-                .addListener((ObservableValue<? extends String> observable, String oldValue, String newValue) -> {
+                .addListener(
+                        (ObservableValue<? extends String>
+                                observable,
+                                String oldValue,
+                                String newValue) -> {
             onPropertyListValueChanged();
         });
 
         return listView;
         
     }
-
-
-
-
 
     private VBox initDetailBox() {
         VBox vBox = new VBox(10);
@@ -176,7 +176,8 @@ public class PropertyPane extends HBox {
         
         Platform.runLater(() -> updateButton.setDisable(true));
         
-        ObservableList<String> items = FXCollections.observableArrayList("Lädt...");
+        ObservableList<String> items =
+                FXCollections.observableArrayList("Lädt...");
         Platform.runLater(() -> propertyList.setItems(items));
 
         ObservableList<String> newItems = getJsonResultObservableList(
@@ -199,7 +200,9 @@ public class PropertyPane extends HBox {
     }
 
     private Button initDeleteButton() {
-        Image deleteIcon = new Image(getClass().getResourceAsStream("/drawables/deleteIcon.png"),
+        Image deleteIcon = new Image(
+                getClass().getResourceAsStream(
+                                "/drawables/deleteIcon.png"),
                 16.0, 16.0, true, true);
 
         Button button = new Button("Löschen", new ImageView(deleteIcon));
@@ -211,10 +214,13 @@ public class PropertyPane extends HBox {
     }
 
     private Button initCreateButton() {
-        Image createIcon = new Image(getClass().getResourceAsStream("/drawables/createIcon.png"),
+        Image createIcon = new Image(
+                getClass().getResourceAsStream(
+                        "/drawables/createIcon.png"),
                 16.0, 16.0, true, true);
 
-        Button button = new Button("Neue Eigenschaft erstellen", new ImageView(createIcon));
+        Button button = new Button(
+                "Neue Eigenschaft erstellen", new ImageView(createIcon));
         button.setContentDisplay(ContentDisplay.RIGHT);
         button.setId("createButton");
 
@@ -271,7 +277,8 @@ public class PropertyPane extends HBox {
 
     private Button initUpdateButton() {
 
-        Image updateIcon = new Image(getClass().getResourceAsStream("/drawables/updateIcon.png"),
+        Image updateIcon = new Image(
+                getClass().getResourceAsStream("/drawables/updateIcon.png"),
                 16.0, 16.0, true, true);
 
         ImageView imageView = new ImageView(updateIcon);
@@ -284,7 +291,8 @@ public class PropertyPane extends HBox {
             ThreadUtils.runAsTask(() -> updatePropertyList());
             
             //Rotate the icon
-            RotateTransition rotate = new RotateTransition(Duration.seconds(2), imageView);
+            RotateTransition rotate =
+                    new RotateTransition(Duration.seconds(2), imageView);
             rotate.setByAngle(360.0);
             rotate.setCycleCount(1);
             rotate.setInterpolator(Interpolator.EASE_BOTH);
@@ -300,14 +308,18 @@ public class PropertyPane extends HBox {
      * UI of the Application.
      */
     private Void updateTaskList() {
-        ObservableList<String> items = FXCollections.observableArrayList("Lädt...");
+        ObservableList<String> items =
+                FXCollections.observableArrayList("Lädt...");
         Platform.runLater(() -> taskList.setItems(items));
         
         HashMap params = new HashMap();
         params.put("eig_name", activeProperty);
 
         ObservableList<String> tasks
-                = getJsonResultObservableList("aufg_name", "selectAufgabeByEigenschaft.php", params);
+                = getJsonResultObservableList(
+                        "aufg_name",
+                        "selectAufgabeByEigenschaft.php",
+                        params);
 
         Platform.runLater(() -> taskList.setItems(tasks));
 
