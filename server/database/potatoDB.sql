@@ -50,6 +50,19 @@ CREATE TABLE IF NOT EXISTS `aufg_termin` (
   `toDate` DATE NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
+-- --------------------------------------------------------
+
+--
+--Tabellenstruktur für Tabelle 'feld'
+--
+
+CREATE TABLE IF NOT EXISTS `feld` (
+ `feld_id` int(11) NOT NULL AUTO_INCREMENT,
+ `row_nr` int(11) NOT NULL,
+ `column_nr` int(11) NOT NULL,
+ PRIMARY KEY (`feld_id`),
+ UNIQUE KEY `row_column_integrity` (`row_nr`,`column_nr`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=latin1;
 
 -- --------------------------------------------------------
 
@@ -89,11 +102,19 @@ CREATE TABLE IF NOT EXISTS `eigenschaft` (
 -- Tabellenstruktur für Tabelle `parzellen`
 --
 
-CREATE TABLE IF NOT EXISTS `parzellen` (
-  `parz_id` int(11) NOT NULL,
-  `feld_nr` int(11) NOT NULL,
-  `sorte` varchar(255) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+CREATE TABLE IF NOT EXISTS`parzellen` (
+ `parz_id` int(11) NOT NULL AUTO_INCREMENT,
+ `feld_nr` int(11) NOT NULL,
+ `sorte` varchar(255) DEFAULT NULL,
+ `parz_row` int(11) NOT NULL,
+ `parz_col` int(11) NOT NULL,
+ PRIMARY KEY (`parz_id`),
+ UNIQUE KEY `row_col_unique` (`parz_row`,`parz_col`,`feld_nr`),
+ KEY `sorte` (`sorte`),
+ KEY `feld_nr` (`feld_nr`),
+ CONSTRAINT `parzellen_ibfk_1` FOREIGN KEY (`sorte`) REFERENCES `sorte` (`sort_name`) ON DELETE SET NULL ON UPDATE CASCADE,
+ CONSTRAINT `parzellen_ibfk_2` FOREIGN KEY (`feld_nr`) REFERENCES `feld` (`feld_id`) ON DELETE NO ACTION ON UPDATE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=latin1;
 
 -- --------------------------------------------------------
 
@@ -140,12 +161,6 @@ ALTER TABLE `eigenschaft`
   ADD PRIMARY KEY (`eig_name`);
 
 --
--- Indizes für die Tabelle `parzellen`
---
-ALTER TABLE `parzellen`
-  ADD PRIMARY KEY (`parz_id`), ADD KEY `sorte` (`sorte`);
-
---
 -- Indizes für die Tabelle `sorte`
 --
 ALTER TABLE `sorte`
@@ -155,11 +170,6 @@ ALTER TABLE `sorte`
 -- AUTO_INCREMENT für exportierte Tabellen
 --
 
---
--- AUTO_INCREMENT für Tabelle `parzellen`
---
-ALTER TABLE `parzellen`
-  MODIFY `parz_id` int(11) NOT NULL AUTO_INCREMENT;
 --
 -- Constraints der exportierten Tabellen
 --
@@ -184,12 +194,6 @@ ALTER TABLE `aufg_gehoert_zu_parz`
 ADD CONSTRAINT `aufg_gehoert_zu_parz_ibfk_1` FOREIGN KEY (`aufg_name`) REFERENCES `aufgabe` (`aufg_name`) ON DELETE NO ACTION ON UPDATE CASCADE,
 ADD CONSTRAINT `aufg_gehoert_zu_parz_ibfk_2` FOREIGN KEY (`parz_id`) REFERENCES `parzellen` (`parz_id`) ON DELETE NO ACTION ON UPDATE CASCADE;
 
---
--- Constraints der Tabelle `parzellen`
---
-ALTER TABLE `parzellen`
-ADD CONSTRAINT `parzellen_ibfk_1` FOREIGN KEY (`sorte`) REFERENCES `sorte` (`sort_name`) ON DELETE SET NULL ON UPDATE CASCADE;
-
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
@@ -207,12 +211,13 @@ CREATE PROCEDURE `insertSorte`(
 ) NOT DETERMINISTIC MODIFIES SQL DATA SQL SECURITY DEFINER 
 INSERT INTO sorte (sort_name) VALUES (name); 
 
-CREATE PROCEDURE `insertParzelle`(
-    IN `id` INTEGER,
-    IN `nr` INTEGER,
-    IN `sorte` VARCHAR(255) CHARSET utf8
-) NOT DETERMINISTIC MODIFIES SQL DATA SQL SECURITY DEFINER 
-INSERT INTO parzellen (parz_id, feld_nr, sorte) VALUES (id, nr, sorte); 
+CREATE PROCEDURE `insertParzelle` ( 
+	IN `id` INT, 
+	IN `nr` INT, 
+	IN `sorte` VARCHAR( 255 ) CHARSET utf8, 
+	IN `rowNr` INT, 
+	IN `colNr` INT ) NOT DETERMINISTIC MODIFIES SQL DATA SQL SECURITY DEFINER 
+INSERT INTO parzellen( parz_id, feld_nr, sorte, parz_row, parz_col ) VALUES (id, nr, sorte, rowNr, colNr);
 
 CREATE PROCEDURE `insertAufgabe`(
     IN `name` VARCHAR(255) CHARSET utf8
@@ -237,6 +242,11 @@ CREATE PROCEDURE `insertAufg_gehoert_zu_parz`(
     IN `pid` INTEGER
 ) NOT DETERMINISTIC MODIFIES SQL DATA SQL SECURITY DEFINER 
 INSERT INTO aufg_gehoert_zu_parz (`aufg_name`, `parz_id`) VALUES (name1, pid); 
+
+CREATE PROCEDURE `insertFeld` ( IN `rowNr` INT( 11 ) , IN `colNr` INT( 11 ) ) NOT DETERMINISTIC NO SQL SQL SECURITY DEFINER INSERT INTO feld( row_nr, column_nr )
+VALUES (
+rowNr, colNr
+);
 
 CREATE PROCEDURE `selectParzellen`() NOT DETERMINISTIC CONTAINS SQL SQL SECURITY DEFINER SELECT * FROM parzellen;
 
