@@ -237,6 +237,65 @@ VALUES (
 rowNr, colNr
 );
 
+--
+-- Inserts a new Feld at the end of a given row. Creates the row if its non-existing
+--
+CREATE PROCEDURE `insertFeldIntoRow`(IN `rowNr` INT UNSIGNED) 
+NOT DETERMINISTIC NO SQL SQL SECURITY DEFINER 
+BEGIN 
+	DECLARE maxCol INT DEFAULT (SELECT MAX(column_nr) FROM feld WHERE row_nr = rowNr); 
+	IF(maxCol IS NULL) THEN SET maxCol = 0; END IF; 
+	INSERT INTO feld( row_nr, column_nr ) VALUES (rowNr, maxCol + 1); 
+END
+
+--
+-- Inserts a new Parzelle at the end of a given (non-)existing row of a given existing field.
+--
+CREATE PROCEDURE `insertParzelleIntoRow`(IN `feldNr` INT, IN `rowNr` INT UNSIGNED) 
+NOT DETERMINISTIC NO SQL SQL SECURITY DEFINER 
+BEGIN 
+	DECLARE maxCol INT DEFAULT (SELECT MAX(parz_col) FROM parzellen WHERE feld_nr = feldNr AND parz_row = rowNr); 
+	IF(maxCol IS NULL) THEN SET maxCol = 0; END IF; 
+	INSERT INTO parzellen( feld_nr, parz_row, parz_col ) VALUES (feldNr, rowNr, maxCol + 1); 
+END
+
+--
+-- Switches the position of two existing parzellen with the SAME feld_nr
+--
+CREATE PROCEDURE `switchParzellen`(IN `parA` INT, IN `parB` INT)
+   NO SQL
+BEGIN
+
+DECLARE parARow INT;
+DECLARE parACol INT;
+DECLARE parBRow INT;
+DECLARE parBCol INT;
+
+IF NOT EXISTS (SELECT * FROM parzellen WHERE parz_id = parA) THEN
+SIGNAL SQLSTATE '45000';
+END IF;
+
+IF NOT EXISTS (SELECT * FROM parzellen WHERE parz_id = parB) THEN
+SIGNAL SQLSTATE '45000';
+END IF;
+
+IF((SELECT feld_nr FROM parzellen WHERE parz_id = parA) != (SELECT feld_nr FROM parzellen WHERE parz_id = parB)) THEN
+SIGNAL SQLSTATE '45000';
+END IF;
+
+SET parARow = (SELECT parz_row FROM parzellen WHERE parz_id = parA);
+SET parACol = (SELECT parz_col FROM parzellen WHERE parz_id = parA);
+SET parBRow = (SELECT parz_row FROM parzellen WHERE parz_id = parB);
+SET parBCol = (SELECT parz_col FROM parzellen WHERE parz_id = parB);
+
+UPDATE parzellen SET parz_row = -1, parz_col = -2 WHERE parz_id = parA;
+
+UPDATE parzellen SET parz_row = parARow, parz_col = parACol WHERE parz_id = parB;
+
+UPDATE parzellen SET parz_row = parBRow, parz_col = parBCol WHERE parz_id = parA;
+
+END
+
 CREATE PROCEDURE `selectParzellen`() NOT DETERMINISTIC CONTAINS SQL SQL SECURITY DEFINER SELECT * FROM parzellen ORDER BY feld_nr, parz_row, parz_col ASC;
 
 CREATE PROCEDURE `selectEigenschaft`() NOT DETERMINISTIC CONTAINS SQL SQL SECURITY DEFINER SELECT * FROM eigenschaft;
@@ -268,5 +327,7 @@ CREATE PROCEDURE `selectFeldRows`() NOT DETERMINISTIC NO SQL SQL SECURITY DEFINE
 CREATE PROCEDURE `selectFeldByRow`(IN `rowNr` INT) NOT DETERMINISTIC NO SQL SQL SECURITY DEFINER SELECT * FROM feld WHERE row_nr = rowNr ORDER BY column_nr ASC;
 
 CREATE PROCEDURE `selectSpecificFeld`(IN `id` INT) NOT DETERMINISTIC NO SQL SQL SECURITY DEFINER SELECT * FROM feld WHERE feld_id = id;
+
+CREATE PROCEDURE `selectSorte`() NOT DETERMINISTIC NO SQL SQL SECURITY DEFINER SELECT * FROM Sorte;
 
 CREATE PROCEDURE `selectParzelleByFeld`(IN `feldId` INT) NOT DETERMINISTIC NO SQL SQL SECURITY DEFINER SELECT * FROM parzellen WHERE feld_nr = feldId ORDER BY parz_row, parz_col ASC;
