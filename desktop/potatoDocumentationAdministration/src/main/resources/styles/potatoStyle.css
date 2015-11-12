@@ -37,3 +37,7 @@ and open the template in the editor.
     -fx-base: green;
     -fx-background-radius: 20;
 }
+
+#fieldButton{
+    -fx-font-size: 40;
+}
