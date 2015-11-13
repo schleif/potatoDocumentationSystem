@@ -377,13 +377,15 @@ public class FieldPane2 extends HBox {
 
     private VBox initFieldBox() {
        
-        /*VBox vBox = new VBox(fieldBoxHeader, fieldList, createButton);
+            VBox vBox = new VBox(fieldBoxHeader, fieldList, createButton);
 
         vBox.getChildren().stream().forEach((child) -> {
             VBox.setMargin(child, new Insets(10));
         });
+        
+        
 
-        return vBox;*/
+        return vBox;
     }
 
     private AnchorPane initFieldBoxHeader() {
