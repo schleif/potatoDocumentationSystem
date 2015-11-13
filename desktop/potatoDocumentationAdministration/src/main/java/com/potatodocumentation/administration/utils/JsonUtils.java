@@ -11,10 +11,8 @@ import com.potatodocumentation.administration.MainApplication;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.util.concurrent.atomic.AtomicInteger;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
@@ -22,6 +20,8 @@ import javafx.collections.ObservableList;
  * @author Ochi
  */
 public class JsonUtils {
+    
+    private static final AtomicInteger openConnections = new AtomicInteger(0);
 
     /**
      * Converts a JsonArray from a given URL with the given JsonTag
@@ -62,6 +62,8 @@ public class JsonUtils {
         //Indicate network usage
         MainApplication mainApp = MainApplication.getInstance();
         mainApp.showLoadBar(true);
+        openConnections.incrementAndGet();
+        mainApp.updateConnections();
         
         //Create connection to get URL
         Connection connection;
@@ -80,7 +82,6 @@ public class JsonUtils {
         try {
             jsonResult = mapper.readValue(url, Map.class);
         } catch (IOException ex) {
-            ex.printStackTrace();
         }
 
         //Check if success
@@ -93,8 +94,12 @@ public class JsonUtils {
             resultList = (ArrayList<Map<String, Object>>) jsonResult.get(resultTag);
         }
         
-        mainApp.showLoadBar(false);
+        if(openConnections.decrementAndGet() <= 0){
+            mainApp.showLoadBar(false);
+        }
+        mainApp.updateConnections();
 
+        
         return resultList;
     }
 
@@ -170,7 +175,6 @@ public class JsonUtils {
         try {
             jsonResult = mapper.readValue(url, Map.class);
         } catch (IOException ex) {
-            ex.printStackTrace();
         }
 
         //Check if success
@@ -232,6 +236,10 @@ public class JsonUtils {
         
         return observables;
 
+    }
+
+    public static int getOpenConnections() {
+        return openConnections.get();
     }
 
 }

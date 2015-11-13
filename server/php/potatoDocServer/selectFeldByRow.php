@@ -6,4 +6,6 @@ define('DB_FUNCTIONS', __DIR__ . '/DB_FUNCTIONS.php');
 // import database connection variables
 require_once DB_FUNCTIONS;
 
-select("selectSorte", null);
+$params = array( "row_nr");
+
+select("selectFeldByRow", $params);

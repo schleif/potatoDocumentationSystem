@@ -5,36 +5,40 @@
  */
 package com.potatodocumentation.administration;
 
+import com.potatodocumentation.administration.utils.JsonUtils;
+import static com.potatodocumentation.administration.utils.JsonUtils.getJsonResultObservableList;
+import static com.potatodocumentation.administration.utils.JsonUtils.getJsonSuccessStatus;
+import com.potatodocumentation.administration.utils.ThreadUtils;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+import javafx.application.Platform;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.Label;
 import javafx.scene.layout.FlowPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 
 /**
  *
  * @author fiel
  */
-public class FieldPane extends FlowPane {
+public class FieldPane extends VBox {
 
     Button createField = new Button("+");
-
-    int count = 0;
+    ObservableList<String> field;
 
     public FieldPane() {
-        super();
-        this.setVgap(10);
-        this.setHgap(10);
-        this.setPadding(new Insets(30, 30, 30, 30));
-        createField.setStyle("-fx-font-size: 100");
-        this.getChildren().add(createField);
-        createField.setOnAction((ActionEvent event) -> {
-            onPlusClicked();
-        });
-        count++;
-        for (int i = 1; i <= 3; i++) {
-            newField(i);
-            count++;
-        }
+        super(10);
+
+        ThreadUtils.runAsTask(() -> updateFieldList());
     }
 
     private void newField(int index) {
@@ -44,8 +48,96 @@ public class FieldPane extends FlowPane {
         this.getChildren().add(0, but);
     }
 
-    private void onPlusClicked() {
-        newField(count++);
+    private void onPlusClicked(int rowNr) {
+        //add new field
+        addField(rowNr);
+
+        //UpdateList
+        ThreadUtils.runAsTask(() -> updateFieldList());
+    }
+
+    private void addField(Integer rowNr) {
+
+        HashMap<String, String> params = new HashMap<>();
+        params.put("row_nr", rowNr.toString());
+
+        boolean success = getJsonSuccessStatus("insertFeldIntoRow.php", params);
+
+        String status = "Feld wurde " + (success ? "" : "nicht ")
+                + "erfolgreich eingefügt!";
+
+        if (success) {
+            new Alert(Alert.AlertType.INFORMATION, status).showAndWait()
+                    .filter(response -> response == ButtonType.OK);
+        } else {
+            new Alert(Alert.AlertType.ERROR).showAndWait()
+                    .filter(response -> response == ButtonType.OK);
+        }
+    }
+
+    private Void updateFieldList() {
+        
+        Platform.runLater(() -> getChildren().clear());
+
+        //Get all rows
+        ObservableList<String> rows = getJsonResultObservableList(
+                "row_nr", "selectFeldRows.php", null);
+
+        //Add one empty row at the end
+        int rowSize = rows.size(), maxRow;
+        if(rowSize == 0){
+            maxRow = rowSize;
+        } else {
+            maxRow = Integer.parseInt(rows.get(rows.size() - 1));
+        }
+        rows.add("" + (++maxRow));
+
+        //Go through all rows and add all fields of the row
+        for (String rowNr : rows) {
+
+            HBox rowBox = new HBox(10);
+            rowBox.setId("rowBox");
+            rowBox.setAlignment(Pos.CENTER_LEFT);
+
+            //Get all field of this row
+            HashMap<String, String> params = new HashMap<>();
+            params.put("row_nr", rowNr);
+            
+            //add label with the rowNr at the beginning of the row
+            Label rowLabel = new Label(rowNr);
+            rowLabel.setId("rowLabel");
+            rowLabel.setRotate(270);
+            rowBox.getChildren().add(rowLabel);
+
+            ObservableList<String> fieldsOfRow = getJsonResultObservableList(
+                    "feld_id", "selectFeldByRow.php", params);
+
+            //Add all fields to rowBox
+            for (String field : fieldsOfRow) {
+                //Numbers are going to have at least 2 digits
+                Button fieldButton = 
+                        new Button(String.format("%2s", field).replace(" ", "0"));
+                fieldButton.setId("fieldButton");
+
+                rowBox.getChildren().add(fieldButton);
+            }
+            //Add the addButton
+            rowBox.getChildren().add(initAddButton(rowNr));
+
+            Platform.runLater(() -> getChildren().add(rowBox));
+        }
+
+        return null;
+    }
+
+    private Button initAddButton(String rowNr) {
+        Button addButton = new Button("+");
+        addButton.setId("createButton");
+        addButton.setOnAction((ActionEvent e) -> {
+            onPlusClicked(Integer.parseInt(rowNr));
+        });
+
+        return addButton;
     }
 
 }

@@ -16,7 +16,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -376,9 +375,9 @@ public class CreateNewTask extends Stage {
 
         if (jsonResult != null) {
             //Add all properties to the ObservableList
-            for (Map<String, Object> property : jsonResult) {
+            jsonResult.stream().forEach((property) -> {
                 observables.add((String) property.get("eig_name"));
-            }
+            });
         }
         
         Platform.runLater(() -> propertyList.setItems(observables));

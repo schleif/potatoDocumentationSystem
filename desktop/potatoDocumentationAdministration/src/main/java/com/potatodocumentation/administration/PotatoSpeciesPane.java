@@ -5,23 +5,26 @@
  */
 package com.potatodocumentation.administration;
 
-import static com.potatodocumentation.administration.utils.JsonUtils.getJsonResultObservableList;
+import static com.potatodocumentation.administration.utils.JsonUtils.*;
+import com.potatodocumentation.administration.utils.ThreadUtils;
+import java.util.HashMap;
 import javafx.animation.Interpolator;
 import javafx.animation.RotateTransition;
+import javafx.application.Platform;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.scene.control.Button;
 import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
-import javafx.scene.control.ListView.EditEvent;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.WindowEvent;
@@ -29,148 +32,295 @@ import javafx.util.Duration;
 
 /**
  *
- * @author fiel
+ * @author Ochi
  */
-public class PotatoSpeciesPane extends VBox {
+public class PotatoSpeciesPane extends HBox {
 
-    // Components
-    Label infoLabel;
+    Label parcelLabel;
+    Label speciesLabel;
+    Label detailLabel;
+    ListView<String> parcelList;
     ListView<String> speciesList;
-    Button createButton;
-    Button deleteButton;
+    VBox detailBox;
+    VBox speciesBox;
+    AnchorPane speciesBoxHeader;
+    AnchorPane detailBoxHeader;
     Button updateButton;
-    
+    Button deleteButton;
+    Button createButton;
+    private String activeSpecies;
+
     public PotatoSpeciesPane() {
-        super();
+        super(10);
+        setFillHeight(true);
 
-        // Layouting
-        this.setPadding(new Insets(5, 5, 5, 5));
-
-        // Init nodes
-        infoLabel = initInfoLabel();
+        //Initialize nodes
+        //SpeciesBox
+        speciesLabel = initSpeciesLabel();
+        updateButton = initUpdateButton();
         speciesList = initSpeciesList();
         createButton = initCreateButton();
-        deleteButton = initDelButton();
-        updateButton = initUpdateButton();
+        speciesBoxHeader = initSpeciesBoxHeader();
+        speciesBox = initSpeciesBox();
 
-        // adding nodes
-        this.getChildren().add(infoLabel);
-        this.getChildren().add(speciesList);
-        HBox box = new HBox();
-        box.setPadding(new Insets(5, 5, 5, 5));
-        box.setSpacing(10);
-        box.getChildren().add(createButton);
-        box.getChildren().add(deleteButton);
-        box.getChildren().add(updateButton);
-        this.getChildren().add(box);
+        //OptionBox
+        detailLabel = initDetailLabel();
+        deleteButton = initDeleteButton();
+        detailBoxHeader = initDetailBoxHeader();
 
-        // finishing tasks
-        updateSpecies();
+        //DetailBox
+        parcelLabel = initParcelLabel();
+        parcelList = initParcelList();
+        detailBox = initDetailBox();
+
+        initLayout();
+
+        //Add needed children
+        getChildren().add(speciesBox);
+        getChildren().add(detailBox);
+
+        //Update TaskList on startup
+        ThreadUtils.runAsTask(() -> updateSpeciesList());
+
     }
-    
-    private ListView<String> initSpeciesList() {
-        ObservableList<String> items
-                = FXCollections.observableArrayList("Keine Sorte ausgewählt");
-        
+
+    private ListView<String> initParcelList() {
+
+        ObservableList<String> items = FXCollections.observableArrayList("Keine Sorte ausgewählt");
+
         ListView<String> listView = new ListView<>(items);
-        
-        listView.setOnMouseClicked((MouseEvent event) -> {
-            deleteButton.setDisable(false);
-        });
-        
-        return listView;
-    }
-    
-    private void updateSpecies() {
-        ObservableList<String> species
-                = getJsonResultObservableList("sort_name", "selectSorte.php", null);
-        
-        speciesList.setItems(species);
-    }
-    
-    private Button initCreateButton() {
-        Image createIcon = new Image(getClass().getResourceAsStream("/drawables/createIcon.png"),
-                16.0, 16.0, true, true);
-        
-        Button button = new Button("Neue Sorte erstellen", new ImageView(createIcon));
-        button.setContentDisplay(ContentDisplay.RIGHT);
-        button.setId("createButton");
-        
-        button.setOnAction(new EventHandler<ActionEvent>() {
-            
-            @Override
-            public void handle(ActionEvent event) {
-                CreateNewSort stage = new CreateNewSort();
-                stage.initModality(Modality.APPLICATION_MODAL);
 
-                //Refresh the TaskList after the window is closed
-                stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
-                    
-                    @Override
-                    public void handle(WindowEvent event) {
-                        updateSpecies();
-                    }
-                });
-                stage.show();
-            }
-        });
-        
-        return button;
+        return listView;
+
     }
-    
-    private Button initDelButton() {
-        Image deleteIcon = new Image(getClass().getResourceAsStream("/drawables/deleteIcon.png"),
-                16.0, 16.0, true, true);
+
+    private Label initParcelLabel() {
+        return new Label("Verknüpfte Parzellen:");
+    }
+
+    private Label initSpeciesLabel() {
+        return new Label("Eigenschaften:");
+    }
+
+    private ListView<String> initSpeciesList() {
         
+        ListView<String> listView = new ListView<>();
+
+        //Add listener on change of selected value
+        listView.getSelectionModel().selectedItemProperty()
+                .addListener(
+                        (ObservableValue<? extends String>
+                                observable,
+                                String oldValue,
+                                String newValue) -> {
+            onSpeciesListValueChanged();
+        });
+
+        return listView;
+        
+    }
+
+    private VBox initDetailBox() {
+        VBox vBox = new VBox(10);
+
+        //Set ID for the css
+        vBox.setId("detailBox");
+        
+        setHgrow(vBox, Priority.ALWAYS);
+
+        return vBox;
+// throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    private void initLayout() {
+
+        detailBox.getChildren().add(detailBoxHeader);
+
+        HBox detailSouth = new HBox(10);
+
+        VBox taskVBox = new VBox(10);
+        taskVBox.getChildren().addAll(parcelLabel, parcelList);
+
+        detailSouth.getChildren().addAll(taskVBox);
+
+        detailSouth.getChildren().stream().forEach((child) -> {
+            HBox.setMargin(child, new Insets(10));
+        });
+
+        detailBox.getChildren().add(detailSouth);
+    }
+
+    private void onSpeciesListValueChanged() {
+        activeSpecies = speciesList.getSelectionModel().getSelectedItem();
+
+        if (activeSpecies == null) {
+            return;
+        }
+        ThreadUtils.runAsTask(() -> updateParcelList());
+
+        deleteButton.setDisable(false);
+
+        detailLabel.setText("Details (" + activeSpecies +")");
+    }
+
+    /**
+     * This method should be called in another Task since it establishes a
+     * network connection! Therefore it uses Platform.runLater() to update the
+     * UI of the Application.
+     */
+    private Void updateSpeciesList() {
+        
+        Platform.runLater(() -> updateButton.setDisable(true));
+        
+        ObservableList<String> items =
+                FXCollections.observableArrayList("Lädt...");
+        Platform.runLater(() -> speciesList.setItems(items));
+
+        ObservableList<String> newItems = getJsonResultObservableList(
+                "sort_name", "selectSorte.php", null);
+
+        Platform.runLater(() -> speciesList.setItems(newItems));
+        Platform.runLater(() -> updateButton.setDisable(false));
+
+        return null;
+    }
+
+
+
+    private Label initDetailLabel() {
+        Label label = new Label("Details");
+        label.setId("detailLabel");
+
+        return label;
+
+    }
+
+    private Button initDeleteButton() {
+        Image deleteIcon = new Image(
+                getClass().getResourceAsStream(
+                                "/drawables/deleteIcon.png"),
+                16.0, 16.0, true, true);
+
         Button button = new Button("Löschen", new ImageView(deleteIcon));
         button.setContentDisplay(ContentDisplay.RIGHT);
         button.setDisable(true);
         button.setId("deleteButton");
-        
-        button.setOnAction((ActionEvent event) -> {
-            onDelButtonClicked();
-        });
-        
+
         return button;
     }
 
-    private void onDelButtonClicked() {
-        throw new UnsupportedOperationException("Not supported yet.");
-        //To change body of generated methods, choose Tools | Templates.
+    private Button initCreateButton() {
+        Image createIcon = new Image(
+                getClass().getResourceAsStream(
+                        "/drawables/createIcon.png"),
+                16.0, 16.0, true, true);
+
+        Button button = new Button(
+                "Neue Sorte erstellen", new ImageView(createIcon));
+        button.setContentDisplay(ContentDisplay.RIGHT);
+        button.setId("createButton");
+
+        button.setOnAction((ActionEvent event) -> {
+            CreateNewSort stage = new CreateNewSort();
+            stage.initModality(Modality.APPLICATION_MODAL);
+            
+            //Refresh the TaskList after the window is closed
+            stage.setOnCloseRequest((WindowEvent event1) -> {
+                ThreadUtils.runAsTask(() -> updateSpeciesList());
+            });
+            stage.show();
+        });
+
+        return button;
+    }
+
+    private AnchorPane initDetailBoxHeader() {
+        AnchorPane anchorPane
+                = new AnchorPane(detailLabel, deleteButton);
+
+        AnchorPane.setLeftAnchor(detailLabel, 10.0);
+        AnchorPane.setRightAnchor(deleteButton, 10.0);
+
+        anchorPane.getChildren().stream().forEach((child) -> {
+            AnchorPane.setTopAnchor(child, 10.0);
+        });
+
+        return anchorPane;
+    }
+
+    private VBox initSpeciesBox() {
+        VBox vBox = new VBox(speciesBoxHeader, speciesList, createButton);
+
+        vBox.getChildren().stream().forEach((child) -> {
+            VBox.setMargin(child, new Insets(10));
+        });
+
+        return vBox;
+    }
+
+    private AnchorPane initSpeciesBoxHeader() {
+        AnchorPane anchorPane = new AnchorPane(speciesLabel, updateButton);
+
+        AnchorPane.setLeftAnchor(speciesLabel, 10.0);
+        AnchorPane.setRightAnchor(updateButton, 10.0);
+
+        anchorPane.getChildren().stream().forEach((child) -> {
+            AnchorPane.setTopAnchor(child, 10.0);
+        });
+
+        return anchorPane;
     }
 
     private Button initUpdateButton() {
-        Image updateIcon = new Image(getClass().getResourceAsStream("/drawables/updateIcon.png"),
+
+        Image updateIcon = new Image(
+                getClass().getResourceAsStream("/drawables/updateIcon.png"),
                 16.0, 16.0, true, true);
-        
+
         ImageView imageView = new ImageView(updateIcon);
 
         Button button = new Button("Neu Laden", imageView);
         button.setContentDisplay(ContentDisplay.RIGHT);
         button.setId("updateButton");
 
-        button.setOnAction(new EventHandler<ActionEvent>() {
-
-            @Override
-            public void handle(ActionEvent event) {
-                
-                updateSpecies();
-                
-                //Rotate the icon
-                RotateTransition rotate = new RotateTransition(Duration.seconds(2), imageView);
-                rotate.setByAngle(360.0);
-                rotate.setCycleCount(1);
-                rotate.setInterpolator(Interpolator.EASE_BOTH);
-                rotate.play();
-                
-                
-            }
+        button.setOnAction((ActionEvent event) -> {
+            ThreadUtils.runAsTask(() -> updateSpeciesList());
+            
+            //Rotate the icon
+            RotateTransition rotate =
+                    new RotateTransition(Duration.seconds(2), imageView);
+            rotate.setByAngle(360.0);
+            rotate.setCycleCount(1);
+            rotate.setInterpolator(Interpolator.EASE_BOTH);
+            rotate.play();
         });
 
         return button;
     }
 
-    private Label initInfoLabel() {
-        return new Label("Sorten verwalten");
+    /**
+     * This method should be called in another Task since it establishes a
+     * network connection! Therefore it uses Platform.runLater() to update the
+     * UI of the Application.
+     */
+    private Void updateParcelList() {
+        ObservableList<String> items =
+                FXCollections.observableArrayList("Lädt...");
+        Platform.runLater(() -> parcelList.setItems(items));
+        
+        HashMap params = new HashMap();
+        params.put("sorte", activeSpecies);
+
+        ObservableList<String> tasks
+                = getJsonResultObservableList(
+                        "parz_id",
+                        "selectParzelleBySorte.php",
+                        params);
+
+        Platform.runLater(() -> parcelList.setItems(tasks));
+
+
+        return null;
     }
+
 }

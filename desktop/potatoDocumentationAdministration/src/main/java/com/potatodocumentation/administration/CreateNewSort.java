@@ -5,13 +5,9 @@
  */
 package com.potatodocumentation.administration;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import static com.potatodocumentation.administration.utils.JsonUtils.getJsonSuccessStatus;
 import java.util.HashMap;
 import java.util.Scanner;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javafx.event.ActionEvent;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
@@ -122,7 +118,7 @@ class CreateNewSort extends Stage {
     }
 
     private void insertSort(String sortName) {
-        if (!sortName.equals("Name...") && !sortName.equals("")) {
+        if (!sortName.equals("Name...") && !sortName.isEmpty()) {
 
             HashMap<String, String> values = new HashMap<>();
             values.put("sort_name", sortName);

@@ -6,16 +6,6 @@
 package com.potatodocumentation.administration;
 
 import static com.potatodocumentation.administration.utils.JsonUtils.getJsonResultObservableList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.ListIterator;
-import javafx.application.Platform;
-import javafx.beans.InvalidationListener;
-import javafx.collections.FXCollections;
-import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.scene.control.ComboBox;
 import javafx.scene.layout.BorderPane;
