@@ -261,15 +261,32 @@ DELIMITER ;
 DROP PROCEDURE IF EXISTS `insertParzelleIntoRow`;
 DELIMITER //
 
-CREATE PROCEDURE `insertParzelleIntoRow`(IN `feldNr` INT, IN `rowNr` INT UNSIGNED) 
-NOT DETERMINISTIC NO SQL SQL SECURITY DEFINER 
+CREATE PROCEDURE `insertParzelleIntoRow` ( 
+	IN `feldNr` INT, 
+	IN `rowNr` INT UNSIGNED, 
+	IN `sortenName` VARCHAR( 255 ) ) NOT DETERMINISTIC NO SQL SQL SECURITY DEFINER 
 BEGIN 
-	DECLARE maxCol INT DEFAULT (SELECT MAX(parz_col) FROM parzellen WHERE feld_nr = feldNr AND parz_row = rowNr); 
-	IF(maxCol IS NULL) THEN SET maxCol = 0; END IF; 
-	INSERT INTO parzellen( feld_nr, parz_row, parz_col ) VALUES (feldNr, rowNr, maxCol + 1); 
+	DECLARE maxCol INTDEFAULT( 
+	SELECT MAX( parz_col ) 
+	ROM parzellen 
+	WHERE feld_nr = feldNr 
+	AND parz_row = rowNr ) ;
 END//
 
 DELIMITER ;
+
+--
+-- Switches the position of two existing parzellen with the SAME feld_nr
+--
+
+CREATE PROCEDURE `selectParzellenByRow`(
+	IN `feldNr` INT, 
+	IN `rowNr` INT)
+   NO SQL
+SELECT * 
+FROM parzellen 
+WHERE feld_nr = feldNr AND parz_row = rowNr 
+ORDER BY parz_col ASC;
 
 --
 -- Switches the position of two existing parzellen with the SAME feld_nr
@@ -351,3 +368,8 @@ CREATE PROCEDURE `selectSpecificFeld`(IN `id` INT) NOT DETERMINISTIC NO SQL SQL 
 CREATE PROCEDURE `selectSorte`() NOT DETERMINISTIC NO SQL SQL SECURITY DEFINER SELECT * FROM sorte;
 
 CREATE PROCEDURE `selectParzelleByFeld`(IN `feldId` INT) NOT DETERMINISTIC NO SQL SQL SECURITY DEFINER SELECT * FROM parzellen WHERE feld_nr = feldId ORDER BY parz_row, parz_col ASC;
+
+CREATE PROCEDURE `selectParzellenRows` ( IN `feldNr` INT( 11 ) ) NOT DETERMINISTIC NO SQL SQL SECURITY DEFINER SELECT DISTINCT parz_row 
+FROM parzellen 
+WHERE feld_nr = feldNr 
+ORDER BY parz_row ASC;
