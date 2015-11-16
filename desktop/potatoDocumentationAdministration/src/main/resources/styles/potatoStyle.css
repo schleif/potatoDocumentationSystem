@@ -23,6 +23,10 @@ and open the template in the editor.
     -fx-background-color: #cccccc;
 }
 
+#scrollPane{
+    -fx-background-color: transparent;
+}
+
 #deleteButton{
     -fx-base: red;
     -fx-background-radius: 20;

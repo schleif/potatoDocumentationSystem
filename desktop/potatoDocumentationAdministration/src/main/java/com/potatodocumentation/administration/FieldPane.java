@@ -12,6 +12,8 @@ import com.potatodocumentation.administration.utils.ThreadUtils;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import javafx.animation.Interpolator;
+import javafx.animation.RotateTransition;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -21,10 +23,16 @@ import javafx.geometry.Pos;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
+import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.Label;
+import javafx.scene.control.ScrollPane;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.util.Duration;
 
 /**
  *
@@ -32,13 +40,25 @@ import javafx.scene.layout.VBox;
  */
 public class FieldPane extends VBox {
 
-    Button createField = new Button("+");
-    ObservableList<String> field;
+    private Label title;
+    private Button updateButton;
+    private AnchorPane header;
+    private VBox fieldBox;
+    private ScrollPane scrollPane;
 
     public FieldPane() {
         super(10);
 
-        ThreadUtils.runAsTask(() -> updateFieldList());
+        title = initTitle();
+        updateButton = initUpdateButton();
+        header = initHeader();
+        fieldBox = initFieldBox();
+        scrollPane = initScrollPane();
+
+        getChildren().add(header);
+        getChildren().add(scrollPane);
+
+        ThreadUtils.runAsTask(() -> updateFieldBox());
     }
 
     private void newField(int index) {
@@ -53,7 +73,7 @@ public class FieldPane extends VBox {
         addField(rowNr);
 
         //UpdateList
-        ThreadUtils.runAsTask(() -> updateFieldList());
+        ThreadUtils.runAsTask(() -> updateFieldBox());
     }
 
     private void addField(Integer rowNr) {
@@ -75,9 +95,9 @@ public class FieldPane extends VBox {
         }
     }
 
-    private Void updateFieldList() {
-        
-        Platform.runLater(() -> getChildren().clear());
+    private Void updateFieldBox() {
+
+        Platform.runLater(() -> fieldBox.getChildren().clear());
 
         //Get all rows
         ObservableList<String> rows = getJsonResultObservableList(
@@ -85,7 +105,7 @@ public class FieldPane extends VBox {
 
         //Add one empty row at the end
         int rowSize = rows.size(), maxRow;
-        if(rowSize == 0){
+        if (rowSize == 0) {
             maxRow = rowSize;
         } else {
             maxRow = Integer.parseInt(rows.get(rows.size() - 1));
@@ -102,7 +122,7 @@ public class FieldPane extends VBox {
             //Get all field of this row
             HashMap<String, String> params = new HashMap<>();
             params.put("row_nr", rowNr);
-            
+
             //add label with the rowNr at the beginning of the row
             Label rowLabel = new Label(rowNr);
             rowLabel.setId("rowLabel");
@@ -115,16 +135,17 @@ public class FieldPane extends VBox {
             //Add all fields to rowBox
             for (String field : fieldsOfRow) {
                 //Numbers are going to have at least 2 digits
-                Button fieldButton = 
-                        new Button(String.format("%2s", field).replace(" ", "0"));
+                Button fieldButton
+                        = new Button(String.format("%2s", field).replace(" ", "0"));
                 fieldButton.setId("fieldButton");
 
                 rowBox.getChildren().add(fieldButton);
             }
             //Add the addButton
             rowBox.getChildren().add(initAddButton(rowNr));
-
-            Platform.runLater(() -> getChildren().add(rowBox));
+            VBox.setMargin(rowBox, new Insets(5));
+            
+            Platform.runLater(() -> fieldBox.getChildren().add(rowBox));
         }
 
         return null;
@@ -138,6 +159,62 @@ public class FieldPane extends VBox {
         });
 
         return addButton;
+    }
+
+    private AnchorPane initHeader() {
+        AnchorPane anchorPane = new AnchorPane(title, updateButton);
+
+        AnchorPane.setLeftAnchor(title, 10.0);
+        AnchorPane.setRightAnchor(updateButton, 10.0);
+
+        return anchorPane;
+    }
+
+    private Label initTitle() {
+        return new Label("Felder");
+    }
+
+    private Button initUpdateButton() {
+
+        Image updateIcon = new Image(getClass().getResourceAsStream("/drawables/updateIcon.png"),
+                16.0, 16.0, true, true);
+
+        ImageView imageView = new ImageView(updateIcon);
+
+        Button button = new Button("Neu Laden", imageView);
+        button.setContentDisplay(ContentDisplay.RIGHT);
+        button.setId("updateButton");
+
+        button.setOnAction((ActionEvent event) -> {
+            ThreadUtils.runAsTask(() -> updateFieldBox());
+
+            //Rotate the icon
+            RotateTransition rotate = new RotateTransition(Duration.seconds(2), imageView);
+            rotate.setFromAngle(0);
+            rotate.setToAngle(360);
+            rotate.setCycleCount(1);
+            rotate.setInterpolator(Interpolator.EASE_BOTH);
+            rotate.play();
+        });
+
+        return button;
+
+    }
+
+    private VBox initFieldBox() {
+        VBox vBox = new VBox(10);
+        
+        return vBox;
+    }
+
+    private ScrollPane initScrollPane() {
+        ScrollPane scrollPane = new ScrollPane();
+
+        scrollPane.setContent(fieldBox);
+        scrollPane.setFitToHeight(true);
+        scrollPane.setId("scrollPane");
+
+        return scrollPane;
     }
 
 }

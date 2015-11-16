@@ -48,6 +48,9 @@ public class MainApplication extends Application {
         scene.getStylesheets().add(getClass()
                 .getResource("/styles/potatoStyle.css").toExternalForm());
         
+         scene.getStylesheets().add(getClass()
+                .getResource("/styles/scrollBarStyle.css").toExternalForm());
+        
         primaryStage.setTitle("PotatoDocumetation");
         primaryStage.setScene(scene);
         primaryStage.show();

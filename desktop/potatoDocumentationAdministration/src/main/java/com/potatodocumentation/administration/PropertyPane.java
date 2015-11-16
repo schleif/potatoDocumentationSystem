@@ -293,7 +293,8 @@ public class PropertyPane extends HBox {
             //Rotate the icon
             RotateTransition rotate =
                     new RotateTransition(Duration.seconds(2), imageView);
-            rotate.setByAngle(360.0);
+            rotate.setFromAngle(0);
+            rotate.setToAngle(360);
             rotate.setCycleCount(1);
             rotate.setInterpolator(Interpolator.EASE_BOTH);
             rotate.play();
