@@ -28,8 +28,9 @@ public class TestPane extends HBox {
     Button b;
 
     Button recursiveButton;
-
     ScrollPane scrollPane;
+    
+    public static MediaPlayer mediaPlayer;
 
     public TestPane() {
         super(10);
@@ -46,8 +47,7 @@ public class TestPane extends HBox {
         this.getChildren().add(scrollPane);
 
         Media sound = new Media("http://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3");
-        MediaPlayer mediaPlayer = new MediaPlayer(sound);
-        mediaPlayer.play();
+        mediaPlayer = new MediaPlayer(sound);
     }
 
     private Button initBButton() {

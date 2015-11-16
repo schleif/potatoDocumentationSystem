@@ -401,6 +401,7 @@ public class AufgabenPane extends HBox {
             rotate.play();
             
             rotateAll();
+            MainApplication.getInstance().go();
         });
         
 

@@ -23,15 +23,6 @@ public class MenuButton extends Button{
         super(text, graphic);
         
         this.pane = pane;
-        
-        
-        RotateTransition rt = new RotateTransition(Duration.seconds(new Random().nextInt(10)), this);
-            rt.setCycleCount(rt.INDEFINITE);
-            rt.setByAngle(360);
-
-            rt.setAutoReverse(true);
-
-            rt.play();
     }
     
     public Pane getPane(){

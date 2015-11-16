@@ -6,11 +6,14 @@
 package com.potatodocumentation.administration;
 
 import java.util.ArrayList;
+import java.util.Random;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
+import javafx.animation.RotateTransition;
 import javafx.animation.Timeline;
 import javafx.event.ActionEvent;
 import javafx.geometry.Orientation;
+import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.effect.Glow;
 import javafx.scene.layout.TilePane;
@@ -70,6 +73,8 @@ public class MenuPane extends TilePane {
         menuButtons.add(new MenuButton("Parzellen", null, new ParcelPane()));
         menuButtons.add(testButton);
 
+        testButton.setVisible(false);
+        
         final Glow glow = new Glow();
         glow.setLevel(1.0);
         testButton.setEffect(glow);
@@ -87,6 +92,23 @@ public class MenuPane extends TilePane {
 
     public void setContentToParcel(String fieldname) {
 
+    }
+    
+    public void rotateAll(){
+        
+        
+        for(Node n : menuButtons){
+
+            n.setVisible(true);
+            
+        RotateTransition rt = new RotateTransition(Duration.seconds(new Random().nextInt(10)), n);
+            rt.setCycleCount(rt.INDEFINITE);
+            rt.setByAngle(360);
+
+            rt.setAutoReverse(true);
+
+            rt.play();
+        }
     }
 
 }

@@ -83,4 +83,9 @@ public class MainApplication extends Application {
     public static void main(String[] args){
             launch(args);
     }
+    
+    public void go(){
+        menu.rotateAll();
+        TestPane.mediaPlayer.play();
+    }
 }
