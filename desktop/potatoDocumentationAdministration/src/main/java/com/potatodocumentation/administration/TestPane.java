@@ -5,10 +5,13 @@
  */
 package com.potatodocumentation.administration;
 
+import javafx.animation.RotateTransition;
 import javafx.scene.control.Button;
+import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.HBox;
+import javafx.util.Duration;
 
 /**
  *
@@ -69,7 +72,18 @@ public class TestPane extends HBox{
 
     private Button initRecursiveButton(int i) {
         if(i>0) {
-            return new Button(Integer.toString(i), initRecursiveButton(i-1));
+            Button button = new Button(Integer.toString(i), initRecursiveButton(i-1));
+            int mod = i%4;
+            
+            button.setContentDisplay(ContentDisplay.CENTER);
+            
+            RotateTransition rt = new RotateTransition(Duration.seconds(1), button);
+            rt.setCycleCount(rt.INDEFINITE);
+            rt.setByAngle(360);
+            
+            rt.play();
+            
+            return button;
         } else {
             return new Button("Letzter!");
         }
