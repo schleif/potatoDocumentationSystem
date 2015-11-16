@@ -113,40 +113,38 @@ public class FieldPane extends VBox {
         rows.add("" + (++maxRow));
 
         //Go through all rows and add all fields of the row
-        for (String rowNr : rows) {
-
+        rows.stream().map((rowNr) -> {
             HBox rowBox = new HBox(10);
             rowBox.setId("rowBox");
             rowBox.setAlignment(Pos.CENTER_LEFT);
-
             //Get all field of this row
             HashMap<String, String> params = new HashMap<>();
             params.put("row_nr", rowNr);
-
             //add label with the rowNr at the beginning of the row
             Label rowLabel = new Label(rowNr);
             rowLabel.setId("rowLabel");
             rowLabel.setRotate(270);
             rowBox.getChildren().add(rowLabel);
-
             ObservableList<String> fieldsOfRow = getJsonResultObservableList(
                     "feld_id", "selectFeldByRow.php", params);
-
             //Add all fields to rowBox
-            for (String field : fieldsOfRow) {
-                //Numbers are going to have at least 2 digits
-                Button fieldButton
-                        = new Button(String.format("%2s", field).replace(" ", "0"));
+            fieldsOfRow.stream().map((field) -> 
+                    new Button(String.format("%2s", field)
+                            .replace(" ", "0"))).map((fieldButton) -> {
                 fieldButton.setId("fieldButton");
-
+                return fieldButton;
+            }).forEach((fieldButton) -> {
                 rowBox.getChildren().add(fieldButton);
-            }
+            });
             //Add the addButton
             rowBox.getChildren().add(initAddButton(rowNr));
+            return rowBox;
+        }).map((rowBox) -> {
             VBox.setMargin(rowBox, new Insets(5));
-            
+            return rowBox;            
+        }).forEach((rowBox) -> {
             Platform.runLater(() -> fieldBox.getChildren().add(rowBox));
-        }
+        });
 
         return null;
     }
