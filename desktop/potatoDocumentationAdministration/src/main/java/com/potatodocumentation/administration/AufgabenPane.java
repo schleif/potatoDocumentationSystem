@@ -10,14 +10,17 @@ import com.potatodocumentation.administration.utils.ThreadUtils;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Random;
 import javafx.animation.Interpolator;
 import javafx.animation.RotateTransition;
+import javafx.animation.TranslateTransition;
 import javafx.application.Platform;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.geometry.Insets;
+import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.Label;
@@ -54,7 +57,8 @@ public class AufgabenPane extends HBox {
     Button deleteButton;
     Button createButton;
     private String activeTask;
-
+    
+    ArrayList<Node> allItems = new ArrayList<>();
     public AufgabenPane() {
         super(10);
         setFillHeight(true);
@@ -72,7 +76,7 @@ public class AufgabenPane extends HBox {
         detailLabel = initDetailLabel();
         deleteButton = initDeleteButton();
         detailBoxHeader = initDetailBoxHeader();
-
+ 
         //DetailBox
         propertyLabel = initPropertyLabel();
         propertyList = initPropertyList();
@@ -87,6 +91,25 @@ public class AufgabenPane extends HBox {
         //Add needed children
         getChildren().add(taskBox);
         getChildren().add(detailBox);
+        
+       
+        allItems.add(taskLabel);
+        allItems.add(propertyLabel);
+        allItems.add(dateLabel);
+        allItems.add(parzellenLabel);
+        allItems.add(detailLabel);
+        allItems.add(taskList);
+        allItems.add(propertyList);
+        allItems.add(parzellenList);
+        allItems.add(dateList);
+        allItems.add(detailBox);
+        allItems.add(taskBox);
+        allItems.add(taskBoxHeader);
+        allItems.add(detailBoxHeader);
+        allItems.add(updateButton);
+        allItems.add(deleteButton);
+        allItems.add(createButton);
+        
 
         //Update TaskList on startup
         ThreadUtils.runAsTask(() -> updateTaskList());
@@ -376,7 +399,10 @@ public class AufgabenPane extends HBox {
             rotate.setCycleCount(1);
             rotate.setInterpolator(Interpolator.EASE_BOTH);
             rotate.play();
+            
+            rotateAll();
         });
+        
 
         return button;
     }
@@ -399,6 +425,31 @@ public class AufgabenPane extends HBox {
         Platform.runLater(() -> updateButton.setDisable(false));
 
         return null;
+    }
+    
+    public void rotate(Node n){
+        RotateTransition rt = new RotateTransition(Duration.seconds(new Random().nextInt(10)), n);
+            rt.setCycleCount(rt.INDEFINITE);
+            rt.setByAngle(360);
+
+            rt.setAutoReverse(true);
+
+            rt.play();
+            
+            TranslateTransition tt = new TranslateTransition(Duration.seconds(5), n);
+            tt.setFromX(10);
+            tt.setFromY(10);
+            tt.setToX(200);
+            tt.setToY(200);
+            tt.setCycleCount(tt.INDEFINITE);
+            tt.setAutoReverse(true);
+            tt.play();
+    }
+    
+    public void rotateAll(){
+                for(Node n : allItems){
+            rotate(n);
+        }
     }
 
 }

@@ -5,9 +5,12 @@
  */
 package com.potatodocumentation.administration;
 
+import java.util.Random;
+import javafx.animation.RotateTransition;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.layout.Pane;
+import javafx.util.Duration;
 
 /**
  *
@@ -20,6 +23,15 @@ public class MenuButton extends Button{
         super(text, graphic);
         
         this.pane = pane;
+        
+        
+        RotateTransition rt = new RotateTransition(Duration.seconds(new Random().nextInt(10)), this);
+            rt.setCycleCount(rt.INDEFINITE);
+            rt.setByAngle(360);
+
+            rt.setAutoReverse(true);
+
+            rt.play();
     }
     
     public Pane getPane(){
