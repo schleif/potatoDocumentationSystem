@@ -32,6 +32,8 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.stage.Modality;
+import javafx.stage.WindowEvent;
 import javafx.util.Duration;
 
 /**
@@ -137,6 +139,11 @@ public class FieldPane extends VBox {
                 //Numbers are going to have at least 2 digits
                 Button fieldButton
                         = new Button(String.format("%2s", field).replace(" ", "0"));
+                
+                fieldButton.setOnAction((ActionEvent e) -> {
+                    openFieldStage(field);
+                });
+                
                 fieldButton.setId("fieldButton");
 
                 rowBox.getChildren().add(fieldButton);
@@ -215,6 +222,17 @@ public class FieldPane extends VBox {
         scrollPane.setId("scrollPane");
 
         return scrollPane;
+    }
+
+    private void openFieldStage(String field) {
+        FieldStage stage = new FieldStage(Integer.parseInt(field));
+            stage.initModality(Modality.APPLICATION_MODAL);
+            
+            //Refresh the TaskList after the window is closed
+            stage.setOnCloseRequest((WindowEvent event1) -> {
+                ThreadUtils.runAsTask(() -> updateFieldBox());
+            });
+            stage.show();
     }
 
 }
