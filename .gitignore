@@ -12,3 +12,5 @@ desktop/potatoDocumentationAdministration/target/maven-archiver/pom.properties
 =======
 /desktop/TestDesktopApp/target/
 >>>>>>> parent of dc13ff2... little refactorings. add parcelpane to menu
+desktop/potatoDocumentationAdministration/target/maven-archiver/pom.properties
+*.lst

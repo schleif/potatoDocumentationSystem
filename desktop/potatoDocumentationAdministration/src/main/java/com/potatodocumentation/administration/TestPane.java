@@ -8,6 +8,7 @@ package com.potatodocumentation.administration;
 import java.applet.AudioClip;
 import java.util.Random;
 import javafx.animation.RotateTransition;
+import javafx.animation.TranslateTransition;
 import javafx.scene.control.Button;
 import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.Label;
@@ -90,6 +91,15 @@ public class TestPane extends HBox {
             rt.setAutoReverse(true);
 
             rt.play();
+            
+            TranslateTransition tt = new TranslateTransition(Duration.seconds(2), button);
+            tt.setFromX(5);
+            tt.setFromY(5);
+            tt.setToX(15);
+            tt.setToY(15);
+            tt.setCycleCount(tt.INDEFINITE);
+            tt.setAutoReverse(true);
+            tt.play();
 
             return button;
         } else {
