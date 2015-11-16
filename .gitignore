@@ -5,5 +5,10 @@ desktop/insertFrame$2.class
 desktop/potatoDocumentation Administration/build/classes/potatodocumentation/administration/DefineParcel.class
 *.class
 desktop/insertFrame.java
+<<<<<<< HEAD
 /desktop/TestDesktopApp/target/
 desktop/potatoDocumentationAdministration/target/maven-archiver/pom.properties
+desktop/potatoDocumentationAdministration/target/maven-archiver/pom.properties
+=======
+/desktop/TestDesktopApp/target/
+>>>>>>> parent of dc13ff2... little refactorings. add parcelpane to menu

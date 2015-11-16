@@ -54,10 +54,6 @@ public class MenuPane extends TilePane {
     public static ArrayList<MenuButton> menuButtons() {
         ArrayList<MenuButton> menuButtons = new ArrayList<>();
         
-        //Testing FootPane;
-        FootPane fp = new FootPane();
-        fp.setWork(true);
-        
         // Adding Buttons
         menuButtons.add(new MenuButton("Aufgaben", null, new AufgabenPane()));
         menuButtons.add(new MenuButton("Eigenschaften", null, new PropertyPane()));
@@ -65,9 +61,13 @@ public class MenuPane extends TilePane {
         menuButtons.add(new MenuButton("Felder", null, new FieldPane()));
         menuButtons.add(new MenuButton("Felder 2.0", null, new FieldPane2()));
         menuButtons.add(new MenuButton("Parzellen", null, new ParcelPane()));
-        menuButtons.add(new MenuButton("Test", null, fp));
+        menuButtons.add(new MenuButton("Test", null, new TestPane()));
         
         return menuButtons;
+    }
+    
+    public void setContentToParcel(String fieldname) {
+        
     }
     
 }

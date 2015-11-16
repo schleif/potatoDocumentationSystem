@@ -29,7 +29,7 @@ public class ParcelPane extends BorderPane {
 
     private ComboBox initFieldChooser() {
         ObservableList<String> items = getJsonResultObservableList(
-                null, "selectParzelle.php", null);
+                "parz_id", "selectParzelle.php", null);
 
         ComboBox cb = new ComboBox(items);
         return cb;
