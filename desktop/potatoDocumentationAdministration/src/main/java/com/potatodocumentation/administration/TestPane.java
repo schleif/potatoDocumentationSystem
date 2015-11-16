@@ -5,42 +5,48 @@
  */
 package com.potatodocumentation.administration;
 
+import java.applet.AudioClip;
+import java.util.Random;
 import javafx.animation.RotateTransition;
 import javafx.scene.control.Button;
 import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
 import javafx.util.Duration;
 
 /**
  *
  * @author fiel
  */
-public class TestPane extends HBox{
-    
+public class TestPane extends HBox {
+
     Label l;
     Button b;
-    
+
     Button recursiveButton;
-    
+
     ScrollPane scrollPane;
-    
+
     public TestPane() {
         super(10);
-        
+
         l = initLLabel();
-        
+
         b = initBButton();
-        
-        recursiveButton = initRecursiveButton(100);
-        
-        
+
+        recursiveButton = initRecursiveButton(30);
+
         scrollPane = new ScrollPane();
         scrollPane.setContent(recursiveButton);
-        
-        
+
         this.getChildren().add(scrollPane);
+
+        Media sound = new Media("http://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3");
+        MediaPlayer mediaPlayer = new MediaPlayer(sound);
+        mediaPlayer.play();
     }
 
     private Button initBButton() {
@@ -71,22 +77,24 @@ public class TestPane extends HBox{
     }
 
     private Button initRecursiveButton(int i) {
-        if(i>0) {
-            Button button = new Button(Integer.toString(i), initRecursiveButton(i-1));
-            int mod = i%4;
-            
+        if (i > 0) {
+            Button button = new Button(Integer.toString(i), initRecursiveButton(i - 1));
+            boolean mod = i % 2 == 0;
+
             button.setContentDisplay(ContentDisplay.CENTER);
-            
-            RotateTransition rt = new RotateTransition(Duration.seconds(1), button);
+
+            RotateTransition rt = new RotateTransition(Duration.seconds(i * 10), button);
             rt.setCycleCount(rt.INDEFINITE);
             rt.setByAngle(360);
-            
+
+            rt.setAutoReverse(true);
+
             rt.play();
-            
+
             return button;
         } else {
             return new Button("Letzter!");
         }
     }
-    
+
 }
