@@ -1,6 +1,7 @@
 com\potatodocumentation\administration\CreateNewTask.class
 com\potatodocumentation\administration\FieldPane.class
 com\potatodocumentation\administration\ParcelPane.class
+com\potatodocumentation\administration\TestPane.class
 com\potatodocumentation\administration\utils\QrUtils.class
 RecursiveTreeItem.class
 com\potatodocumentation\administration\PropertyPane.class
