@@ -21,6 +21,7 @@ com\potatodocumentation\administration\MenuButton.class
 com\potatodocumentation\administration\FieldPane2$4.class
 com\potatodocumentation\administration\FieldPane2$3$1.class
 com\potatodocumentation\administration\FootPane.class
+com\potatodocumentation\administration\ParcelBox.class
 com\potatodocumentation\administration\FieldPane2$1.class
 com\potatodocumentation\administration\FXMLController.class
 com\potatodocumentation\administration\utils\ThreadUtils.class

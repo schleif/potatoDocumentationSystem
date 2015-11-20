@@ -5,10 +5,14 @@
  */
 package com.potatodocumentation.administration;
 
+import com.potatodocumentation.administration.utils.JsonUtils;
+import static com.potatodocumentation.administration.utils.JsonUtils.getJsonResultArray;
 import static com.potatodocumentation.administration.utils.JsonUtils
         .getJsonResultObservableList;
 import com.potatodocumentation.administration.utils.ThreadUtils;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 import javafx.animation.Interpolator;
 import javafx.animation.RotateTransition;
 import javafx.application.Platform;
@@ -50,8 +54,13 @@ public class FieldStage extends Stage {
         
         Scene scene = new Scene(parcelBox);
         
+        scene.getStylesheets().add(getClass()
+                .getResource("/styles/potatoStyle.css").toExternalForm());
+        
         setTitle("JaudiDauuu");
         setScene(scene);
+        
+        
         
     }
 
@@ -128,18 +137,21 @@ public class FieldStage extends Stage {
                 getJsonResultObservableList("parz_row", 
                         "selectParzellenRows.php", params);
         
+        //Iterate trough all rows
         for(String row : rows){
             HBox rowBox = new HBox(2);
             
             params.put("parz_row", row);
-            ObservableList<String> parcels = 
-                    getJsonResultObservableList("parz_id", 
-                            "selectParzellenByRow.php", params);
+            ArrayList<Map<String,Object>> resultArray = 
+                    getJsonResultArray("selectParzellenByRow.php", params);
             
-            for(String parcel : parcels){
-                Button parcButton = new Button(parcel);
+            for(Map<String, Object> parcel : resultArray){
+                String idString = (String) parcel.get("parz_id");
+                int id = Integer.parseInt(idString);
                 
-                rowBox.getChildren().add(parcButton);     
+                String sorte = (String) parcel.get("sorte");
+                
+                rowBox.getChildren().add(new ParcelBox(id, sorte));     
             }
             
             Platform.runLater(() -> parcelBox.getChildren().add(rowBox));
