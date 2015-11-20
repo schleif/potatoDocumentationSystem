@@ -1,4 +1,4 @@
-package com.potatodoc.potatodocumentation;
+package com.potatodoc.potatodocumentation.gui;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -7,6 +7,8 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.potatodoc.potatodocumentation.R;
 
 import java.util.List;
 

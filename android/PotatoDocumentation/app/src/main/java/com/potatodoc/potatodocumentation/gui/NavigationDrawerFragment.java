@@ -1,4 +1,4 @@
-package com.potatodoc.potatodocumentation;
+package com.potatodoc.potatodocumentation.gui;
 
 import android.support.v7.app.AppCompatActivity;
 import android.app.Activity;
@@ -17,12 +17,10 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Adapter;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.BaseAdapter;
 import android.widget.ListView;
-import android.widget.Toast;
+
+import com.potatodoc.potatodocumentation.R;
 
 /**
  * Fragment used for managing interactions for and presentation of a navigation drawer.

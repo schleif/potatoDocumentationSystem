@@ -1,8 +1,10 @@
-package com.potatodoc.potatodocumentation;
+package com.potatodoc.potatodocumentation.gui;
 
 import java.util.ArrayList;
 import java.util.List;
 import android.support.v4.app.Fragment;
+
+import com.potatodoc.potatodocumentation.R;
 
 /**
  * This class represents one item of the navigationbar of the app.
