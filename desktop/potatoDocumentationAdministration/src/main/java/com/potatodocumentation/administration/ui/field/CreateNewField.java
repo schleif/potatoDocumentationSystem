@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.potatodocumentation.administration;
+package com.potatodocumentation.administration.ui.field;
 
 import static com.potatodocumentation.administration.utils.JsonUtils.getJsonSuccessStatus;
 import java.util.HashMap;
@@ -26,7 +26,7 @@ import javafx.stage.Stage;
  *
  * @author fiel
  */
-class CreateNewSort extends Stage {
+class CreateNewField extends Stage {
 
     //Components
     Label description;
@@ -39,9 +39,9 @@ class CreateNewSort extends Stage {
     VBox box;
 
     // State: if on should inserted or more
-    boolean oneSort = true;
+    boolean oneProp = true;
 
-    public CreateNewSort() {
+    public CreateNewField() {
         super();
 
         description = initDescripLabel();
@@ -65,12 +65,12 @@ class CreateNewSort extends Stage {
         buttonBox.setPadding(new Insets(5, 5, 5, 5));
         buttonBox.setSpacing(5);
         buttonBox.getChildren().add(okButton);
-        buttonBox.getChildren().add(cancel);
-                
+        buttonBox.getChildren().add(cancel);   
+        
         box.getChildren().add(buttonBox);
         box.getChildren().add(more);
 
-        this.setTitle("Neue Sorte hinzufügen");
+        this.setTitle("Neues Feld hinzufügen");
         this.setScene(scene);
 
         //Make sure no field is focused per default
@@ -78,12 +78,11 @@ class CreateNewSort extends Stage {
     }
 
     private TextField initNameField() {
-        String defaultText = "Name...";
-        TextField tf = new TextField(defaultText);
+        TextField tf = new TextField("Name...");
         tf.setOnMouseClicked((MouseEvent event) -> {
-            if (tf.getText().equals(defaultText)) {
-               tf.setText(""); 
-            }            
+            if (tf.getText().equals("Name...")) {
+                tf.setText("");
+            }
         });
         return tf;
     }
@@ -97,46 +96,45 @@ class CreateNewSort extends Stage {
     }
 
     private void onOkClicked() {
-        if (oneSort) {
-            insertSort(nameField.getText());
+        if (oneProp) {
+            insertField(nameField.getText());
         } else {
             String values = moreNames.getText();
-            if (values.isEmpty() || values.equals("Sorte1"
+            if (values.isEmpty() || values.equals("Feld1;"
                     + "\n"
-                    + "Sorte2")) {
+                    + "Feld2;")) {
                 Alert alert = new Alert(Alert.AlertType.ERROR);
+
                 alert.showAndWait()
                         .filter(response -> response == ButtonType.OK);
                 return;
             }
             Scanner sc = new Scanner(values);
             while (sc.hasNext()) {
-                String sortName = sc.nextLine();
-                insertSort(sortName);
+                String fieldName = sc.nextLine();
+                insertField(fieldName);
             }
         }
     }
 
-    private void insertSort(String sortName) {
-        if (!sortName.equals("Name...") && !sortName.isEmpty()) {
+    private void insertField(String fieldName) {
+        if (!fieldName.equals("Name...") && !fieldName.equals("")) {
 
             HashMap<String, String> values = new HashMap<>();
-            values.put("sort_name", sortName);
+            values.put("field_id", fieldName);
 
-            boolean success = getJsonSuccessStatus("insertSorte.php", values);
+            boolean success = getJsonSuccessStatus("insertField.php", values);
 
-            String status = "Sorte wurde " + (success ? "" : "nicht ")
+            String status = "Feld wurde " + (success ? "" : "nicht ")
                     + "erfolgreich eingefügt!";
 
-            if (success) {
-                new Alert(Alert.AlertType.INFORMATION, status).showAndWait()
-                        .filter(response -> response == ButtonType.OK);
-            } else {
-                new Alert(Alert.AlertType.ERROR).showAndWait()
-                        .filter(response -> response == ButtonType.OK);
-            }
+            Alert alert = new Alert(Alert.AlertType.INFORMATION, status);
+
+            alert.showAndWait()
+                    .filter(response -> response == ButtonType.OK);
         } else {
             Alert alert = new Alert(Alert.AlertType.ERROR);
+
             alert.showAndWait()
                     .filter(response -> response == ButtonType.OK);
         }
@@ -144,24 +142,24 @@ class CreateNewSort extends Stage {
 
     private Label initDescripLabel() {
         return new Label("Geben Sie in das Feld den Namen"
-                + " der Sorte an.");
+                + " des Feldes an.");
     }
 
     private TextArea initMoreNames() {
-        String defStr = "Sorte1"
+        String defStr = "Feld1"
                 + "\n"
-                + "Sorte2";
+                + "Feld2";
         TextArea ta = new TextArea(defStr);
         ta.setOnMouseClicked((MouseEvent event) -> {
-            if(ta.getText().equals(defStr)) {
+            if (ta.getText().equals(defStr)) {
                 ta.setText("");
-            }            
+            }
         });
         return ta;
     }
 
     private Button initMoreButton() {
-        Button but = new Button("Mehrere Sorten hinzufügen");
+        Button but = new Button("Mehrere Felder hinzufügen");
         but.setOnAction((ActionEvent event) -> {
             onMoreClicked();
         });
@@ -172,7 +170,7 @@ class CreateNewSort extends Stage {
         box.getChildren().remove(1);
         box.getChildren().add(1, moreNames);
         box.getChildren().remove(3);
-        oneSort = false;
+        oneProp = false;
     }
 
     private Button initCancelButton() {

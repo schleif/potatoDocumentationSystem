@@ -3,8 +3,16 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.potatodocumentation.administration;
+package com.potatodocumentation.administration.ui.menu;
 
+import com.potatodocumentation.administration.AufgabenPane;
+import com.potatodocumentation.administration.ui.field.FieldPane;
+import com.potatodocumentation.administration.ui.field.FieldPane2;
+import com.potatodocumentation.administration.MainApplication;
+import com.potatodocumentation.administration.ui.field.ParcelPane;
+import com.potatodocumentation.administration.ui.sort.PotatoSpeciesPane;
+import com.potatodocumentation.administration.PropertyPane;
+import com.potatodocumentation.administration.ui.TestPane;
 import java.util.ArrayList;
 import java.util.Random;
 import javafx.animation.KeyFrame;

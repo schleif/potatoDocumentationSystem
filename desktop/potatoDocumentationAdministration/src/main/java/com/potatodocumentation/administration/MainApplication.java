@@ -5,6 +5,9 @@
  */
 package com.potatodocumentation.administration;
 
+import com.potatodocumentation.administration.ui.TestPane;
+import com.potatodocumentation.administration.ui.FootPane;
+import com.potatodocumentation.administration.ui.menu.MenuPane;
 import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;

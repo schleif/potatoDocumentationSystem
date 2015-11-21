@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.potatodocumentation.administration;
+package com.potatodocumentation.administration.ui;
 
 import com.potatodocumentation.administration.utils.JsonUtils;
 import javafx.application.Platform;
@@ -17,7 +17,7 @@ import javafx.scene.layout.HBox;
  *
  * @author fiel
  */
-class FootPane extends HBox {
+public class FootPane extends HBox {
 
     ImageView icon;
     Label processLabel;
@@ -61,7 +61,7 @@ class FootPane extends HBox {
         icon.setVisible(isWorking);
     }
 
-    void updateConnections() {
+    public void updateConnections() {
         Platform.runLater(()
                 -> processLabel.setText(
                         "Beschäftigt(" + JsonUtils.getOpenConnections() 

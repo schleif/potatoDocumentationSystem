@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.potatodocumentation.administration;
+package com.potatodocumentation.administration.ui.field;
 
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
@@ -49,8 +49,6 @@ public class ParcelBox extends VBox {
 
         getChildren().add(header);
         getChildren().add(sortLabel);
-
-        setId("parcelBox");
     }
 
     private AnchorPane initHeader() {

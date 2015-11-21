@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.potatodocumentation.administration;
+package com.potatodocumentation.administration.ui.field;
 
 import com.potatodocumentation.administration.utils.JsonUtils;
 import static com.potatodocumentation.administration.utils.JsonUtils.getJsonResultObservableList;
