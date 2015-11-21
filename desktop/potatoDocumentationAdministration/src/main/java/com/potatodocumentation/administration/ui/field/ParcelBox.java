@@ -5,12 +5,18 @@
  */
 package com.potatodocumentation.administration.ui.field;
 
+import com.potatodocumentation.administration.utils.ThreadUtils;
+import java.util.concurrent.Callable;
+import javafx.application.Platform;
+import javafx.event.EventHandler;
+import javafx.event.EventType;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
@@ -25,6 +31,8 @@ public class ParcelBox extends VBox {
 
     private int id;
     private String sort;
+    boolean isInMarkMode = false;
+    private boolean isMarked = false;
 
     private Label idLabel;
     private Label sortLabel;
@@ -49,6 +57,7 @@ public class ParcelBox extends VBox {
 
         getChildren().add(header);
         getChildren().add(sortLabel);
+        
     }
 
     private AnchorPane initHeader() {
@@ -94,5 +103,31 @@ public class ParcelBox extends VBox {
     private Label initIdLabel() {
         return new Label("ID: " + id);
     }
+    
+    public void mark(){
+        isMarked = isInMarkMode  && !isMarked;
+        
+        if(isMarked){
+            getStyleClass().add("marked-parcel-box");
+        } else {
+            getStyleClass().remove("marked-parcel-box");
+        }
+    }
+    
+    public void setMarkMode(boolean isInMarkMode){
+        this.isInMarkMode = isInMarkMode;
 
+        //Set isMarked so box isn't marked in the beginning
+        this.isMarked = this.isInMarkMode;
+        
+        mark();
+    }
+    
+    public boolean isMarked(){
+        return isMarked;
+    }
+    
+    public int getParcelId(){
+        return id;
+    }
 }

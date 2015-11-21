@@ -5,6 +5,7 @@
  */
 package com.potatodocumentation.administration.ui.field;
 
+import com.potatodocumentation.administration.ui.field.map.ParcelMap;
 import com.potatodocumentation.administration.utils.JsonUtils;
 import static com.potatodocumentation.administration.utils.JsonUtils.getJsonResultArray;
 import static com.potatodocumentation.administration.utils.JsonUtils
@@ -39,7 +40,7 @@ public class FieldStage extends Stage {
     private Button updateButton;
     private Button deleteButton;
     private Label title;
-    private VBox parcelBox;
+    private ParcelMap map;
 
     public FieldStage(int fieldId) {
         super();
@@ -48,11 +49,11 @@ public class FieldStage extends Stage {
         title = initTitle();
         deleteButton = initDeleteButton();
         updateButton = initUpdateButton();
-        parcelBox = initParcelBox();
+        map = new ParcelMap(FIELD_ID, null);
         
-        ThreadUtils.runAsTask(() -> updateParcelBox());
+        ThreadUtils.runAsTask(() -> map.updateParcelBox());
         
-        Scene scene = new Scene(parcelBox);
+        Scene scene = new Scene(map);
         
         scene.getStylesheets().add(getClass()
                 .getResource("/styles/potatoStyle.css").toExternalForm());
@@ -111,7 +112,7 @@ public class FieldStage extends Stage {
         button.setId("updateButton");
 
         button.setOnAction((ActionEvent event) -> {
-            ThreadUtils.runAsTask(() -> updateParcelBox());
+            ThreadUtils.runAsTask(() -> map.updateParcelBox());
             
             //Rotate the icon
             RotateTransition rotate = new RotateTransition(Duration.seconds(2), 
@@ -125,39 +126,6 @@ public class FieldStage extends Stage {
 
         return button;
     }
-    
-    public Void updateParcelBox(){
-        
-        Platform.runLater(() -> parcelBox.getChildren().clear());
-        
-        HashMap<String, String> params = new HashMap<>();
-        params.put("feld_nr", Integer.toString(FIELD_ID));
-        
-        ObservableList<String> rows = 
-                getJsonResultObservableList("parz_row", 
-                        "selectParzellenRows.php", params);
-        
-        //Iterate trough all rows
-        for(String row : rows){
-            HBox rowBox = new HBox(2);
-            
-            params.put("parz_row", row);
-            ArrayList<Map<String,Object>> resultArray = 
-                    getJsonResultArray("selectParzellenByRow.php", params);
-            
-            for(Map<String, Object> parcel : resultArray){
-                String idString = (String) parcel.get("parz_id");
-                int id = Integer.parseInt(idString);
-                
-                String sorte = (String) parcel.get("sorte");
-                
-                rowBox.getChildren().add(new ParcelBox(id, sorte));     
-            }
-            
-            Platform.runLater(() -> parcelBox.getChildren().add(rowBox));
-        }
-        
-        return null;
-    }
+  
 
 }

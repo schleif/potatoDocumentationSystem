@@ -6,6 +6,7 @@ com\potatodocumentation\administration\CreateNewProp.class
 com\potatodocumentation\administration\utils\ThreadUtils$1.class
 com\potatodocumentation\administration\ui\field\FieldStage.class
 com\potatodocumentation\administration\ui\field\FieldPane2$3.class
+com\potatodocumentation\administration\ui\field\map\ParcelMap.class
 com\potatodocumentation\administration\utils\JsonUtils.class
 com\potatodocumentation\administration\ui\field\CreateNewField.class
 com\potatodocumentation\administration\AufgabenPane.class
