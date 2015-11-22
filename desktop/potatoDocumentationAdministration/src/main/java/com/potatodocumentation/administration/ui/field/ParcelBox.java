@@ -5,22 +5,18 @@
  */
 package com.potatodocumentation.administration.ui.field;
 
-import com.potatodocumentation.administration.utils.ThreadUtils;
-import java.util.concurrent.Callable;
-import javafx.application.Platform;
-import javafx.event.EventHandler;
-import javafx.event.EventType;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
-import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.MouseDragEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontPosture;
 
@@ -58,13 +54,12 @@ public class ParcelBox extends VBox {
 
         getChildren().add(header);
         getChildren().add(sortLabel);
-        
-        setOnMouseDragEntered((MouseDragEvent event) -> {
-                        if (isInMarkMode) {
+
+        setOnMousePressed((MouseEvent event) -> {
+            if (isInMarkMode) {
                 mark(!isMarked);
                 updateStyle();
             }
-            System.out.println("Entered!");
         });
     }
 

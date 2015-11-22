@@ -18,8 +18,10 @@ com\potatodocumentation\administration\Connection.class
 com\potatodocumentation\administration\ui\sort\PotatoSpeciesPane.class
 com\potatodocumentation\administration\MainApplication.class
 com\potatodocumentation\administration\ui\field\ParcelPane.class
+com\potatodocumentation\administration\utils\MiscUtils.class
 com\potatodocumentation\administration\ui\field\FieldPane2$1.class
 com\potatodocumentation\administration\ui\field\FieldPane2$4.class
+com\potatodocumentation\administration\utils\AnimationUtils.class
 com\potatodocumentation\administration\ui\field\FieldPane2.class
 com\potatodocumentation\administration\ui\FootPane.class
 com\potatodocumentation\administration\ui\field\FieldPane2$3$1.class

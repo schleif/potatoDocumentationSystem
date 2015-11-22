@@ -6,22 +6,34 @@
 package com.potatodocumentation.administration.ui.field.map;
 
 import com.potatodocumentation.administration.ui.field.ParcelBox;
+import com.potatodocumentation.administration.utils.AnimationUtils;
+import com.potatodocumentation.administration.utils.JsonUtils;
 import static com.potatodocumentation.administration.utils.JsonUtils.getJsonResultArray;
 import static com.potatodocumentation.administration.utils.JsonUtils.getJsonResultObservableList;
+import static com.potatodocumentation.administration.utils.JsonUtils.getJsonSuccessStatus;
+import com.potatodocumentation.administration.utils.MiscUtils;
 import com.potatodocumentation.administration.utils.ThreadUtils;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import javafx.animation.Timeline;
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;
+import javafx.scene.Cursor;
 import javafx.scene.control.Button;
+import javafx.scene.image.ImageView;
+import javafx.scene.input.ClipboardContent;
+import javafx.scene.input.DragEvent;
+import javafx.scene.input.Dragboard;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.input.TransferMode;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.util.Duration;
 
 /**
  *
@@ -42,6 +54,8 @@ public class ParcelMap extends VBox {
 
     private VBox parcelBox;
 
+    private ImageView dragIcon = new ImageView();
+
     public ParcelMap(int fieldID, List<String> taggedParcels) {
         super(10);
 
@@ -59,7 +73,7 @@ public class ParcelMap extends VBox {
 
         parcelBox = new VBox(2);
 
-        getChildren().addAll(buttonBox, parcelBox);
+        getChildren().addAll(buttonBox, parcelBox, dragIcon);
     }
 
     public Void updateParcelBox() {
@@ -89,7 +103,8 @@ public class ParcelMap extends VBox {
                 String sorte = (String) parcelMap.get("sorte");
 
                 ParcelBox parcel = new ParcelBox(id, sorte);
-                
+                addDragFeature(parcel);
+
                 parcels.add(parcel);
                 rowBox.getChildren().add(parcel);
             }
@@ -146,5 +161,102 @@ public class ParcelMap extends VBox {
         for (ParcelBox parcel : parcels) {
             parcel.setMarkMode(isInMarkMode);
         }
+    }
+
+    private void addDragFeature(ParcelBox parcel) {
+        //The animation to be played with associated parcels     
+        Timeline draggedAnimation = AnimationUtils.opacity(parcel);
+
+        //Init the drag n drop event
+        parcel.setOnDragDetected((MouseEvent event) -> {
+            Dragboard db = parcel.startDragAndDrop(TransferMode.MOVE);
+
+            db.setDragView(parcel.snapshot(null, null));
+
+            //Put the parcels id in the Dragboard
+            ClipboardContent content = new ClipboardContent();
+            content.putString(Integer.toString(parcel.getParcelId()));
+            db.setContent(content);
+
+            draggedAnimation.play();
+
+            event.consume();
+        });
+
+        //Only accept Drag n Drop if it's from a different parcel and contains
+        //a valid Integer
+        parcel.setOnDragOver((DragEvent event) -> {
+            if (event.getGestureSource() != parcel) {
+
+                Dragboard db = event.getDragboard();
+                if (db.hasString()) {
+
+                    String dbContent = db.getString();
+                    if (MiscUtils.isInteger(dbContent)) {
+
+                        event.acceptTransferModes(TransferMode.MOVE);
+                    }
+                }
+            }
+            event.consume();
+        });
+
+        //Change the appereance if a drag n drop enters
+        parcel.setOnDragEntered((DragEvent event) -> {
+            if (event.getGestureSource() != parcel) {
+
+                Dragboard db = event.getDragboard();
+                if (db.hasString()) {
+
+                    String dbContent = db.getString();
+                    if (MiscUtils.isInteger(dbContent)) {
+
+                        draggedAnimation.play();
+                    }
+                }
+            }
+            event.consume();
+        });
+
+        //change the appereance back if the drag n drop exits
+        parcel.setOnDragExited((DragEvent event) -> {
+            if (event.getGestureSource() != parcel) {
+                draggedAnimation.jumpTo(Duration.ZERO);
+                draggedAnimation.stop();
+            }
+
+            event.consume();
+        });
+
+        //Switch the parcels
+        parcel.setOnDragDropped((DragEvent event) -> {
+            String dbContent = event.getDragboard().getString();
+
+            switchParcels(parcel.getParcelId(),
+                    Integer.parseInt(dbContent));
+
+            event.setDropCompleted(true);
+
+            event.consume();
+        });
+
+        //Change appereance of the source back if drag n drop finished
+        parcel.setOnDragDone((DragEvent event) -> {
+            draggedAnimation.jumpTo(Duration.ZERO);
+            draggedAnimation.stop();
+            System.out.println("Drag done!");
+        });
+    }
+
+    //Don't run as a different Task to enhance UI feeling
+    private void switchParcels(int parA, int parB) {
+        System.out.println("Switch: " + parA + " " + parB);
+        HashMap params = new HashMap();
+        params.put("parA", Integer.toString(parA));
+        params.put("parB", Integer.toString(parB));
+
+        boolean success = getJsonSuccessStatus("switchParzellen.php", params);
+
+        ThreadUtils.runAsTask(() -> updateParcelBox());
     }
 }
