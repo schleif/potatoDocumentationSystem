@@ -16,6 +16,7 @@ import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseDragEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Priority;
@@ -58,6 +59,13 @@ public class ParcelBox extends VBox {
         getChildren().add(header);
         getChildren().add(sortLabel);
         
+        setOnMouseDragEntered((MouseDragEvent event) -> {
+                        if (isInMarkMode) {
+                mark(!isMarked);
+                updateStyle();
+            }
+            System.out.println("Entered!");
+        });
     }
 
     private AnchorPane initHeader() {
@@ -91,43 +99,42 @@ public class ParcelBox extends VBox {
         if (sort == null || sort.isEmpty()) {
             label.setText("Keine");
             Font font = Font.getDefault();
-            label.setFont(Font.font(font.getName(), FontPosture.ITALIC, 
+            label.setFont(Font.font(font.getName(), FontPosture.ITALIC,
                     font.getSize()));
         } else {
             label.setText(sort);
         }
-        
+
         return label;
     }
 
     private Label initIdLabel() {
         return new Label("ID: " + id);
     }
-    
-    public void mark(){
-        isMarked = isInMarkMode  && !isMarked;
-        
-        if(isMarked){
+
+    public void mark(boolean mark) {
+        isMarked = mark;
+    }
+
+    public void setMarkMode(boolean isInMarkMode) {
+        this.isInMarkMode = isInMarkMode;
+
+        updateStyle();
+    }
+
+    public boolean isMarked() {
+        return isMarked;
+    }
+
+    public int getParcelId() {
+        return id;
+    }
+
+    private void updateStyle() {
+        if (isInMarkMode && isMarked) {
             getStyleClass().add("marked-parcel-box");
         } else {
             getStyleClass().remove("marked-parcel-box");
         }
-    }
-    
-    public void setMarkMode(boolean isInMarkMode){
-        this.isInMarkMode = isInMarkMode;
-
-        //Set isMarked so box isn't marked in the beginning
-        this.isMarked = this.isInMarkMode;
-        
-        mark();
-    }
-    
-    public boolean isMarked(){
-        return isMarked;
-    }
-    
-    public int getParcelId(){
-        return id;
     }
 }

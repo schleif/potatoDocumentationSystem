@@ -90,23 +90,6 @@ public class ParcelMap extends VBox {
 
                 ParcelBox parcel = new ParcelBox(id, sorte);
                 
-                //TODO: Übersichtlicher gestalten
-                
-                parcel.setOnMouseClicked((MouseEvent event) -> {
-                    parcel.mark();
-                    if(parcel.isMarked()){
-                        System.out.println("Marked: " + parcel.getParcelId());
-                        markedParcels.add(parcel);
-                    } else {
-                        System.out.println("Unmarked: " + parcel.getParcelId());
-                        markedParcels.remove(parcel);
-                    }
-                    
-                    for(ParcelBox p : markedParcels){
-                        System.out.println(p.getParcelId());
-                    }
-                });
-                
                 parcels.add(parcel);
                 rowBox.getChildren().add(parcel);
             }
