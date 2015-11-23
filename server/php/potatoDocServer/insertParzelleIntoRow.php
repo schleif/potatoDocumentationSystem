@@ -6,10 +6,7 @@ defined('DB_FUNCTIONS') || define('DB_FUNCTIONS', __DIR__ . '/DB_FUNCTIONS.php')
 // import database connection variables
 require_once DB_FUNCTIONS;
 
-$values = array(
-    'atr1' => 'feld_nr',
-	'atr2' => 'parz_row'
-);
+$values = array('feld_nr', 'parz_row', 'sorte');
 
 $jsonResult = insertCall('insertParzelleIntoRow', $values);
 

@@ -261,16 +261,16 @@ DELIMITER ;
 DROP PROCEDURE IF EXISTS `insertParzelleIntoRow`;
 DELIMITER //
 
-CREATE PROCEDURE `insertParzelleIntoRow` ( 
+CREATE PROCEDURE `insertParzelleIntoRow`(
 	IN `feldNr` INT, 
 	IN `rowNr` INT UNSIGNED, 
-	IN `sortenName` VARCHAR( 255 ) ) NOT DETERMINISTIC NO SQL SQL SECURITY DEFINER 
-BEGIN 
-	DECLARE maxCol INTDEFAULT( 
-	SELECT MAX( parz_col ) 
-	ROM parzellen 
-	WHERE feld_nr = feldNr 
-	AND parz_row = rowNr ) ;
+	IN `sortenName` VARCHAR(255))
+   NO SQL
+BEGIN
+   DECLARE maxCol INT DEFAULT (SELECT MAX(parz_col) FROM parzellen WHERE feld_nr = feldNr AND parz_row = rowNr);
+   IF(maxCol IS NULL) THEN SET maxCol = 0; END IF;
+   IF(sortenName LIKE 'NULL') THEN SET sortenName = NULL; END IF;
+   INSERT INTO parzellen( feld_nr, parz_row, parz_col, sorte ) VALUES (feldNr, rowNr, maxCol + 1, sortenName);
 END//
 
 DELIMITER ;

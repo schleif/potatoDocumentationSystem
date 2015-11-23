@@ -5,7 +5,9 @@
  */
 package com.potatodocumentation.administration.ui.field.map;
 
+import com.potatodocumentation.administration.ui.field.FieldStage;
 import com.potatodocumentation.administration.ui.field.ParcelBox;
+import com.potatodocumentation.administration.ui.field.CreateNewParcel;
 import com.potatodocumentation.administration.utils.AnimationUtils;
 import com.potatodocumentation.administration.utils.JsonUtils;
 import static com.potatodocumentation.administration.utils.JsonUtils.getJsonResultArray;
@@ -33,6 +35,8 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.stage.Modality;
+import javafx.stage.WindowEvent;
 import javafx.util.Duration;
 
 /**
@@ -100,14 +104,25 @@ public class ParcelMap extends VBox {
                 String idString = (String) parcelMap.get("parz_id");
                 int id = Integer.parseInt(idString);
 
+                //Create new ParcelBox
                 String sorte = (String) parcelMap.get("sorte");
-
                 ParcelBox parcel = new ParcelBox(id, sorte);
+
+                //Add the drag feature
                 addDragFeature(parcel);
 
+                //Add parcel to the parcel-list
                 parcels.add(parcel);
+
                 rowBox.getChildren().add(parcel);
             }
+            //Create an Add Button to create new parcels
+            Button addButton = new Button("+");
+            addButton.setId("createButton");
+            addButton.setOnAction((ActionEvent event) -> {
+                createNewParcel(fieldID, Integer.parseInt(row), 1, 1);
+            });
+            rowBox.getChildren().add(addButton);
 
             Platform.runLater(() -> parcelBox.getChildren().add(rowBox));
         }
@@ -250,7 +265,6 @@ public class ParcelMap extends VBox {
 
     //Don't run as a different Task to enhance UI feeling
     private void switchParcels(int parA, int parB) {
-        System.out.println("Switch: " + parA + " " + parB);
         HashMap params = new HashMap();
         params.put("parA", Integer.toString(parA));
         params.put("parB", Integer.toString(parB));
@@ -258,5 +272,17 @@ public class ParcelMap extends VBox {
         boolean success = getJsonSuccessStatus("switchParzellen.php", params);
 
         ThreadUtils.runAsTask(() -> updateParcelBox());
+    }
+
+    private void createNewParcel(int fieldID, int row, int nrRows, int parPerRow) {
+        CreateNewParcel stage
+                = new CreateNewParcel(fieldID, row, nrRows, parPerRow);
+        stage.initModality(Modality.APPLICATION_MODAL);
+
+        //Refresh the TaskList after the window is closed
+        stage.setOnCloseRequest((WindowEvent event1) -> {
+            ThreadUtils.runAsTask(() -> updateParcelBox());
+        });
+        stage.show();
     }
 }
