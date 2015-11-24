@@ -5,7 +5,7 @@
  */
 package com.potatodocumentation.administration.ui.menu;
 
-import com.potatodocumentation.administration.AufgabenPane;
+import com.potatodocumentation.administration.ui.task.AufgabenPane;
 import com.potatodocumentation.administration.ui.field.FieldPane;
 import com.potatodocumentation.administration.ui.field.FieldPane2;
 import com.potatodocumentation.administration.MainApplication;
@@ -34,6 +34,10 @@ import javafx.util.Duration;
 public class MenuPane extends TilePane {
 
     private ArrayList<MenuButton> menuButtons;
+
+    public ArrayList<MenuButton> getMenuButtons() {
+        return menuButtons;
+    }
     private MainApplication mainApp;
 
     public MenuPane(MainApplication mainApp) {
@@ -71,7 +75,7 @@ public class MenuPane extends TilePane {
         ArrayList<MenuButton> menuButtons = new ArrayList<>();
 
         MenuButton testButton = new MenuButton("Test", null, new TestPane());
-        
+
         // Adding Buttons
         menuButtons.add(new MenuButton("Aufgaben", null, new AufgabenPane()));
         menuButtons.add(new MenuButton("Eigenschaften", null, new PropertyPane()));
@@ -102,9 +106,7 @@ public class MenuPane extends TilePane {
 
     }
     
-    public void rotateAll(){
-        
-        
+    public void rotateAll(){      
         for(Node n : menuButtons){
 
             n.setVisible(true);

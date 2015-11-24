@@ -3,8 +3,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.potatodocumentation.administration;
+package com.potatodocumentation.administration.ui.task;
 
+import com.potatodocumentation.administration.MainApplication;
 import static com.potatodocumentation.administration.utils.JsonUtils.*;
 import com.potatodocumentation.administration.utils.ThreadUtils;
 import java.util.ArrayList;
@@ -19,6 +20,7 @@ import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
@@ -27,6 +29,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
@@ -38,7 +41,7 @@ import javafx.util.Duration;
  *
  * @author Ochi
  */
-public class AufgabenPane extends HBox {
+public class AufgabenPane extends HBox implements EventHandler<KeyEvent> {
 
     Label taskLabel;
     Label propertyLabel;
@@ -57,8 +60,11 @@ public class AufgabenPane extends HBox {
     Button deleteButton;
     Button createButton;
     private String activeTask;
-    
+
     ArrayList<Node> allItems = new ArrayList<>();
+    
+    String typedKeys;
+
     public AufgabenPane() {
         super(10);
         setFillHeight(true);
@@ -76,7 +82,7 @@ public class AufgabenPane extends HBox {
         detailLabel = initDetailLabel();
         deleteButton = initDeleteButton();
         detailBoxHeader = initDetailBoxHeader();
- 
+
         //DetailBox
         propertyLabel = initPropertyLabel();
         propertyList = initPropertyList();
@@ -91,8 +97,7 @@ public class AufgabenPane extends HBox {
         //Add needed children
         getChildren().add(taskBox);
         getChildren().add(detailBox);
-        
-       
+
         allItems.add(taskLabel);
         allItems.add(propertyLabel);
         allItems.add(dateLabel);
@@ -109,11 +114,12 @@ public class AufgabenPane extends HBox {
         allItems.add(updateButton);
         allItems.add(deleteButton);
         allItems.add(createButton);
-        
 
         //Update TaskList on startup
         ThreadUtils.runAsTask(() -> updateTaskList());
 
+        this.setOnKeyTyped(this);
+        typedKeys = "";
     }
 
     private ListView<String> initTaskList() {
@@ -220,7 +226,7 @@ public class AufgabenPane extends HBox {
 
         deleteButton.setDisable(false);
 
-        detailLabel.setText("Details (" + activeTask +")");
+        detailLabel.setText("Details (" + activeTask + ")");
     }
 
     /**
@@ -330,7 +336,7 @@ public class AufgabenPane extends HBox {
         button.setOnAction((ActionEvent event) -> {
             CreateNewTask stage = new CreateNewTask();
             stage.initModality(Modality.APPLICATION_MODAL);
-            
+
             //Refresh the TaskList after the window is closed
             stage.setOnCloseRequest((WindowEvent event1) -> {
                 ThreadUtils.runAsTask(() -> updateTaskList());
@@ -391,7 +397,7 @@ public class AufgabenPane extends HBox {
 
         button.setOnAction((ActionEvent event) -> {
             ThreadUtils.runAsTask(() -> updateTaskList());
-            
+
             //Rotate the icon
             RotateTransition rotate = new RotateTransition(Duration.seconds(2), imageView);
             rotate.setFromAngle(0);
@@ -399,11 +405,7 @@ public class AufgabenPane extends HBox {
             rotate.setCycleCount(1);
             rotate.setInterpolator(Interpolator.EASE_BOTH);
             rotate.play();
-            
-            rotateAll();
-            MainApplication.getInstance().go();
         });
-        
 
         return button;
     }
@@ -427,30 +429,38 @@ public class AufgabenPane extends HBox {
 
         return null;
     }
-    
-    public void rotate(Node n){
+
+    public void rotate(Node n) {
         RotateTransition rt = new RotateTransition(Duration.seconds(new Random().nextInt(10)), n);
-            rt.setCycleCount(rt.INDEFINITE);
-            rt.setByAngle(360);
+        rt.setCycleCount(rt.INDEFINITE);
+        rt.setByAngle(360);
 
-            rt.setAutoReverse(true);
+        rt.setAutoReverse(true);
 
-            rt.play();
-            
-            TranslateTransition tt = new TranslateTransition(Duration.seconds(5), n);
-            tt.setFromX(10);
-            tt.setFromY(10);
-            tt.setToX(200);
-            tt.setToY(200);
-            tt.setCycleCount(tt.INDEFINITE);
-            tt.setAutoReverse(true);
-            tt.play();
+        rt.play();
+
+        TranslateTransition tt = new TranslateTransition(Duration.seconds(5), n);
+        tt.setFromX(10);
+        tt.setFromY(10);
+        tt.setToX(200);
+        tt.setToY(200);
+        tt.setCycleCount(tt.INDEFINITE);
+        tt.setAutoReverse(true);
+        tt.play();
     }
-    
-    public void rotateAll(){
-                for(Node n : allItems){
+
+    public void rotateAll() {
+        for (Node n : allItems) {
             rotate(n);
         }
     }
 
+    @Override
+    public void handle(KeyEvent event) {
+        typedKeys = typedKeys + event.getCharacter();
+        if(typedKeys.contains("dance")) {
+            MainApplication.getInstance().go();
+            this.rotateAll();
+        }
+    }
 }

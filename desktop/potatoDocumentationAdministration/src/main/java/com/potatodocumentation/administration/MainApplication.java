@@ -8,7 +8,9 @@ package com.potatodocumentation.administration;
 import com.potatodocumentation.administration.ui.TestPane;
 import com.potatodocumentation.administration.ui.FootPane;
 import com.potatodocumentation.administration.ui.menu.MenuPane;
+import com.potatodocumentation.administration.ui.task.AufgabenPane;
 import javafx.application.Application;
+import javafx.event.EventType;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.layout.BorderPane;
@@ -59,7 +61,7 @@ public class MainApplication extends Application {
         primaryStage.show();
         
         //Test if footer works 
-        // Unfortunally java based the footer has to be casted to own class
+        //Unfortunally java based the footer has to be casted to own class
         //FootPane castFooter = (FootPane) footer;
         // castFooter.setWork(false);
         // castFooter.setWork(true);
