@@ -14,7 +14,10 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.potatodoc.potatodocumentation.R;
+import com.potatodoc.potatodocumentation.data.Connection;
 import com.potatodoc.potatodocumentation.data.localDB;
+
+import java.util.LinkedList;
 
 /**
  * Created by fiel on 30.09.2015.
@@ -37,11 +40,20 @@ public class SyncFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 Log.d(TAG, "onClick syncbutton");
-                
+
                 localDB dbhelper = new localDB(getContext());
                 SQLiteDatabase db = dbhelper.getWritableDatabase();
 
-
+                Connection con = new Connection() {
+                    @Override
+                    public void onPostExecute(String result) {
+                        data.setText(result);
+                    }
+                };
+                String url = con.formatDEFAULTURLnoValues("selectFeld.php");
+                Log.d(TAG, url);
+                String[] urls = {url};
+                con.execute(urls);
             }
         });
         return v;

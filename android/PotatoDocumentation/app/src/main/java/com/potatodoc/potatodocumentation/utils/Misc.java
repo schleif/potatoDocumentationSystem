@@ -1,5 +1,6 @@
 package com.potatodoc.potatodocumentation.utils;
 
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -12,12 +13,12 @@ import java.util.Scanner;
 public class Misc {
 
     public static String readIt(InputStream stream) throws IOException, UnsupportedEncodingException {
-        Scanner scanner = new Scanner(new InputStreamReader(stream, "UTF-8"));
-        String result = "";
-        while(scanner.hasNextLine()) {
-            result.concat(scanner.nextLine());
+        BufferedReader reader = new BufferedReader(new InputStreamReader(stream, "UTF-8"));
+        String webPage = "",data="";
+        while ((data = reader.readLine()) != null){
+            webPage += data + "\n";
         }
-        return result;
+        return webPage;
     }
 
 }

@@ -53,9 +53,7 @@ public class localDB extends SQLiteOpenHelper {
     }
 
     private void syncTable(String tableName) {
-        Connection con = new Connection();
-        String url = con.formatDEFAULTURL("selectFeld.php");
-        con.doInBackground();
+
     }
 
 }
