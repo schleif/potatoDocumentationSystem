@@ -21,7 +21,7 @@ import java.util.Objects;
  * Created by fiel on 20.11.2015.
  * This class helps you to download stuff from a given url.
  * If you want to use it you have to implement the onPostExecute Method
- * In this method you can write your code that should executet if the download is complete
+ * In this method you can write your code that should executed if the download is complete
  *
  * You have also access to some static URL format methods.
  */
