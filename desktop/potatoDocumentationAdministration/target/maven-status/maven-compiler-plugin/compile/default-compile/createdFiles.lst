@@ -1,4 +1,4 @@
-com\potatodocumentation\administration\CreateNewTask.class
+com\potatodocumentation\administration\ui\task\CreateNewTask.class
 com\potatodocumentation\administration\utils\QrUtils.class
 RecursiveTreeItem.class
 com\potatodocumentation\administration\PropertyPane.class
@@ -9,7 +9,7 @@ com\potatodocumentation\administration\ui\field\FieldPane2$3.class
 com\potatodocumentation\administration\ui\field\map\ParcelMap.class
 com\potatodocumentation\administration\utils\JsonUtils.class
 com\potatodocumentation\administration\ui\field\CreateNewField.class
-com\potatodocumentation\administration\AufgabenPane.class
+com\potatodocumentation\administration\ui\task\AufgabenPane.class
 com\potatodocumentation\administration\ui\field\CreateNewParcel.class
 com\potatodocumentation\administration\ui\field\ParcelBox.class
 com\potatodocumentation\administration\ui\menu\MenuButton.class

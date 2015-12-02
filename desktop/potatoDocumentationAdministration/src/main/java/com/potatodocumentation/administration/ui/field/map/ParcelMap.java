@@ -48,12 +48,12 @@ public class ParcelMap extends VBox {
     private int fieldID;
     private List<String> taggedParcels;
     private List<ParcelBox> parcels;
-    private List<ParcelBox> markedParcels;
-    private boolean isInMarkMode = false;
+    private List<ParcelBox> selectedParcels;
+    private boolean isInSelectionMode = false;
 
     private Button updateButton;
     private Button editButton;
-    private Button markButton;
+    private Button selectButton;
     private HBox buttonBox;
 
     private VBox parcelBox;
@@ -68,11 +68,11 @@ public class ParcelMap extends VBox {
                 = (taggedParcels == null ? new ArrayList<>() : taggedParcels);
 
         this.parcels = new ArrayList<>();
-        this.markedParcels = new ArrayList<>();
+        this.selectedParcels = new ArrayList<>();
 
         updateButton = initUpdateButton();
         editButton = initEditButton();
-        markButton = initMarkButton();
+        selectButton = initselectButton();
         buttonBox = initButtonBox();
 
         parcelBox = new VBox(2);
@@ -117,11 +117,7 @@ public class ParcelMap extends VBox {
                 rowBox.getChildren().add(parcel);
             }
             //Create an Add Button to create new parcels
-            Button addButton = new Button("+");
-            addButton.setId("createButton");
-            addButton.setOnAction((ActionEvent event) -> {
-                createNewParcel(fieldID, Integer.parseInt(row), 1, 1);
-            });
+            Button addButton = newAddButton(fieldID, Integer.parseInt(row));
             rowBox.getChildren().add(addButton);
 
             Platform.runLater(() -> parcelBox.getChildren().add(rowBox));
@@ -149,7 +145,7 @@ public class ParcelMap extends VBox {
         return editButton;
     }
 
-    private Button initMarkButton() {
+    private Button initselectButton() {
         Button button = new Button("Markieren");
 
         button.setOnAction((ActionEvent event) -> {
@@ -160,21 +156,21 @@ public class ParcelMap extends VBox {
     }
 
     private HBox initButtonBox() {
-        HBox hBox = new HBox(editButton, markButton, updateButton);
+        HBox hBox = new HBox(editButton, selectButton, updateButton);
         hBox.setAlignment(Pos.CENTER_RIGHT);
 
         return hBox;
     }
 
     private void onMarkButtonPressed() {
-        isInMarkMode = !isInMarkMode;
+        isInSelectionMode = !isInSelectionMode;
 
-        editButton.setVisible(isInMarkMode);
+        editButton.setVisible(isInSelectionMode);
 
-        markedParcels.clear();
+        selectedParcels.clear();
 
         for (ParcelBox parcel : parcels) {
-            parcel.setMarkMode(isInMarkMode);
+            parcel.setMarkMode(isInSelectionMode);
         }
     }
 
@@ -284,5 +280,15 @@ public class ParcelMap extends VBox {
             ThreadUtils.runAsTask(() -> updateParcelBox());
         });
         stage.show();
+    }
+
+    private Button newAddButton(int fieldID, int row) {
+        Button addButton = new Button("+");
+        addButton.setId("createButton");
+        addButton.setOnAction((ActionEvent event) -> {
+            createNewParcel(fieldID, row, 1, 1);
+        });
+        
+        return addButton;
     }
 }

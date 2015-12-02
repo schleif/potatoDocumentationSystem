@@ -34,7 +34,6 @@ public class ParcelBox extends VBox {
     private Label idLabel;
     private Label sortLabel;
     private AnchorPane header;
-    private Button deleteButton;
 
     public ParcelBox(int id, String sort) {
         super(2);
@@ -44,7 +43,6 @@ public class ParcelBox extends VBox {
 
         idLabel = initIdLabel();
         sortLabel = initSortLabel();
-        deleteButton = initDeleteButton();
         header = initHeader();
 
         VBox.setVgrow(header, Priority.NEVER);
@@ -64,29 +62,16 @@ public class ParcelBox extends VBox {
     }
 
     private AnchorPane initHeader() {
-        AnchorPane ap = new AnchorPane(idLabel, deleteButton);
+        AnchorPane ap = new AnchorPane(idLabel);
 
         ap.setMinWidth(50);
         ap.setPrefWidth(50);
 
         AnchorPane.setLeftAnchor(idLabel, 1.0);
-        AnchorPane.setRightAnchor(deleteButton, 1.0);
 
         return ap;
     }
 
-    private Button initDeleteButton() {
-        Image deleteIcon = new Image(getClass().getResourceAsStream("/drawables/deleteIcon.png"),
-                8.0, 8.0, true, true);
-
-        Button button = new Button(null, new ImageView(deleteIcon));
-        button.setMinSize(12, 12);
-        button.setPrefSize(12, 12);
-        button.setMaxSize(12, 12);
-        button.setId("deleteButton");
-
-        return button;
-    }
 
     private Label initSortLabel() {
         Label label = new Label();
