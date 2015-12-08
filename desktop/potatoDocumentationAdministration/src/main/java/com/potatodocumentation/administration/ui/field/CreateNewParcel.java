@@ -33,38 +33,58 @@ public class CreateNewParcel extends Stage {
     private int targetRow;
     private int nrOfRows;
     private int parPerRow;
-    
+
+    boolean fixedRows;
+
     VBox content;
+
     Label header;
+
+    Label parPerRowTitle;
+    Label parPerRowLabel;
+    Button parPerRowIncrease;
+    Button parPerRowDecrease;
+    HBox parPerRowBox;
+
+    Label rowTitle;
+    Label rowLabel;
+    Button rowIncrease;
+    Button rowDecrease;
+    HBox rowBox;
+
     TextField sort;
     HBox buttonBox;
     Button okButton;
     Button cancelButton;
-    
-    public CreateNewParcel(int fieldNr, int targetRow, int nrOfRows, 
+
+    public CreateNewParcel(int fieldNr, int targetRow, int nrOfRows,
             int parPerRow) {
         super();
-        
+
         this.fieldNr = fieldNr;
         this.targetRow = targetRow;
         this.nrOfRows = nrOfRows;
         this.parPerRow = parPerRow;
+        this.fixedRows = targetRow < 0;
 
         header = initHeader();
+
+        parPerRowTitle = initParPerRowTitle();
+        parPerRowDecrease = initParPerRowDecrease();
+        
         sort = initSort();
         okButton = initOkButton();
         cancelButton = initCancelButton();
         buttonBox = initButtonBox();
-        
+
         content = initContent();
-  
+
         Scene scene = new Scene(content);
         this.setTitle("Neue Parzellen hinzufügen");
         this.setScene(scene);
 
         header.requestFocus();
     }
-
 
     private Button initOkButton() {
         Button but = new Button("Hinzufügen");
@@ -75,7 +95,7 @@ public class CreateNewParcel extends Stage {
     }
 
     private void onOkClicked() {
-        
+
     }
 
     private void insertField(String fieldName) {
@@ -115,33 +135,53 @@ public class CreateNewParcel extends Stage {
 
     private Label initHeader() {
         int parsToInsert = nrOfRows * parPerRow;
-        
+
         String newString = (parsToInsert > 1 ? "neue" : "neues");
         String fieldString = (parsToInsert > 1 ? "Felder" : "Feld");
-                
-        Label label = new Label("Füge " + parsToInsert + " " + newString + " " 
+
+        Label label = new Label("Füge " + parsToInsert + " " + newString + " "
                 + fieldString + " ein:");
-        
+
         return label;
     }
 
     private TextField initSort() {
         TextField textField = new TextField();
         textField.setPromptText("Sorte eingeben");
-        
+
         return textField;
     }
 
     private HBox initButtonBox() {
         HBox hBox = new HBox(10, okButton, cancelButton);
         hBox.setAlignment(Pos.CENTER_RIGHT);
-        
+
         return hBox;
     }
 
     private VBox initContent() {
         VBox vBox = new VBox(10, header, sort, buttonBox);
-        
+
         return vBox;
+    }
+
+    private Label initParPerRowTitle() {
+        return new Label("Anzahl der Parzellen:");
+    }
+
+    private Button initParPerRowDecrease() {
+        Button button = new Button("-");
+        
+        button.setOnAction((ActionEvent e) -> {
+            decreaseParPerRow();
+        });
+        
+        return button;
+    }
+
+    private void decreaseParPerRow() {
+        int oldValue = Integer.parseInt(parPerRowLabel.getText());
+        int newValue = --oldValue < 0 ? 0 : oldValue;
+        parPerRowLabel.setText(Integer.toString(newValue));
     }
 }

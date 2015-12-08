@@ -5,11 +5,9 @@
  */
 package com.potatodocumentation.administration.ui.field.map;
 
-import com.potatodocumentation.administration.ui.field.FieldStage;
 import com.potatodocumentation.administration.ui.field.ParcelBox;
 import com.potatodocumentation.administration.ui.field.CreateNewParcel;
 import com.potatodocumentation.administration.utils.AnimationUtils;
-import com.potatodocumentation.administration.utils.JsonUtils;
 import static com.potatodocumentation.administration.utils.JsonUtils.getJsonResultArray;
 import static com.potatodocumentation.administration.utils.JsonUtils.getJsonResultObservableList;
 import static com.potatodocumentation.administration.utils.JsonUtils.getJsonSuccessStatus;
@@ -23,10 +21,9 @@ import javafx.animation.Timeline;
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.geometry.Pos;
-import javafx.scene.Cursor;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.DragEvent;
@@ -58,6 +55,8 @@ public class ParcelMap extends VBox {
 
     private VBox parcelBox;
 
+    private Label loadLabel;
+
     private ImageView dragIcon = new ImageView();
 
     public ParcelMap(int fieldID, List<String> taggedParcels) {
@@ -77,11 +76,15 @@ public class ParcelMap extends VBox {
 
         parcelBox = new VBox(2);
 
-        getChildren().addAll(buttonBox, parcelBox, dragIcon);
+        loadLabel = initLoadLabel();
+
+        getChildren().addAll(buttonBox, loadLabel, parcelBox);
     }
 
     public Void updateParcelBox() {
-
+        
+        indicateLoading(true);
+        
         Platform.runLater(() -> parcelBox.getChildren().clear());
         parcels.clear();
 
@@ -123,6 +126,8 @@ public class ParcelMap extends VBox {
             Platform.runLater(() -> parcelBox.getChildren().add(rowBox));
         }
 
+        indicateLoading(false);
+        
         return null;
     }
 
@@ -243,8 +248,8 @@ public class ParcelMap extends VBox {
         parcel.setOnDragDropped((DragEvent event) -> {
             String dbContent = event.getDragboard().getString();
 
-            switchParcels(parcel.getParcelId(),
-                    Integer.parseInt(dbContent));
+            ThreadUtils.runAsTask(() -> switchParcels(parcel.getParcelId(),
+                    Integer.parseInt(dbContent)));
 
             event.setDropCompleted(true);
 
@@ -255,12 +260,12 @@ public class ParcelMap extends VBox {
         parcel.setOnDragDone((DragEvent event) -> {
             draggedAnimation.jumpTo(Duration.ZERO);
             draggedAnimation.stop();
-            System.out.println("Drag done!");
         });
     }
 
-    //Don't run as a different Task to enhance UI feeling
-    private void switchParcels(int parA, int parB) {
+    private Void switchParcels(int parA, int parB) {
+        indicateLoading(true);
+        
         HashMap params = new HashMap();
         params.put("parA", Integer.toString(parA));
         params.put("parB", Integer.toString(parB));
@@ -268,6 +273,8 @@ public class ParcelMap extends VBox {
         boolean success = getJsonSuccessStatus("switchParzellen.php", params);
 
         ThreadUtils.runAsTask(() -> updateParcelBox());
+        
+        return null;
     }
 
     private void createNewParcel(int fieldID, int row, int nrRows, int parPerRow) {
@@ -288,7 +295,19 @@ public class ParcelMap extends VBox {
         addButton.setOnAction((ActionEvent event) -> {
             createNewParcel(fieldID, row, 1, 1);
         });
-        
+
         return addButton;
+    }
+
+    private Label initLoadLabel() {
+        Label label = new Label("Lädt...");
+        label.setVisible(false);
+        
+        return label;
+    }
+    
+    private void indicateLoading(boolean isLoading){
+        Platform.runLater(() -> parcelBox.setVisible(!isLoading));
+        Platform.runLater(() -> loadLabel.setVisible(isLoading));    
     }
 }
