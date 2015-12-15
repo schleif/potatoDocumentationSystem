@@ -36,6 +36,8 @@ public class Connection {
      */
     public Connection(String service) {
         String urlString = HOST + service;
+
+        System.out.println(urlString);
         try {
             this.serviceURL = new URL(urlString);
         } catch (IOException ex) {
@@ -71,7 +73,7 @@ public class Connection {
             e.printStackTrace();
         }
 
-
+        System.out.println(urlString);
         try {
             this.serviceURL = new URL(urlString);
         } catch (IOException ex) {

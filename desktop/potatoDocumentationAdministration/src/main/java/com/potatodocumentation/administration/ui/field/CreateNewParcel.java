@@ -85,36 +85,50 @@ public class CreateNewParcel extends Stage {
     private Button initOkButton() {
         Button but = new Button("Hinzufügen");
         but.setOnAction((ActionEvent event) -> {
-            onOkClicked();
+            insertParcels();
         });
         return but;
     }
 
     private void onOkClicked() {
-
+        
     }
 
-    private void insertField(String fieldName) {
-        if (!fieldName.equals("Name...") && !fieldName.equals("")) {
-
+    private void insertParcels() {
+        
             HashMap<String, String> values = new HashMap<>();
-            values.put("field_id", fieldName);
+            values.put("feld_nr", Integer.toString(fieldNr));
+            values.put("parz_row", Integer.toString(targetRow));
+            values.put("par_per_row", Integer.toString(parPerRowBox.getValue()));
+            values.put("sorte", sort.getText());
+            
+            boolean success;
+                    
+            if(fixedRows){
+                success = getJsonSuccessStatus("insertMultipleParzellen.php", 
+                        values);
+            } else {
+                int nrOfRows = ((NumericControlBox) rowBox).getValue();
+                values.put("nr_of_rows", Integer.toString(nrOfRows));
+                success = getJsonSuccessStatus("insertMultipleRows.php", 
+                        values);
+                
+            }
 
-            boolean success = getJsonSuccessStatus("insertField.php", values);
+             
 
-            String status = "Feld wurde " + (success ? "" : "nicht ")
+            String status = "Parzellen wurden " + (success ? "" : "nicht ")
                     + "erfolgreich eingefügt!";
 
             Alert alert = new Alert(Alert.AlertType.INFORMATION, status);
 
             alert.showAndWait()
                     .filter(response -> response == ButtonType.OK);
-        } else {
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-
-            alert.showAndWait()
-                    .filter(response -> response == ButtonType.OK);
-        }
+            
+            if(success){
+                close();
+            }
+        
     }
 
     private Button initCancelButton() {

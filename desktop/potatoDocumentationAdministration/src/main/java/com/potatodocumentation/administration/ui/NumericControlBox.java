@@ -82,5 +82,9 @@ public class NumericControlBox extends HBox {
         }
         value.setText(Integer.toString(val));
     }
+    
+    public int getValue(){
+        return val;
+    }
 
 }

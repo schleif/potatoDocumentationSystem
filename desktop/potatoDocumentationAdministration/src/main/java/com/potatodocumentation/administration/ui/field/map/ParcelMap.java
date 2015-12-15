@@ -82,9 +82,9 @@ public class ParcelMap extends VBox {
     }
 
     public Void updateParcelBox() {
-        
+
         indicateLoading(true);
-        
+
         Platform.runLater(() -> parcelBox.getChildren().clear());
         parcels.clear();
 
@@ -109,13 +109,7 @@ public class ParcelMap extends VBox {
 
                 //Create new ParcelBox
                 String sorte = (String) parcelMap.get("sorte");
-                ParcelBox parcel = new ParcelBox(id, sorte);
-
-                //Add the drag feature
-                addDragFeature(parcel);
-
-                //Add parcel to the parcel-list
-                parcels.add(parcel);
+                ParcelBox parcel = newParcelBox(id, sorte);
 
                 rowBox.getChildren().add(parcel);
             }
@@ -125,13 +119,13 @@ public class ParcelMap extends VBox {
 
             Platform.runLater(() -> parcelBox.getChildren().add(rowBox));
         }
-        
+
         //Add addButton to new Row and indicate it doesnt belong to a row
         Button addButton = newAddButton(fieldID, -1);
         Platform.runLater(() -> parcelBox.getChildren().add(addButton));
 
         indicateLoading(false);
-        
+
         return null;
     }
 
@@ -269,7 +263,7 @@ public class ParcelMap extends VBox {
 
     private Void switchParcels(int parA, int parB) {
         indicateLoading(true);
-        
+
         HashMap params = new HashMap();
         params.put("parA", Integer.toString(parA));
         params.put("parB", Integer.toString(parB));
@@ -277,7 +271,7 @@ public class ParcelMap extends VBox {
         boolean success = getJsonSuccessStatus("switchParzellen.php", params);
 
         ThreadUtils.runAsTask(() -> updateParcelBox());
-        
+
         return null;
     }
 
@@ -306,12 +300,24 @@ public class ParcelMap extends VBox {
     private Label initLoadLabel() {
         Label label = new Label("Lädt...");
         label.setVisible(false);
-        
+
         return label;
     }
-    
-    private void indicateLoading(boolean isLoading){
+
+    private void indicateLoading(boolean isLoading) {
         Platform.runLater(() -> parcelBox.setVisible(!isLoading));
-        Platform.runLater(() -> loadLabel.setVisible(isLoading));    
+        Platform.runLater(() -> loadLabel.setVisible(isLoading));
+    }
+
+    private ParcelBox newParcelBox(int id, String sorte) {
+        ParcelBox parcel = new ParcelBox(id, sorte);
+
+        //Add the drag feature
+        addDragFeature(parcel);
+
+        //Add parcel to the parcel-list
+        parcels.add(parcel);
+
+        return parcel;
     }
 }
