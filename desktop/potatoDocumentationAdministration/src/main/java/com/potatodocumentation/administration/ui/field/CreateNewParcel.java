@@ -5,12 +5,14 @@
  */
 package com.potatodocumentation.administration.ui.field;
 
+import com.potatodocumentation.administration.ui.NumericControlBox;
 import static com.potatodocumentation.administration.utils.JsonUtils.getJsonSuccessStatus;
 import java.util.HashMap;
 import java.util.Scanner;
 import javafx.event.ActionEvent;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
@@ -34,23 +36,16 @@ public class CreateNewParcel extends Stage {
     private int nrOfRows;
     private int parPerRow;
 
+    //Indicates if the number of rows is fixed
     boolean fixedRows;
 
     VBox content;
 
     Label header;
 
-    Label parPerRowTitle;
-    Label parPerRowLabel;
-    Button parPerRowIncrease;
-    Button parPerRowDecrease;
-    HBox parPerRowBox;
+    NumericControlBox parPerRowBox;
 
-    Label rowTitle;
-    Label rowLabel;
-    Button rowIncrease;
-    Button rowDecrease;
-    HBox rowBox;
+    Node rowBox;
 
     TextField sort;
     HBox buttonBox;
@@ -65,12 +60,13 @@ public class CreateNewParcel extends Stage {
         this.targetRow = targetRow;
         this.nrOfRows = nrOfRows;
         this.parPerRow = parPerRow;
-        this.fixedRows = targetRow < 0;
+        this.fixedRows = targetRow >= 0;
 
         header = initHeader();
-
-        parPerRowTitle = initParPerRowTitle();
-        parPerRowDecrease = initParPerRowDecrease();
+        
+        parPerRowBox = initParPerRowBox();
+        
+        rowBox = initRowBox();
         
         sort = initSort();
         okButton = initOkButton();
@@ -160,28 +156,23 @@ public class CreateNewParcel extends Stage {
     }
 
     private VBox initContent() {
-        VBox vBox = new VBox(10, header, sort, buttonBox);
+        VBox vBox = new VBox(10, parPerRowBox,  rowBox, sort, buttonBox);
 
         return vBox;
     }
 
-    private Label initParPerRowTitle() {
-        return new Label("Anzahl der Parzellen:");
+    private NumericControlBox initParPerRowBox() {
+        String title = fixedRows ? "Felder:" : "Felder pro Reihe:";
+        return new NumericControlBox(title, parPerRow, 1, 
+                Integer.MAX_VALUE);
     }
 
-    private Button initParPerRowDecrease() {
-        Button button = new Button("-");
-        
-        button.setOnAction((ActionEvent e) -> {
-            decreaseParPerRow();
-        });
-        
-        return button;
-    }
-
-    private void decreaseParPerRow() {
-        int oldValue = Integer.parseInt(parPerRowLabel.getText());
-        int newValue = --oldValue < 0 ? 0 : oldValue;
-        parPerRowLabel.setText(Integer.toString(newValue));
+    private Node initRowBox() {
+        if(fixedRows){
+            return new Label("In Reihe " + this.targetRow);
+        } else {
+            return new NumericControlBox("Anzahl der Reihen:", 1, 1, 
+                    Integer.MAX_VALUE);
+        }
     }
 }

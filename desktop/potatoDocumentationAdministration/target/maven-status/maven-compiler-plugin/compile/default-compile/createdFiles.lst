@@ -27,6 +27,7 @@ com\potatodocumentation\administration\ui\field\FieldPane2.class
 com\potatodocumentation\administration\ui\FootPane.class
 com\potatodocumentation\administration\ui\field\FieldPane2$3$1.class
 com\potatodocumentation\administration\FXMLController.class
+com\potatodocumentation\administration\ui\NumericControlBox.class
 com\potatodocumentation\administration\utils\ThreadUtils.class
 com\potatodocumentation\administration\utils\DateUtils.class
 com\potatodocumentation\administration\ui\sort\CreateNewSort.class

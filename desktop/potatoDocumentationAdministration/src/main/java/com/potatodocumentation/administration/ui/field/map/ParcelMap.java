@@ -125,6 +125,10 @@ public class ParcelMap extends VBox {
 
             Platform.runLater(() -> parcelBox.getChildren().add(rowBox));
         }
+        
+        //Add addButton to new Row and indicate it doesnt belong to a row
+        Button addButton = newAddButton(fieldID, -1);
+        Platform.runLater(() -> parcelBox.getChildren().add(addButton));
 
         indicateLoading(false);
         
