@@ -114,14 +114,18 @@ public class ParcelMap extends VBox {
                 rowBox.getChildren().add(parcel);
             }
             //Create an Add Button to create new parcels
-            Button addButton = newAddButton(fieldID, Integer.parseInt(row));
+            Button addButton = newAddButton(Integer.parseInt(row), true);
             rowBox.getChildren().add(addButton);
 
             Platform.runLater(() -> parcelBox.getChildren().add(rowBox));
         }
 
-        //Add addButton to new Row and indicate it doesnt belong to a row
-        Button addButton = newAddButton(fieldID, -1);
+        //Add addButton to new Row 
+        int maxRow = 1;
+        if(!rows.isEmpty()){
+            Integer.parseInt(rows.get(rows.size() - 1));
+        }
+        Button addButton = newAddButton(maxRow + 1, false);
         Platform.runLater(() -> parcelBox.getChildren().add(addButton));
 
         indicateLoading(false);
@@ -275,9 +279,11 @@ public class ParcelMap extends VBox {
         return null;
     }
 
-    private void createNewParcel(int fieldID, int row, int nrRows, int parPerRow) {
+    private void createNewParcel(int row, int nrRows, int parPerRow,
+            boolean fixedRows) {
         CreateNewParcel stage
-                = new CreateNewParcel(fieldID, row, nrRows, parPerRow);
+                = new CreateNewParcel(fieldID, row, nrRows, parPerRow,
+                        fixedRows);
         stage.initModality(Modality.APPLICATION_MODAL);
 
         //Refresh the TaskList after the window is closed
@@ -287,11 +293,11 @@ public class ParcelMap extends VBox {
         stage.show();
     }
 
-    private Button newAddButton(int fieldID, int row) {
+    private Button newAddButton(int row, boolean fixedRows) {
         Button addButton = new Button("+");
         addButton.setId("createButton");
         addButton.setOnAction((ActionEvent event) -> {
-            createNewParcel(fieldID, row, 1, 1);
+            createNewParcel(row, 1, 1, fixedRows);
         });
 
         return addButton;

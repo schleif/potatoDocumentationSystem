@@ -53,21 +53,21 @@ public class CreateNewParcel extends Stage {
     Button cancelButton;
 
     public CreateNewParcel(int fieldNr, int targetRow, int nrOfRows,
-            int parPerRow) {
+            int parPerRow, boolean fixedRows) {
         super();
 
         this.fieldNr = fieldNr;
         this.targetRow = targetRow;
         this.nrOfRows = nrOfRows;
         this.parPerRow = parPerRow;
-        this.fixedRows = targetRow >= 0;
+        this.fixedRows = fixedRows;
 
         header = initHeader();
-        
+
         parPerRowBox = initParPerRowBox();
-        
+
         rowBox = initRowBox();
-        
+
         sort = initSort();
         okButton = initOkButton();
         cancelButton = initCancelButton();
@@ -91,44 +91,37 @@ public class CreateNewParcel extends Stage {
     }
 
     private void onOkClicked() {
-        
+
     }
 
     private void insertParcels() {
-        
-            HashMap<String, String> values = new HashMap<>();
-            values.put("feld_nr", Integer.toString(fieldNr));
-            values.put("parz_row", Integer.toString(targetRow));
-            values.put("par_per_row", Integer.toString(parPerRowBox.getValue()));
-            values.put("sorte", sort.getText());
-            
-            boolean success;
-                    
-            if(fixedRows){
-                success = getJsonSuccessStatus("insertMultipleParzellen.php", 
-                        values);
-            } else {
-                int nrOfRows = ((NumericControlBox) rowBox).getValue();
-                values.put("nr_of_rows", Integer.toString(nrOfRows));
-                success = getJsonSuccessStatus("insertMultipleRows.php", 
-                        values);
-                
-            }
 
-             
+        HashMap<String, String> values = new HashMap<>();
+        values.put("feld_nr", Integer.toString(fieldNr));
+        values.put("parz_row", Integer.toString(targetRow));
+        values.put("par_per_row", Integer.toString(parPerRowBox.getValue()));
+        values.put("sorte", sort.getText());
+        //get the number of rows
+        int rows = (fixedRows ? nrOfRows : 
+                ((NumericControlBox) rowBox).getValue());
+        values.put("nr_of_rows", Integer.toString(rows));
+        boolean success;
 
-            String status = "Parzellen wurden " + (success ? "" : "nicht ")
-                    + "erfolgreich eingefügt!";
+        success = getJsonSuccessStatus("insertMultipleParzellen.php", values);
 
-            Alert alert = new Alert(Alert.AlertType.INFORMATION, status);
+        String status = "Parzellen wurden " + (success ? "" : "nicht ")
+                + "erfolgreich eingefügt!";
 
-            alert.showAndWait()
-                    .filter(response -> response == ButtonType.OK);
-            
-            if(success){
-                close();
-            }
-        
+        Alert alert = new Alert(Alert.AlertType.INFORMATION, status);
+
+        alert.showAndWait()
+                .filter(response -> response == ButtonType.OK);
+
+        //close window if parcels were inserted successfully
+        if (success) {
+            close();
+        }
+
     }
 
     private Button initCancelButton() {
@@ -170,22 +163,22 @@ public class CreateNewParcel extends Stage {
     }
 
     private VBox initContent() {
-        VBox vBox = new VBox(10, parPerRowBox,  rowBox, sort, buttonBox);
+        VBox vBox = new VBox(10, parPerRowBox, rowBox, sort, buttonBox);
 
         return vBox;
     }
 
     private NumericControlBox initParPerRowBox() {
         String title = fixedRows ? "Felder:" : "Felder pro Reihe:";
-        return new NumericControlBox(title, parPerRow, 1, 
+        return new NumericControlBox(title, parPerRow, 1,
                 Integer.MAX_VALUE);
     }
 
     private Node initRowBox() {
-        if(fixedRows){
+        if (fixedRows) {
             return new Label("In Reihe " + this.targetRow);
         } else {
-            return new NumericControlBox("Anzahl der Reihen:", 1, 1, 
+            return new NumericControlBox("Anzahl der Reihen:", 1, 1,
                     Integer.MAX_VALUE);
         }
     }
