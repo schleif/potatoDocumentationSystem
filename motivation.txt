@@ -1,0 +1,43 @@
+﻿Dokumentationssystem
+
+Für die Kartoffelwissenschaftler soll eine Dokumentationssystem erstellt werden.
+
+Ausgangssituation:
+Ein Feld ist in Parzellen eingeteilt, die in kleinere Parzellen eingeteilt sind. Alle Parzellen sind rechteckig.
+In den Parzellen sind Kartoffeln verschiedener Sorten angepflanzt.
+Jede Parzelle wird regelmäßig von Helfern aufgesucht und die Veränderung der Pflanzen wird dokumentiert.
+Die Helfer gehen anhand eines Parzellenplans durch das Feld.
+Für jede Parzelle gibt es ein Formular, in dass die Ergebnisse eingetragen werden sollen.
+Später werden alle Formulare per Hand in MS Excel zur weiterverarbeitung eingetragen.
+
+Der Plan wird vorher in MS Excel durch die Wissenschaftler angelegt.
+
+Probleme:
+1) Die Helfer machen bei der Dokumentation leicht fehler.
+2) Zwischen Dokumentation und Verarbeitung gibt es einen Medienbruch
+
+Ziel:
+Eine Android-App für Tablets unterstützt die Dokumentation der Forschungsergebnisse.
+Dabei prüft die App die von den Helfern eingetragenen Daten auf Plausibilität.
+Aus der App werden die Daten automatisch zur Weiterverarbeitung übertragen.
+
+Anforderungen:
+Die Bediener der App sind schlichte Helfer, denen eine kurze Einweisung reichen muss.
+
+Probleme der neuen Lösung:
+1) Jede Dokumentation zur den Parzellen muss eindeutig identifizierbar sein.
+
+Lösungsvorschläge:
+1) Identifizierung durch NFC
+2) Identifizierung durch QR Codes
+3) Identifizierung durch GPS
+3) Identifizierung durch Position auf der Karte
+
+Lösung 1) und 2) benötigen zusätzliche Hardware auf dem Feld.
+Lösung 3) ist nicht sehr genau, könnte theoretisch durch A-GPS und gyroskop genauer werden.
+
+Lösung 4) ist Problematisch im Blick auf den Entwurf der Karte, der in ein darstellbares Format auf dem Tablet gebracht werden muss.
+
+Nähere Betrachtung von Lösung 4:
+ 
+ 
