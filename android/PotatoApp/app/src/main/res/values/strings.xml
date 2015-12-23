@@ -1,0 +1,15 @@
+<resources>
+    <string name="app_name">PotatoApp</string>
+
+
+    <string name="action_settings">Settings</string>
+    <string name="title_activity_task">TaskActivity</string>
+    <string name="errorDB">Keine Datenbankverbindung vorhanden</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="title_activity_qr__scanner">QR_ScannerActivity</string>
+    <string name="cancel">Zurück</string>
+    <string name="dialog_warning">Wenn sie Weiter drücken gehen alle nicht gespeicherten Daten verloren</string>
+    <string name="weiter">Weiter</string>
+
+
+</resources>
