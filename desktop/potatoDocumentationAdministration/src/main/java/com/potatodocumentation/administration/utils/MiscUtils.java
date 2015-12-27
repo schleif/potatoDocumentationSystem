@@ -5,6 +5,9 @@
  */
 package com.potatodocumentation.administration.utils;
 
+import java.util.Collection;
+import java.util.HashSet;
+
 /**
  *
  * @author Ochi
@@ -33,6 +36,30 @@ public class MiscUtils {
             }
         }
         return true;
+    }
+
+    /**
+     * Checks if Collection b is a subset of collection b. Returns true if all
+     * elements of b are contained in a. Returns null if not there is at least
+     * one element of b contained in a but not all elements are. Else returns
+     * false.
+     *
+     */
+    public static <T> Boolean isSubset(Collection<T> a, Collection<T> b) {
+        
+        int count = 0;
+
+        for (T x : b) {
+            if (a.contains(x)) {
+                count++;
+            }
+        }
+        
+        if(count < b.size() && count > 0){
+            return null;
+        }
+
+        return (!b.isEmpty()) && count == b.size();
     }
 
 }

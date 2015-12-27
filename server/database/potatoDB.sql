@@ -373,3 +373,11 @@ CREATE PROCEDURE `selectParzellenRows` ( IN `feldNr` INT( 11 ) ) NOT DETERMINIST
 FROM parzellen 
 WHERE feld_nr = feldNr 
 ORDER BY parz_row ASC;
+
+CREATE PROCEDURE `selectMaxFeldColumn` ( ) NOT DETERMINISTIC NO SQL SQL SECURITY DEFINER 
+SELECT MAX( counted ) AS maxColumn 
+FROM ( 
+SELECT COUNT( column_nr ) AS counted 
+FROM feld 
+GROUP BY row_nr 
+) AS countColumns;

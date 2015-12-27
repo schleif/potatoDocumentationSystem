@@ -6,18 +6,9 @@
 package com.potatodocumentation.administration.ui.field;
 
 import com.potatodocumentation.administration.ui.field.map.ParcelMap;
-import com.potatodocumentation.administration.utils.JsonUtils;
-import static com.potatodocumentation.administration.utils.JsonUtils.getJsonResultArray;
-import static com.potatodocumentation.administration.utils.JsonUtils
-        .getJsonResultObservableList;
 import com.potatodocumentation.administration.utils.ThreadUtils;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 import javafx.animation.Interpolator;
 import javafx.animation.RotateTransition;
-import javafx.application.Platform;
-import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -25,7 +16,6 @@ import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import javafx.util.Duration;
@@ -42,23 +32,21 @@ public class FieldStage extends Stage {
     private Label title;
     private ParcelMap map;
 
-    public FieldStage(int fieldId) {
+    public FieldStage(int fieldId, ParcelMap map) {
         super();
 
         FIELD_ID = fieldId;
         title = initTitle();
         deleteButton = initDeleteButton();
         updateButton = initUpdateButton();
-        map = new ParcelMap(FIELD_ID, null);
-        
-        ThreadUtils.runAsTask(() -> map.updateParcelBox());
+        this.map = map;
         
         Scene scene = new Scene(map);
         
         scene.getStylesheets().add(getClass()
                 .getResource("/styles/potatoStyle.css").toExternalForm());
         
-        setTitle("JaudiDauuu");
+        setTitle("Feld Nr. " + fieldId);
         setScene(scene);
         
         

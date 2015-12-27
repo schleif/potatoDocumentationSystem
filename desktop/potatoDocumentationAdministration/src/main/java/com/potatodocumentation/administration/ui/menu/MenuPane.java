@@ -7,7 +7,6 @@ package com.potatodocumentation.administration.ui.menu;
 
 import com.potatodocumentation.administration.ui.task.AufgabenPane;
 import com.potatodocumentation.administration.ui.field.FieldPane;
-import com.potatodocumentation.administration.ui.field.FieldPane2;
 import com.potatodocumentation.administration.MainApplication;
 import com.potatodocumentation.administration.ui.field.ParcelPane;
 import com.potatodocumentation.administration.ui.sort.PotatoSpeciesPane;
@@ -81,7 +80,6 @@ public class MenuPane extends TilePane {
         menuButtons.add(new MenuButton("Eigenschaften", null, new PropertyPane()));
         menuButtons.add(new MenuButton("Sorten", null, new PotatoSpeciesPane()));
         menuButtons.add(new MenuButton("Felder", null, new FieldPane()));
-        menuButtons.add(new MenuButton("Felder 2.0", null, new FieldPane2()));
         menuButtons.add(new MenuButton("Parzellen", null, new ParcelPane()));
         menuButtons.add(testButton);
 

@@ -21,6 +21,7 @@ import javafx.animation.Timeline;
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -42,10 +43,14 @@ import javafx.util.Duration;
  */
 public class ParcelMap extends VBox {
 
+    /**
+     * All selected parcels
+     */
+    private List<Integer> selectedParcels;
+    private EventHandler parcelSelectionHandler;
+
     private int fieldID;
-    private List<String> taggedParcels;
     private List<ParcelBox> parcels;
-    private List<ParcelBox> selectedParcels;
     private boolean isInSelectionMode = false;
 
     private Button updateButton;
@@ -59,15 +64,13 @@ public class ParcelMap extends VBox {
 
     private ImageView dragIcon = new ImageView();
 
-    public ParcelMap(int fieldID, List<String> taggedParcels) {
+    public ParcelMap(int fieldID, List<Integer> selectedParcels) {
         super(10);
 
         this.fieldID = fieldID;
-        this.taggedParcels
-                = (taggedParcels == null ? new ArrayList<>() : taggedParcels);
 
         this.parcels = new ArrayList<>();
-        this.selectedParcels = new ArrayList<>();
+        this.selectedParcels = selectedParcels;
 
         updateButton = initUpdateButton();
         editButton = initEditButton();
@@ -81,6 +84,8 @@ public class ParcelMap extends VBox {
         getChildren().addAll(buttonBox, loadLabel, parcelBox);
     }
 
+    //Updates the parcels
+    //Should run as a new task
     public Void updateParcelBox() {
 
         indicateLoading(true);
@@ -122,11 +127,13 @@ public class ParcelMap extends VBox {
 
         //Add addButton to new Row 
         int maxRow = 1;
-        if(!rows.isEmpty()){
+        if (!rows.isEmpty()) {
             Integer.parseInt(rows.get(rows.size() - 1));
         }
         Button addButton = newAddButton(maxRow + 1, false);
         Platform.runLater(() -> parcelBox.getChildren().add(addButton));
+
+        updateStyle();
 
         indicateLoading(false);
 
@@ -156,7 +163,7 @@ public class ParcelMap extends VBox {
         Button button = new Button("Markieren");
 
         button.setOnAction((ActionEvent event) -> {
-            onMarkButtonPressed();
+            onSelectButtonPressed();
         });
 
         return button;
@@ -169,16 +176,21 @@ public class ParcelMap extends VBox {
         return hBox;
     }
 
-    private void onMarkButtonPressed() {
+    private void onSelectButtonPressed() {
         isInSelectionMode = !isInSelectionMode;
 
         editButton.setVisible(isInSelectionMode);
 
-        selectedParcels.clear();
-
         for (ParcelBox parcel : parcels) {
-            parcel.setMarkMode(isInSelectionMode);
+            if (isInSelectionMode) {
+                parcel.addEventHandler(MouseEvent.MOUSE_CLICKED,
+                        parcelSelectionHandler());
+            } else {
+                parcel.removeEventHandler(MouseEvent.MOUSE_CLICKED,
+                        parcelSelectionHandler());
+            }
         }
+
     }
 
     private void addDragFeature(ParcelBox parcel) {
@@ -325,5 +337,58 @@ public class ParcelMap extends VBox {
         parcels.add(parcel);
 
         return parcel;
+    }
+
+    /**
+     * Adds/Removes a ParcelBox to/from selectedParcels. Can only be used on
+     * instanced of ParcelBox.
+     *
+     * @return
+     */
+    private EventHandler<MouseEvent> parcelSelectionHandler() {
+        //Singelton
+        if (parcelSelectionHandler == null) {
+
+            EventHandler<MouseEvent> eventHandler = (MouseEvent event) -> {
+                ParcelBox parcel = (ParcelBox) event.getSource();
+                int parcelId = parcel.getParcelId();
+
+                // Add/remove parcel and update style
+                if (selectedParcels.contains(parcelId)) {
+                    selectedParcels.remove(new Integer(parcelId));
+                    parcel.getStyleClass().remove("marked-parcel-box");
+                } else {
+                    selectedParcels.add(parcelId);
+                    parcel.getStyleClass().add("marked-parcel-box");
+                }
+
+                System.out.println(selectedParcels);
+            };
+
+            parcelSelectionHandler = eventHandler;
+
+        }
+
+        return parcelSelectionHandler;
+    }
+
+    //return a list of the IDs of parcels included in this map
+    public List<Integer> getParcels() {
+        List<Integer> list = new ArrayList<>();
+        for (ParcelBox parcel : parcels) {
+            list.add(parcel.getParcelId());
+        }
+
+        return list;
+    }
+
+    private void updateStyle() {
+        for (ParcelBox parcel : parcels) {
+            if (selectedParcels.contains(parcel.getParcelId())) {
+                parcel.getStyleClass().add("marked-parcel-box");
+            } else {
+                parcel.getStyleClass().remove("marked-parcel-box");
+            }
+        }
     }
 }
