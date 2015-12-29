@@ -71,7 +71,7 @@ public class FieldBox extends VBox {
         return parcel.getParcels();
     }
 
-    //Updates parcelbox in a new task
+    //Updates parcelmap in SAME thread. Can be called as new task 
     public Void update() {
         parcel.updateParcelBox();
         return null;

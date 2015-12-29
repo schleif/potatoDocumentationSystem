@@ -5,8 +5,11 @@
  */
 package com.potatodocumentation.administration.utils;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Observable;
+import javafx.collections.ObservableList;
 
 /**
  *
@@ -60,6 +63,32 @@ public class MiscUtils {
         }
 
         return (!b.isEmpty()) && count == b.size();
+    }
+    
+    public static<T extends Comparable> T getMax(Collection<T> collection){
+
+        T max = null; 
+        
+        for(T x : collection){
+            if(max == null || x.compareTo(max) > 0){
+                max = x;
+            }
+        }
+        
+        System.out.println("Coll: " + collection + ", max: " + max);
+        return max;
+    }
+    
+    public static Collection<Integer> 
+        parseCollectionToInteger(Collection<String> collection){
+            
+            Collection<Integer> newCol = new ArrayList<>();
+        
+            for(String s : collection){
+                newCol.add(Integer.parseInt(s));
+            }
+            
+            return newCol;
     }
 
 }

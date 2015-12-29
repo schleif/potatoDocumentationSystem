@@ -122,15 +122,16 @@ public class ParcelMap extends VBox {
             Button addButton = newAddButton(Integer.parseInt(row), true);
             rowBox.getChildren().add(addButton);
 
+            //add the row
             Platform.runLater(() -> parcelBox.getChildren().add(rowBox));
         }
 
         //Add addButton to new Row 
         int maxRow = 1;
         if (!rows.isEmpty()) {
-            Integer.parseInt(rows.get(rows.size() - 1));
+            maxRow = Integer.parseInt(MiscUtils.getMax(rows));
         }
-        Button addButton = newAddButton(maxRow + 1, false);
+        Button addButton = newAddButton(++maxRow, false);
         Platform.runLater(() -> parcelBox.getChildren().add(addButton));
 
         updateStyle();

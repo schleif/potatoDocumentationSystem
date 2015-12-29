@@ -66,10 +66,15 @@ ParcelBox:hover{
 
 FieldBox{
     -fx-background-color: white;
+    -fx-background-radius: 5; 
     -fx-border-width: 3;
     -fx-border-color: black;
-    -fx-border-radius: 2;
+    -fx-border-radius: 5;
     -fx-cursor: hand;
+}
+
+FieldBox:hover{
+    -fx-background-color: lightcoral;
 }
 
 #selectedFieldBox{

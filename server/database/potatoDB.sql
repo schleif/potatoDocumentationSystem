@@ -381,3 +381,7 @@ SELECT COUNT( column_nr ) AS counted
 FROM feld 
 GROUP BY row_nr 
 ) AS countColumns;
+
+CREATE PROCEDURE `selectParzelleByAufgabe` ( IN `aufgName` VARCHAR( 255 ) ) NOT DETERMINISTIC NO SQL SQL SECURITY DEFINER SELECT parz_id
+FROM aufg_gehoert_zu_parz
+WHERE aufg_name = aufgName;

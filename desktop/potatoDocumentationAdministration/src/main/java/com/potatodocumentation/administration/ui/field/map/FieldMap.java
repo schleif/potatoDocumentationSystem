@@ -119,7 +119,7 @@ public class FieldMap extends ScrollPane {
                         selectedParcels);
 
                 fields.add(field);
-                field.getParcel().updateParcelBox();
+                field.update();
                 rowBox.getChildren().add(field);
             }
             //Add the addButton

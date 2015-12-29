@@ -5,6 +5,10 @@
  */
 package com.potatodocumentation.administration.ui.field;
 
+import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.SimpleDoubleProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.layout.AnchorPane;
@@ -18,6 +22,11 @@ import javafx.scene.text.FontPosture;
  * @author Ochi
  */
 public class ParcelBox extends VBox {
+    
+    /**
+     * Indicated the width of all ParcelBoxes t
+     */
+    public static DoubleProperty maxWidth = new SimpleDoubleProperty(10);
 
     private int id;
     private String sort;
@@ -43,6 +52,9 @@ public class ParcelBox extends VBox {
 
         getChildren().add(header);
         getChildren().add(sortLabel);
+        
+        bindWidth();
+        
     }
 
     private AnchorPane initHeader() {
@@ -81,6 +93,17 @@ public class ParcelBox extends VBox {
 
     public int getParcelId() {
         return id;
+    }
+
+    private void bindWidth() {
+        //Set maxWidth on width change
+        widthProperty().addListener((ObservableValue<? extends Number> ov, Number oldValue, Number newValue) -> {
+            if(newValue.doubleValue() > maxWidth.doubleValue()){
+                maxWidth.setValue(newValue);
+            }
+        });
+        
+        minWidthProperty().bind(maxWidth);
     }
 
 }

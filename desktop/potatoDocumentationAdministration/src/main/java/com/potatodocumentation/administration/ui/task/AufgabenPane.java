@@ -6,9 +6,12 @@
 package com.potatodocumentation.administration.ui.task;
 
 import com.potatodocumentation.administration.MainApplication;
+import com.potatodocumentation.administration.ui.field.map.FieldMap;
 import static com.potatodocumentation.administration.utils.JsonUtils.*;
+import com.potatodocumentation.administration.utils.MiscUtils;
 import com.potatodocumentation.administration.utils.ThreadUtils;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
@@ -27,11 +30,13 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.WindowEvent;
@@ -50,8 +55,9 @@ public class AufgabenPane extends HBox implements EventHandler<KeyEvent> {
     Label detailLabel;
     ListView<String> taskList;
     ListView<String> propertyList;
-    ListView<String> parzellenList;
     ListView<String> dateList;
+    ScrollPane mapPane;
+    FieldMap map;
     VBox detailBox;
     VBox taskBox;
     AnchorPane taskBoxHeader;
@@ -62,7 +68,7 @@ public class AufgabenPane extends HBox implements EventHandler<KeyEvent> {
     private String activeTask;
 
     ArrayList<Node> allItems = new ArrayList<>();
-    
+
     String typedKeys;
 
     public AufgabenPane() {
@@ -84,12 +90,12 @@ public class AufgabenPane extends HBox implements EventHandler<KeyEvent> {
         detailBoxHeader = initDetailBoxHeader();
 
         //DetailBox
+        mapPane = initMapPane();
         propertyLabel = initPropertyLabel();
         propertyList = initPropertyList();
         dateLabel = initDateLabel();
         dateList = initDateList();
         parzellenLabel = initParzellenLabel();
-        parzellenList = initParzellenList();
         detailBox = initDetailBox();
 
         initLayout();
@@ -105,7 +111,7 @@ public class AufgabenPane extends HBox implements EventHandler<KeyEvent> {
         allItems.add(detailLabel);
         allItems.add(taskList);
         allItems.add(propertyList);
-        allItems.add(parzellenList);
+        allItems.add(mapPane);
         allItems.add(dateList);
         allItems.add(detailBox);
         allItems.add(taskBox);
@@ -149,12 +155,10 @@ public class AufgabenPane extends HBox implements EventHandler<KeyEvent> {
         ListView<String> listView = new ListView<>(items);
 
         return listView;
-//throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     private Label initDateLabel() {
         return new Label("Termine:");
-// throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     private ListView<String> initDateList() {
@@ -163,12 +167,10 @@ public class AufgabenPane extends HBox implements EventHandler<KeyEvent> {
         ListView<String> listView = new ListView<>(items);
 
         return listView;
-//throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     private Label initParzellenLabel() {
         return new Label("Verknüpfte Parzellen:");
-//throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     private ListView<String> initParzellenList() {
@@ -177,7 +179,6 @@ public class AufgabenPane extends HBox implements EventHandler<KeyEvent> {
         ListView<String> listView = new ListView<>(items);
 
         return listView;
-//throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     private VBox initDetailBox() {
@@ -187,7 +188,6 @@ public class AufgabenPane extends HBox implements EventHandler<KeyEvent> {
         vBox.setId("detailBox");
 
         return vBox;
-// throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     private void initLayout() {
@@ -203,7 +203,7 @@ public class AufgabenPane extends HBox implements EventHandler<KeyEvent> {
         dateVBox.getChildren().addAll(dateLabel, dateList);
 
         VBox parzellenVBox = new VBox(10);
-        parzellenVBox.getChildren().addAll(parzellenLabel, parzellenList);
+        parzellenVBox.getChildren().addAll(parzellenLabel, mapPane);
 
         detailSouth.getChildren().addAll(propertyVBox, dateVBox, parzellenVBox);
 
@@ -222,7 +222,7 @@ public class AufgabenPane extends HBox implements EventHandler<KeyEvent> {
         }
         ThreadUtils.runAsTask(() -> updatePropertyList());
         ThreadUtils.runAsTask(() -> updateDateList());
-        ThreadUtils.runAsTask(() -> updateParzellenList());
+        ThreadUtils.runAsTask(() -> updateMap());
 
         deleteButton.setDisable(false);
 
@@ -284,26 +284,6 @@ public class AufgabenPane extends HBox implements EventHandler<KeyEvent> {
         return null;
     }
 
-    /**
-     * This method should be called in another Task since it establishes a
-     * network connection! Therefore it uses Platform.runLater() to update the
-     * UI of the Application.
-     */
-    private Void updateParzellenList() {
-        ObservableList<String> items = FXCollections.observableArrayList("Lädt...");
-        Platform.runLater(() -> parzellenList.setItems(items));
-
-        HashMap params = new HashMap();
-
-        params.put("aufg_name", activeTask);
-
-        ObservableList<String> newItems = getJsonResultObservableList(
-                "eig_name", "selectParzellenByAufgabe.php", params);
-
-        Platform.runLater(() -> parzellenList.setItems(newItems));
-
-        return null;
-    }
 
     private Label initDetailLabel() {
         Label label = new Label("Details");
@@ -458,9 +438,42 @@ public class AufgabenPane extends HBox implements EventHandler<KeyEvent> {
     @Override
     public void handle(KeyEvent event) {
         typedKeys = typedKeys + event.getCharacter();
-        if(typedKeys.contains("dance")) {
+        if (typedKeys.contains("dance")) {
             MainApplication.getInstance().go();
             this.rotateAll();
         }
+    }
+
+    private Void updateMap() {
+
+        Platform.runLater(() -> mapPane.setContent(new Label("Lädt...")));
+
+        HashMap params = new HashMap();
+        params.put("aufg_name", activeTask);  
+        ObservableList<String> selectedParcels = getJsonResultObservableList(
+                "parz_id", "selectParzelleByAufgabe.php", params);
+        
+        //Parse Strings to Integer
+        Collection<Integer> parsedCol = 
+                MiscUtils.parseCollectionToInteger(selectedParcels);
+        
+        ObservableList<Integer> parsedList = 
+                FXCollections.observableArrayList(parsedCol);
+        
+        FieldMap fieldMap = new FieldMap(parsedList);
+        
+        fieldMap.setStyle("-fx-font-size: 9;");
+
+        Platform.runLater(() -> mapPane.setContent(fieldMap));
+        
+        return null;
+    }
+
+    private ScrollPane initMapPane() {
+        ScrollPane scrollPane = new ScrollPane(new Label("Aufgabe auswählen"));
+        
+      //  scrollPane.prefHeightProperty().bind(dateList.heightProperty());
+                
+        return scrollPane;
     }
 }

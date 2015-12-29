@@ -10,14 +10,17 @@ import com.potatodocumentation.administration.utils.ThreadUtils;
 import javafx.animation.Interpolator;
 import javafx.animation.RotateTransition;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 import javafx.util.Duration;
 
 /**
@@ -41,16 +44,13 @@ public class FieldStage extends Stage {
         updateButton = initUpdateButton();
         this.map = map;
         
-        Scene scene = new Scene(map);
+        Scene scene = new Scene(new HBox(map));
         
         scene.getStylesheets().add(getClass()
                 .getResource("/styles/potatoStyle.css").toExternalForm());
         
         setTitle("Feld Nr. " + fieldId);
         setScene(scene);
-        
-        
-        
     }
 
     private Label initTitle() {
