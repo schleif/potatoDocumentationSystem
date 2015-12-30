@@ -5,8 +5,11 @@
  */
 package com.potatodocumentation.administration.ui.sort;
 
+import com.potatodocumentation.administration.ui.field.map.FieldMap;
 import static com.potatodocumentation.administration.utils.JsonUtils.*;
+import com.potatodocumentation.administration.utils.MiscUtils;
 import com.potatodocumentation.administration.utils.ThreadUtils;
+import java.util.Collection;
 import java.util.HashMap;
 import javafx.animation.Interpolator;
 import javafx.animation.RotateTransition;
@@ -20,6 +23,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
@@ -39,10 +43,11 @@ public class PotatoSpeciesPane extends HBox {
     Label parcelLabel;
     Label speciesLabel;
     Label detailLabel;
-    ListView<String> parcelList;
     ListView<String> speciesList;
     VBox detailBox;
     VBox speciesBox;
+    ScrollPane mapPane;
+    FieldMap map;
     AnchorPane speciesBoxHeader;
     AnchorPane detailBoxHeader;
     Button updateButton;
@@ -70,7 +75,7 @@ public class PotatoSpeciesPane extends HBox {
 
         //DetailBox
         parcelLabel = initParcelLabel();
-        parcelList = initParcelList();
+        mapPane = initMapPane();
         detailBox = initDetailBox();
 
         initLayout();
@@ -103,21 +108,20 @@ public class PotatoSpeciesPane extends HBox {
     }
 
     private ListView<String> initSpeciesList() {
-        
+
         ListView<String> listView = new ListView<>();
 
         //Add listener on change of selected value
         listView.getSelectionModel().selectedItemProperty()
                 .addListener(
-                        (ObservableValue<? extends String>
-                                observable,
+                        (ObservableValue<? extends String> observable,
                                 String oldValue,
                                 String newValue) -> {
-            onSpeciesListValueChanged();
-        });
+                            onSpeciesListValueChanged();
+                        });
 
         return listView;
-        
+
     }
 
     private VBox initDetailBox() {
@@ -125,7 +129,7 @@ public class PotatoSpeciesPane extends HBox {
 
         //Set ID for the css
         vBox.setId("detailBox");
-        
+
         setHgrow(vBox, Priority.ALWAYS);
 
         return vBox;
@@ -139,7 +143,7 @@ public class PotatoSpeciesPane extends HBox {
         HBox detailSouth = new HBox(10);
 
         VBox taskVBox = new VBox(10);
-        taskVBox.getChildren().addAll(parcelLabel, parcelList);
+        taskVBox.getChildren().addAll(parcelLabel, mapPane);
 
         detailSouth.getChildren().addAll(taskVBox);
 
@@ -156,11 +160,11 @@ public class PotatoSpeciesPane extends HBox {
         if (activeSpecies == null) {
             return;
         }
-        ThreadUtils.runAsTask(() -> updateParcelList());
+        ThreadUtils.runAsTask(() -> updateMap());
 
         deleteButton.setDisable(false);
 
-        detailLabel.setText("Details (" + activeSpecies +")");
+        detailLabel.setText("Details (" + activeSpecies + ")");
     }
 
     /**
@@ -169,11 +173,11 @@ public class PotatoSpeciesPane extends HBox {
      * UI of the Application.
      */
     private Void updateSpeciesList() {
-        
+
         Platform.runLater(() -> updateButton.setDisable(true));
-        
-        ObservableList<String> items =
-                FXCollections.observableArrayList("Lädt...");
+
+        ObservableList<String> items
+                = FXCollections.observableArrayList("Lädt...");
         Platform.runLater(() -> speciesList.setItems(items));
 
         ObservableList<String> newItems = getJsonResultObservableList(
@@ -184,8 +188,31 @@ public class PotatoSpeciesPane extends HBox {
 
         return null;
     }
+    
+        private Void updateMap() {
 
+        Platform.runLater(() -> mapPane.setContent(new Label("Lädt...")));
 
+        HashMap params = new HashMap();
+        params.put("sorte", activeSpecies);
+        ObservableList<String> selectedParcels = getJsonResultObservableList(
+                        "parz_id", "selectParzelleBySorte.php", params);
+
+        //Parse Strings to Integer
+        Collection<Integer> parsedCol
+                = MiscUtils.parseCollectionToInteger(selectedParcels);
+
+        ObservableList<Integer> parsedList
+                = FXCollections.observableArrayList(parsedCol);
+
+        FieldMap fieldMap = new FieldMap(parsedList);
+
+        fieldMap.setStyle("-fx-font-size: 9;");
+
+        Platform.runLater(() -> mapPane.setContent(fieldMap));
+
+        return null;
+    }
 
     private Label initDetailLabel() {
         Label label = new Label("Details");
@@ -198,7 +225,7 @@ public class PotatoSpeciesPane extends HBox {
     private Button initDeleteButton() {
         Image deleteIcon = new Image(
                 getClass().getResourceAsStream(
-                                "/drawables/deleteIcon.png"),
+                        "/drawables/deleteIcon.png"),
                 16.0, 16.0, true, true);
 
         Button button = new Button("Löschen", new ImageView(deleteIcon));
@@ -223,7 +250,7 @@ public class PotatoSpeciesPane extends HBox {
         button.setOnAction((ActionEvent event) -> {
             CreateNewSort stage = new CreateNewSort();
             stage.initModality(Modality.APPLICATION_MODAL);
-            
+
             //Refresh the TaskList after the window is closed
             stage.setOnCloseRequest((WindowEvent event1) -> {
                 ThreadUtils.runAsTask(() -> updateSpeciesList());
@@ -285,10 +312,10 @@ public class PotatoSpeciesPane extends HBox {
 
         button.setOnAction((ActionEvent event) -> {
             ThreadUtils.runAsTask(() -> updateSpeciesList());
-            
+
             //Rotate the icon
-            RotateTransition rotate =
-                    new RotateTransition(Duration.seconds(2), imageView);
+            RotateTransition rotate
+                    = new RotateTransition(Duration.seconds(2), imageView);
             rotate.setFromAngle(0);
             rotate.setToAngle(360);
             rotate.setCycleCount(1);
@@ -299,29 +326,10 @@ public class PotatoSpeciesPane extends HBox {
         return button;
     }
 
-    /**
-     * This method should be called in another Task since it establishes a
-     * network connection! Therefore it uses Platform.runLater() to update the
-     * UI of the Application.
-     */
-    private Void updateParcelList() {
-        ObservableList<String> items =
-                FXCollections.observableArrayList("Lädt...");
-        Platform.runLater(() -> parcelList.setItems(items));
-        
-        HashMap params = new HashMap();
-        params.put("sorte", activeSpecies);
+    private ScrollPane initMapPane() {
+        ScrollPane scrollPane = new ScrollPane(new FieldMap());
 
-        ObservableList<String> tasks
-                = getJsonResultObservableList(
-                        "parz_id",
-                        "selectParzelleBySorte.php",
-                        params);
-
-        Platform.runLater(() -> parcelList.setItems(tasks));
-
-
-        return null;
+        return scrollPane;
     }
 
 }

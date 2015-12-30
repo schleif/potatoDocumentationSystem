@@ -24,7 +24,9 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
+import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.Label;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.DragEvent;
@@ -54,8 +56,10 @@ public class ParcelMap extends VBox {
     private boolean isInSelectionMode = false;
 
     private Button updateButton;
-    private Button editButton;
     private Button selectButton;
+    private Button editButton;
+    private Button deleteButton;
+    private HBox editModeBox;
     private HBox buttonBox;
 
     private VBox parcelBox;
@@ -73,8 +77,10 @@ public class ParcelMap extends VBox {
         this.selectedParcels = selectedParcels;
 
         updateButton = initUpdateButton();
+        selectButton = initSelectButton();
         editButton = initEditButton();
-        selectButton = initselectButton();
+        deleteButton = initDeleteButton();
+        editModeBox = initEditModeBox();
         buttonBox = initButtonBox();
 
         parcelBox = new VBox(2);
@@ -142,7 +148,7 @@ public class ParcelMap extends VBox {
     }
 
     private Button initUpdateButton() {
-        Button button = new Button(" ");
+        Button button = new Button("Aktualisieren");
         button.setId("updateButton");
 
         button.setOnAction((ActionEvent event) -> {
@@ -155,13 +161,11 @@ public class ParcelMap extends VBox {
     private Button initEditButton() {
         Button editButton = new Button("Bearbeite markierte");
 
-        editButton.setVisible(false);
-
         return editButton;
     }
 
-    private Button initselectButton() {
-        Button button = new Button("Markieren");
+    private Button initSelectButton() {
+        Button button = new Button("Markieren ist aus");
 
         button.setOnAction((ActionEvent event) -> {
             onSelectButtonPressed();
@@ -171,7 +175,7 @@ public class ParcelMap extends VBox {
     }
 
     private HBox initButtonBox() {
-        HBox hBox = new HBox(editButton, selectButton, updateButton);
+        HBox hBox = new HBox(10, editModeBox, selectButton, updateButton);
         hBox.setAlignment(Pos.CENTER_RIGHT);
 
         return hBox;
@@ -180,7 +184,12 @@ public class ParcelMap extends VBox {
     private void onSelectButtonPressed() {
         isInSelectionMode = !isInSelectionMode;
 
-        editButton.setVisible(isInSelectionMode);
+        editModeBox.setVisible(isInSelectionMode);
+        
+        //Change text of the select Button
+        String buttonString = "Markieren ist " 
+                + (isInSelectionMode ? "an" : "aus");
+        selectButton.setText(buttonString);
 
         for (ParcelBox parcel : parcels) {
             if (isInSelectionMode) {
@@ -391,5 +400,21 @@ public class ParcelMap extends VBox {
                 parcel.getStyleClass().remove("marked-parcel-box");
             }
         }
+    }
+
+    private Button initDeleteButton() {
+
+        Button button = new Button("Lösche markierte");
+        button.setId("deleteButton");
+
+        return button;
+    }
+
+    private HBox initEditModeBox() {
+        HBox hBox = new HBox(10, deleteButton, editButton);
+        
+        hBox.setVisible(false);
+        
+        return hBox;
     }
 }

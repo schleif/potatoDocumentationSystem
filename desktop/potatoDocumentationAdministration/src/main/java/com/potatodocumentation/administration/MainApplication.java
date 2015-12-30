@@ -10,6 +10,8 @@ import com.potatodocumentation.administration.ui.FootPane;
 import com.potatodocumentation.administration.ui.menu.MenuPane;
 import com.potatodocumentation.administration.ui.task.AufgabenPane;
 import javafx.application.Application;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.event.EventType;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
@@ -48,7 +50,8 @@ public class MainApplication extends Application {
         
         BorderPane.setMargin(contentPane, new Insets(10, 10, 10, 10));
         
-        Scene scene = new Scene(mainPane);
+        Scene scene = new Scene(mainPane, 1250, 555);
+        
         //Add css
         scene.getStylesheets().add(getClass()
                 .getResource("/styles/potatoStyle.css").toExternalForm());

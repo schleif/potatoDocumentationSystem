@@ -39,8 +39,9 @@ ParcelBox:hover{
     -fx-background-color: lightcoral;
 }
 
-#scrollPane{
+ScrollPane{
     -fx-background-color: transparent;
+    -fx-border-color: transparent;
 }
 
 #deleteButton{

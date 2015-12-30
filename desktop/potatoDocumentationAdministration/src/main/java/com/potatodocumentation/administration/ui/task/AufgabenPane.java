@@ -186,6 +186,8 @@ public class AufgabenPane extends HBox implements EventHandler<KeyEvent> {
 
         //Set ID for the css
         vBox.setId("detailBox");
+        
+        vBox.setDisable(true);
 
         return vBox;
     }
@@ -215,6 +217,8 @@ public class AufgabenPane extends HBox implements EventHandler<KeyEvent> {
     }
 
     private void onTaskListValueChanged() {
+        detailBox.setDisable(false);
+        
         activeTask = taskList.getSelectionModel().getSelectedItem();
 
         if (activeTask == null) {
@@ -227,6 +231,7 @@ public class AufgabenPane extends HBox implements EventHandler<KeyEvent> {
         deleteButton.setDisable(false);
 
         detailLabel.setText("Details (" + activeTask + ")");
+
     }
 
     /**
@@ -283,7 +288,6 @@ public class AufgabenPane extends HBox implements EventHandler<KeyEvent> {
 
         return null;
     }
-
 
     private Label initDetailLabel() {
         Label label = new Label("Details");
@@ -449,31 +453,29 @@ public class AufgabenPane extends HBox implements EventHandler<KeyEvent> {
         Platform.runLater(() -> mapPane.setContent(new Label("Lädt...")));
 
         HashMap params = new HashMap();
-        params.put("aufg_name", activeTask);  
+        params.put("aufg_name", activeTask);
         ObservableList<String> selectedParcels = getJsonResultObservableList(
                 "parz_id", "selectParzelleByAufgabe.php", params);
-        
+
         //Parse Strings to Integer
-        Collection<Integer> parsedCol = 
-                MiscUtils.parseCollectionToInteger(selectedParcels);
-        
-        ObservableList<Integer> parsedList = 
-                FXCollections.observableArrayList(parsedCol);
-        
+        Collection<Integer> parsedCol
+                = MiscUtils.parseCollectionToInteger(selectedParcels);
+
+        ObservableList<Integer> parsedList
+                = FXCollections.observableArrayList(parsedCol);
+
         FieldMap fieldMap = new FieldMap(parsedList);
-        
+
         fieldMap.setStyle("-fx-font-size: 9;");
 
         Platform.runLater(() -> mapPane.setContent(fieldMap));
-        
+
         return null;
     }
 
     private ScrollPane initMapPane() {
-        ScrollPane scrollPane = new ScrollPane(new Label("Aufgabe auswählen"));
+        ScrollPane scrollPane = new ScrollPane(new FieldMap());
         
-      //  scrollPane.prefHeightProperty().bind(dateList.heightProperty());
-                
         return scrollPane;
     }
 }
