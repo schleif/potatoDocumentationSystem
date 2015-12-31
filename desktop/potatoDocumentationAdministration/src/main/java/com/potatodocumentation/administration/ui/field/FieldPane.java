@@ -26,7 +26,6 @@ import javafx.util.Duration;
 public class FieldPane extends VBox {
     
     private Label title;
-    private Button updateButton;
     private AnchorPane header;
     private FieldMap fieldMap;
 
@@ -34,9 +33,8 @@ public class FieldPane extends VBox {
         super(10);
 
         title = initTitle();
-        updateButton = initUpdateButton();
         header = initHeader();
-        fieldMap = new FieldMap();
+        fieldMap = new FieldMap(true, true);
 
         getChildren().add(header);
         getChildren().add(fieldMap);
@@ -45,10 +43,9 @@ public class FieldPane extends VBox {
     }
 
     private AnchorPane initHeader() {
-        AnchorPane anchorPane = new AnchorPane(title, updateButton);
+        AnchorPane anchorPane = new AnchorPane(title);
 
         AnchorPane.setLeftAnchor(title, 10.0);
-        AnchorPane.setRightAnchor(updateButton, 10.0);
 
         return anchorPane;
     }

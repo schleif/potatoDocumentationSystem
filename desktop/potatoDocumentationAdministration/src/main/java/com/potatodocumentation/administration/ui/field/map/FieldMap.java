@@ -6,12 +6,12 @@
 package com.potatodocumentation.administration.ui.field.map;
 
 import com.potatodocumentation.administration.ui.field.FieldBox;
+import com.potatodocumentation.administration.ui.field.ParcelBox;
 import static com.potatodocumentation.administration.utils.JsonUtils.getJsonResultObservableList;
 import static com.potatodocumentation.administration.utils.JsonUtils.getJsonSuccessStatus;
 import com.potatodocumentation.administration.utils.MiscUtils;
 import com.potatodocumentation.administration.utils.ThreadUtils;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import javafx.application.Platform;
@@ -19,13 +19,14 @@ import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
-import javafx.scene.control.ScrollPane;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
@@ -33,35 +34,48 @@ import javafx.scene.layout.VBox;
  *
  * @author Ochi
  */
-public class FieldMap extends ScrollPane {
+public class FieldMap extends VBox {
 
     private List<FieldBox> fields = new ArrayList<>();
-    private ObservableList<Integer> selectedParcels = FXCollections
+    private ObservableList<Integer> selectedParcels;
+    private ObservableList<Integer> selectedFields = FXCollections
             .observableArrayList();
+    private EventHandler fieldSelectionHandler;
 
     private int maxColumn = 10;
-    private boolean smallMode;
+    private boolean isEditable;
+    private final boolean isSelectable;
+    private boolean isInSelectionMode = false;
 
     private Label loadLabel;
     private VBox fieldBox;
 
-    public FieldMap(ObservableList<Integer> selectedParcels) {
-        this();
+    private Button updateButton;
+    private Button selectButton;
+    private Button editButton;
+    private Button deleteButton;
+    private HBox editModeBox;
+    private HBox buttonBox;
+
+    public FieldMap(ObservableList<Integer> selectedParcels, boolean editable, 
+            boolean selectable) {
+        super(10);
 
         this.selectedParcels = selectedParcels;
-
-        selectedParcels.addListener((ListChangeListener.Change<? extends Integer> c) -> {
-            updateStyle();
-        });
-
-    }
-
-    public FieldMap() {
-
-        this.smallMode = smallMode;
+        this.isEditable = editable;
+        this.isSelectable = selectable;
 
         loadLabel = new Label("Lädt...");
         fieldBox = new VBox(10);
+
+        updateButton = initUpdateButton();
+        selectButton = initSelectButton();
+        editButton = initEditButton();
+        deleteButton = initDeleteButton();
+        editModeBox = initEditModeBox();
+        buttonBox = initButtonBox();
+
+        getChildren().addAll(buttonBox, loadLabel, fieldBox);
 
         ThreadUtils.runAsTask(() -> update());
 
@@ -71,11 +85,16 @@ public class FieldMap extends ScrollPane {
 
     }
 
+    public FieldMap(boolean editable, boolean selectable) {
+        //Start new FieldMap with empty selectedParcels list
+        this(FXCollections.observableArrayList(), editable, selectable);
+    }
+
     //Should be called as new Task
     public Void update() {
 
-        //Indicate loading by setting the load Label as content
-        Platform.runLater(() -> setContent(loadLabel));
+        //Indicate loading
+        indicateLoading(true);
 
         Platform.runLater(() -> fieldBox.getChildren().clear());
         fields.clear();
@@ -115,8 +134,7 @@ public class FieldMap extends ScrollPane {
             //Add all fields to rowBox
             for (String fieldNr : fieldsOfRow) {
 
-                FieldBox field = new FieldBox(Integer.parseInt(fieldNr),
-                        selectedParcels);
+                FieldBox field = createNewField(Integer.parseInt(fieldNr));
 
                 fields.add(field);
                 field.update();
@@ -129,7 +147,7 @@ public class FieldMap extends ScrollPane {
             Platform.runLater(() -> fieldBox.getChildren().add(rowBox));
         }
 
-        Platform.runLater(() -> setContent(fieldBox));
+        indicateLoading(false);
 
         updateStyle();
 
@@ -137,11 +155,16 @@ public class FieldMap extends ScrollPane {
     }
 
     private Button initAddButton(String rowNr) {
+
         Button addButton = new Button("+");
         addButton.setId("createButton");
         addButton.setOnAction((ActionEvent e) -> {
             onPlusClicked(Integer.parseInt(rowNr));
         });
+
+        //Only show Button if Map is editable
+        addButton.setVisible(isEditable);
+        addButton.setManaged(isEditable);
 
         return addButton;
     }
@@ -189,5 +212,128 @@ public class FieldMap extends ScrollPane {
                 field.setId(null);
             }
         }
+    }
+
+    private FieldBox createNewField(int fieldNr) {
+
+        ObservableList list = (isEditable ? FXCollections.observableArrayList()
+                : selectedParcels);
+
+        FieldBox field = new FieldBox(fieldNr, list, isEditable, isSelectable);
+
+        return field;
+    }
+
+    private Button initUpdateButton() {
+        Button button = new Button("Aktualisieren");
+        button.setId("updateButton");
+
+        button.setOnAction((ActionEvent event) -> {
+            ThreadUtils.runAsTask(() -> update());
+        });
+
+        return button;
+    }
+
+    private Button initSelectButton() {
+        Button button = new Button("Markieren ist aus");
+
+        button.setOnAction((ActionEvent event) -> {
+            onSelectButtonPressed();
+        });
+
+        return button;
+    }
+
+    private Button initEditButton() {
+        Button editButton = new Button("Bearbeite markierte");
+
+        return editButton;
+    }
+
+    private Button initDeleteButton() {
+        Button button = new Button("Lösche markierte");
+        button.setId("deleteButton");
+
+        return button;
+    }
+
+    private HBox initEditModeBox() {
+        HBox hBox = new HBox(10, deleteButton, editButton);
+
+        hBox.setVisible(false);
+        hBox.setManaged(isEditable);
+
+        return hBox;
+    }
+
+    private HBox initButtonBox() {
+        HBox hBox = new HBox(10, editModeBox, selectButton, updateButton);
+        hBox.setAlignment(Pos.CENTER_RIGHT);
+        
+        hBox.setVisible(isSelectable);
+        hBox.setManaged(isSelectable);
+
+        return hBox;
+    }
+
+    private void indicateLoading(boolean isLoading) {
+        Platform.runLater(() -> fieldBox.setManaged(!isLoading));
+        Platform.runLater(() -> fieldBox.setVisible(!isLoading));
+        
+        Platform.runLater(() -> loadLabel.setManaged(isLoading));
+        Platform.runLater(() -> loadLabel.setVisible(isLoading));
+    }
+
+    private void onSelectButtonPressed() {
+        isInSelectionMode = !isInSelectionMode;
+
+        editModeBox.setVisible(isEditable && isInSelectionMode);
+
+        //Change text of the select Button
+        String buttonString = "Markieren ist "
+                + (isInSelectionMode ? "an" : "aus");
+        selectButton.setText(buttonString);
+
+        for (FieldBox field : fields) {
+            if (isInSelectionMode) {
+                field.setOnMouseClicked(fieldSelectionHandler());
+            } else {
+                field.setOnMouseClicked(field.openFieldStageHandler());
+            }
+        }
+    }
+
+    /**
+     * Adds/Removes a FieldBox to/from selectedField. Can only be used on
+     * instances of FieldBox.
+     *
+     * @return
+     */
+    private EventHandler<MouseEvent> fieldSelectionHandler() {
+        //Singelton
+        if (fieldSelectionHandler == null) {
+
+            EventHandler<MouseEvent> eventHandler = (MouseEvent event) -> {
+                FieldBox field = (FieldBox) event.getSource();
+                int fieldID = field.getFieldId();
+
+                // Add/remove parcel and update style
+                if (selectedFields.contains(fieldID)) {
+                    selectedFields.remove(new Integer(fieldID));
+                    field.getStyleClass().remove("marked-field");
+                } else {
+                    selectedFields.add(fieldID);
+                    field.getStyleClass().add("marked-field");
+                }
+
+                System.out.println("Fields: " + selectedFields);
+            };
+
+            fieldSelectionHandler = eventHandler;
+
+        }
+
+        return fieldSelectionHandler;
     }
 }

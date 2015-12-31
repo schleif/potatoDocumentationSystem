@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.Map;
 import javafx.animation.Timeline;
 import javafx.application.Platform;
+import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -48,15 +49,19 @@ public class ParcelMap extends VBox {
     /**
      * All selected parcels
      */
-    private List<Integer> selectedParcels;
+    private ObservableList<Integer> selectedParcels;
     private EventHandler parcelSelectionHandler;
+    private final boolean isEditable;
 
     private int fieldID;
     private List<ParcelBox> parcels;
     private boolean isInSelectionMode = false;
+    private final boolean isSelectable;
 
     private Button updateButton;
     private Button selectButton;
+    private Button selectAllButton;
+    private Button deselectAllButton;
     private Button editButton;
     private Button deleteButton;
     private HBox editModeBox;
@@ -68,16 +73,21 @@ public class ParcelMap extends VBox {
 
     private ImageView dragIcon = new ImageView();
 
-    public ParcelMap(int fieldID, List<Integer> selectedParcels) {
+    public ParcelMap(int fieldID, ObservableList<Integer> selectedParcels,
+            boolean editable, boolean selectable) {
         super(10);
 
         this.fieldID = fieldID;
 
+        this.isEditable = editable;
+        this.isSelectable = selectable;
         this.parcels = new ArrayList<>();
         this.selectedParcels = selectedParcels;
 
         updateButton = initUpdateButton();
         selectButton = initSelectButton();
+        selectAllButton = initSelectAllButton();
+        deselectAllButton = initDeselectAllButton();
         editButton = initEditButton();
         deleteButton = initDeleteButton();
         editModeBox = initEditModeBox();
@@ -86,6 +96,12 @@ public class ParcelMap extends VBox {
         parcelBox = new VBox(2);
 
         loadLabel = initLoadLabel();
+        
+        selectedParcels.addListener(
+                (ListChangeListener.Change<? extends Integer> c) -> {
+            updateStyle();
+                    System.out.println(selectedParcels);
+        });
 
         getChildren().addAll(buttonBox, loadLabel, parcelBox);
     }
@@ -175,8 +191,12 @@ public class ParcelMap extends VBox {
     }
 
     private HBox initButtonBox() {
-        HBox hBox = new HBox(10, editModeBox, selectButton, updateButton);
+        HBox hBox = new HBox(10, editModeBox, selectButton, selectAllButton,
+                deselectAllButton, updateButton);
         hBox.setAlignment(Pos.CENTER_RIGHT);
+
+        hBox.setVisible(isSelectable);
+        hBox.setManaged(isSelectable);
 
         return hBox;
     }
@@ -184,20 +204,19 @@ public class ParcelMap extends VBox {
     private void onSelectButtonPressed() {
         isInSelectionMode = !isInSelectionMode;
 
-        editModeBox.setVisible(isInSelectionMode);
-        
+        editModeBox.setVisible(isEditable && isInSelectionMode);
+
         //Change text of the select Button
-        String buttonString = "Markieren ist " 
+        String buttonString = "Markieren ist "
                 + (isInSelectionMode ? "an" : "aus");
         selectButton.setText(buttonString);
 
         for (ParcelBox parcel : parcels) {
             if (isInSelectionMode) {
-                parcel.addEventHandler(MouseEvent.MOUSE_CLICKED,
-                        parcelSelectionHandler());
+                parcel.setOnMouseClicked(parcelSelectionHandler());
             } else {
-                parcel.removeEventHandler(MouseEvent.MOUSE_CLICKED,
-                        parcelSelectionHandler());
+                parcel.setOnMouseClicked((MouseEvent event) -> {
+                });
             }
         }
 
@@ -322,18 +341,26 @@ public class ParcelMap extends VBox {
             createNewParcel(row, 1, 1, fixedRows);
         });
 
+        addButton.setVisible(isEditable);
+        addButton.setManaged(isEditable);
+
         return addButton;
     }
 
     private Label initLoadLabel() {
         Label label = new Label("Lädt...");
+
         label.setVisible(false);
+        label.setManaged(false);
 
         return label;
     }
 
     private void indicateLoading(boolean isLoading) {
+        Platform.runLater(() -> parcelBox.setManaged(!isLoading));
         Platform.runLater(() -> parcelBox.setVisible(!isLoading));
+
+        Platform.runLater(() -> loadLabel.setManaged(isLoading));
         Platform.runLater(() -> loadLabel.setVisible(isLoading));
     }
 
@@ -366,10 +393,8 @@ public class ParcelMap extends VBox {
                 // Add/remove parcel and update style
                 if (selectedParcels.contains(parcelId)) {
                     selectedParcels.remove(new Integer(parcelId));
-                    parcel.getStyleClass().remove("marked-parcel-box");
                 } else {
                     selectedParcels.add(parcelId);
-                    parcel.getStyleClass().add("marked-parcel-box");
                 }
 
                 System.out.println(selectedParcels);
@@ -397,7 +422,7 @@ public class ParcelMap extends VBox {
             if (selectedParcels.contains(parcel.getParcelId())) {
                 parcel.getStyleClass().add("marked-parcel-box");
             } else {
-                parcel.getStyleClass().remove("marked-parcel-box");
+                parcel.getStyleClass().clear();
             }
         }
     }
@@ -412,9 +437,39 @@ public class ParcelMap extends VBox {
 
     private HBox initEditModeBox() {
         HBox hBox = new HBox(10, deleteButton, editButton);
-        
+
         hBox.setVisible(false);
-        
+        hBox.setManaged(isEditable);
+
         return hBox;
+    }
+
+    private Button initSelectAllButton() {
+        Button button = new Button("Alle auswählen");
+
+        button.setOnAction((ActionEvent event) -> {
+            for (ParcelBox parcel : parcels) {
+                int id = parcel.getParcelId();
+                if (!selectedParcels.contains(id)) {
+                    selectedParcels.add(id);
+                }
+            }
+            updateStyle();
+        });
+
+        return button;
+    }
+
+    private Button initDeselectAllButton() {
+        Button button = new Button("Alle abwählen");
+
+        button.setOnAction((ActionEvent event) -> {
+            for (ParcelBox parcel : parcels) {
+                selectedParcels.remove(new Integer(parcel.getParcelId()));
+            }
+            updateStyle();
+        });
+
+        return button;
     }
 }

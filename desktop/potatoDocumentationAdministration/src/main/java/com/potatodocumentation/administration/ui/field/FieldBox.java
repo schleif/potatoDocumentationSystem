@@ -8,7 +8,11 @@ package com.potatodocumentation.administration.ui.field;
 import com.potatodocumentation.administration.ui.field.map.ParcelMap;
 import com.potatodocumentation.administration.utils.ThreadUtils;
 import java.util.List;
+import java.util.Observable;
+import javafx.collections.ObservableList;
+import javafx.event.EventHandler;
 import javafx.geometry.Pos;
+import javafx.scene.AccessibleAttribute;
 import javafx.scene.control.Label;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.VBox;
@@ -23,27 +27,31 @@ public class FieldBox extends VBox {
 
     private int fieldID;
     private ParcelMap parcel;
-    private List<Integer> selectedParcels;
+    private ObservableList<Integer> selectedParcels;
 
     private Label label;
+    private final boolean isEditable;
+    private final boolean isSelectable;
 
-    public FieldBox(int fieldID, List<Integer> selectedParcels) {
+    public FieldBox(int fieldID, ObservableList<Integer> selectedParcels,
+            boolean editable, boolean selectable) {
         super(10);
-        
+
         setStyle();
 
         //Init private variables
         this.fieldID = fieldID;
+        this.isEditable = editable;
+        this.isSelectable = selectable;
 
         label = initLabel();
         this.selectedParcels = selectedParcels;
 
-        parcel = new ParcelMap(fieldID, selectedParcels);
+        parcel = new ParcelMap(fieldID, selectedParcels, isEditable,
+                isSelectable);
 
         //Set OnClick
-        setOnMouseClicked((MouseEvent e) -> {
-            openFieldStage(fieldID);
-        });
+        setOnMouseClicked(openFieldStageHandler());
 
         //add nodes
         getChildren().add(label);
@@ -55,11 +63,16 @@ public class FieldBox extends VBox {
         return new Label(labelString);
     }
 
-    private void openFieldStage(int field) {
-        FieldStage stage = new FieldStage(field, parcel);
-        stage.initModality(Modality.APPLICATION_MODAL);
+    public EventHandler openFieldStageHandler() {
+        EventHandler mouseClickHandler
+                = (EventHandler<MouseEvent>) (MouseEvent event) -> {
+                    FieldStage stage = new FieldStage(fieldID, parcel);
+                    stage.initModality(Modality.APPLICATION_MODAL);
 
-        stage.show();
+                    stage.show();
+                };
+
+        return mouseClickHandler;
     }
 
     private void setStyle() {

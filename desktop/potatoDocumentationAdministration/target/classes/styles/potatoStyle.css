@@ -63,6 +63,10 @@ ScrollPane{
     -fx-border-color: #ff9900;
 }
 
+.unmarked-parcel-box{
+    -fx-border-color: black;
+}
+
 //FieldBox styles
 
 FieldBox{
@@ -84,5 +88,9 @@ FieldBox:hover{
 
 #partialSelectedFieldBox{
     -fx-border-color: orange;
-    -fx-border-style: dashed;
+    -fx-border-style: dotted;
+}
+
+.marked-field{
+    -fx-border-color: #ff9900;
 }

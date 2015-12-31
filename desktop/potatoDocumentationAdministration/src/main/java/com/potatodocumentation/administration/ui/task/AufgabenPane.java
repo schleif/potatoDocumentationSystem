@@ -464,7 +464,7 @@ public class AufgabenPane extends HBox implements EventHandler<KeyEvent> {
         ObservableList<Integer> parsedList
                 = FXCollections.observableArrayList(parsedCol);
 
-        FieldMap fieldMap = new FieldMap(parsedList);
+        FieldMap fieldMap = new FieldMap(parsedList, false, false);
 
         fieldMap.setStyle("-fx-font-size: 9;");
 
@@ -474,7 +474,7 @@ public class AufgabenPane extends HBox implements EventHandler<KeyEvent> {
     }
 
     private ScrollPane initMapPane() {
-        ScrollPane scrollPane = new ScrollPane(new FieldMap());
+        ScrollPane scrollPane = new ScrollPane(new FieldMap(false, false));
         
         return scrollPane;
     }

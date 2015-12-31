@@ -205,7 +205,7 @@ public class PotatoSpeciesPane extends HBox {
         ObservableList<Integer> parsedList
                 = FXCollections.observableArrayList(parsedCol);
 
-        FieldMap fieldMap = new FieldMap(parsedList);
+        FieldMap fieldMap = new FieldMap(parsedList, false, false);
 
         fieldMap.setStyle("-fx-font-size: 9;");
 
@@ -327,7 +327,7 @@ public class PotatoSpeciesPane extends HBox {
     }
 
     private ScrollPane initMapPane() {
-        ScrollPane scrollPane = new ScrollPane(new FieldMap());
+        ScrollPane scrollPane = new ScrollPane(new FieldMap(false, false));
 
         return scrollPane;
     }
