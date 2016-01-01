@@ -142,7 +142,9 @@ public class AufgabenPane extends HBox implements EventHandler<KeyEvent> {
     }
 
     private Label initTaskLabel() {
-        return new Label("Aufgaben:");
+        Label title =  new Label("Aufgaben");
+        title.setId("title");
+        return title;
     }
 
     private Label initPropertyLabel() {
@@ -346,7 +348,7 @@ public class AufgabenPane extends HBox implements EventHandler<KeyEvent> {
     }
 
     private VBox initTaskBox() {
-        VBox vBox = new VBox(taskBoxHeader, taskList, createButton);
+        VBox vBox = new VBox(taskLabel, taskBoxHeader, taskList, createButton);
 
         vBox.getChildren().stream().forEach((child) -> {
             VBox.setMargin(child, new Insets(10));
@@ -356,9 +358,8 @@ public class AufgabenPane extends HBox implements EventHandler<KeyEvent> {
     }
 
     private AnchorPane initTaskBoxHeader() {
-        AnchorPane anchorPane = new AnchorPane(taskLabel, updateButton);
+        AnchorPane anchorPane = new AnchorPane(updateButton);
 
-        AnchorPane.setLeftAnchor(taskLabel, 10.0);
         AnchorPane.setRightAnchor(updateButton, 10.0);
 
         anchorPane.getChildren().stream().forEach((child) -> {

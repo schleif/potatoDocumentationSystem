@@ -22,6 +22,7 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
@@ -40,6 +41,14 @@ public class FieldMap extends VBox {
     private ObservableList<Integer> selectedParcels;
     private ObservableList<Integer> selectedFields = FXCollections
             .observableArrayList();
+
+    public ObservableList<Integer> getSelectedParcels() {
+        return selectedParcels;
+    }
+
+    public ObservableList<Integer> getSelectedFields() {
+        return selectedFields;
+    }
     private EventHandler fieldSelectionHandler;
 
     private int maxColumn = 10;
@@ -57,7 +66,7 @@ public class FieldMap extends VBox {
     private HBox editModeBox;
     private HBox buttonBox;
 
-    public FieldMap(ObservableList<Integer> selectedParcels, boolean editable, 
+    public FieldMap(ObservableList<Integer> selectedParcels, boolean editable,
             boolean selectable) {
         super(10);
 
@@ -82,6 +91,10 @@ public class FieldMap extends VBox {
         selectedParcels.addListener((ListChangeListener.Change<? extends Integer> c) -> {
             updateStyle();
         });
+        
+        for(Node node : getChildren()){
+            VBox.setMargin(node, new Insets(10));
+        }
 
     }
 
@@ -270,7 +283,7 @@ public class FieldMap extends VBox {
     private HBox initButtonBox() {
         HBox hBox = new HBox(10, editModeBox, selectButton, updateButton);
         hBox.setAlignment(Pos.CENTER_RIGHT);
-        
+
         hBox.setVisible(isSelectable);
         hBox.setManaged(isSelectable);
 
@@ -280,7 +293,7 @@ public class FieldMap extends VBox {
     private void indicateLoading(boolean isLoading) {
         Platform.runLater(() -> fieldBox.setManaged(!isLoading));
         Platform.runLater(() -> fieldBox.setVisible(!isLoading));
-        
+
         Platform.runLater(() -> loadLabel.setManaged(isLoading));
         Platform.runLater(() -> loadLabel.setVisible(isLoading));
     }
@@ -316,18 +329,29 @@ public class FieldMap extends VBox {
 
             EventHandler<MouseEvent> eventHandler = (MouseEvent event) -> {
                 FieldBox field = (FieldBox) event.getSource();
-                int fieldID = field.getFieldId();
-
-                // Add/remove parcel and update style
-                if (selectedFields.contains(fieldID)) {
-                    selectedFields.remove(new Integer(fieldID));
-                    field.getStyleClass().remove("marked-field");
+                if (!isEditable) {
+                    /**
+                     * If the map is not editable add all parcels instead of 
+                     * adding the fields to selectedFields
+                     **/
+                    if (field.isFullySelected()) {
+                        field.getParcel().deselectAll();
+                    } else {
+                        field.getParcel().selectAll();
+                    }
                 } else {
-                    selectedFields.add(fieldID);
-                    field.getStyleClass().add("marked-field");
-                }
 
-                System.out.println("Fields: " + selectedFields);
+                    int fieldID = field.getFieldId();
+
+                    // Add/remove parcel and update style
+                    if (selectedFields.contains(fieldID)) {
+                        selectedFields.remove(new Integer(fieldID));
+                        field.getStyleClass().remove("marked-field");
+                    } else {
+                        selectedFields.add(fieldID);
+                        field.getStyleClass().add("marked-field");
+                    }
+                }
             };
 
             fieldSelectionHandler = eventHandler;

@@ -10,6 +10,20 @@ and open the template in the editor.
 .root{
     -fx-font-family: 'monospaced';
 }
+
+#title{
+    -fx-text-fill: grey;
+    -fx-font-family: sans-serif;
+    -fx-font-size: 30;
+    -fx-font-style: italic;
+}
+
+Button{
+    -fx-background-color: lightgrey;
+    -fx-cursor: hand;
+}
+
+
 #detailBox{
     -fx-background-color: #e8e8e8;
     -fx-border-style: solid;
@@ -45,26 +59,25 @@ ScrollPane{
 }
 
 #deleteButton{
-    -fx-base: red;
-    -fx-background-radius: 20;
+    -fx-background-radius: 5;
+    -fx-background-color: indianred;
+    -fx-text-fill: white;
 }
 
 #updateButton{
-    -fx-base: blue;
-    -fx-background-radius: 20;
+    -fx-background-radius: 5;
+    -fx-background-color: cornflowerblue;
+    -fx-text-fill: white;
 }
 
 #createButton{
-    -fx-base: green;
-    -fx-background-radius: 20;
+    -fx-background-radius: 5;
+    -fx-background-color: darkseagreen;
+    -fx-text-fill: white;
 }
 
 .marked-parcel-box{
     -fx-border-color: #ff9900;
-}
-
-.unmarked-parcel-box{
-    -fx-border-color: black;
 }
 
 //FieldBox styles
@@ -93,4 +106,9 @@ FieldBox:hover{
 
 .marked-field{
     -fx-border-color: #ff9900;
+}
+
+FootPane{
+    -fx-border-width: 1 0 0 0;
+    -fx-border-color: lightgrey;
 }

@@ -13,6 +13,7 @@ import javafx.event.ActionEvent;
 import javafx.scene.control.Button;
 import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.Label;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
@@ -28,6 +29,7 @@ public class FieldPane extends VBox {
     private Label title;
     private AnchorPane header;
     private FieldMap fieldMap;
+    private ScrollPane mapPane;
 
     public FieldPane() {
         super(10);
@@ -35,9 +37,10 @@ public class FieldPane extends VBox {
         title = initTitle();
         header = initHeader();
         fieldMap = new FieldMap(true, true);
+        mapPane = new ScrollPane(fieldMap);
 
         getChildren().add(header);
-        getChildren().add(fieldMap);
+        getChildren().add(mapPane);
         
         fieldMap.setStyle("-fx-font-size: " + 20 + ";");
     }
@@ -51,7 +54,9 @@ public class FieldPane extends VBox {
     }
 
     private Label initTitle() {
-        return new Label("Felder");
+        Label title= new Label("Felder");
+        title.setId("title");
+        return title;
     }
 
     private Button initUpdateButton() {

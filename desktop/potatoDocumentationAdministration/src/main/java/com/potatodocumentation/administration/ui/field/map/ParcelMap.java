@@ -96,12 +96,12 @@ public class ParcelMap extends VBox {
         parcelBox = new VBox(2);
 
         loadLabel = initLoadLabel();
-        
+
         selectedParcels.addListener(
                 (ListChangeListener.Change<? extends Integer> c) -> {
-            updateStyle();
+                    updateStyle();
                     System.out.println(selectedParcels);
-        });
+                });
 
         getChildren().addAll(buttonBox, loadLabel, parcelBox);
     }
@@ -223,6 +223,11 @@ public class ParcelMap extends VBox {
     }
 
     private void addDragFeature(ParcelBox parcel) {
+        //Only add feature if in Edit mode
+        if (!isEditable) {
+            return;
+        }
+
         //The animation to be played with associated parcels     
         Timeline draggedAnimation = AnimationUtils.opacity(parcel);
 
@@ -448,13 +453,7 @@ public class ParcelMap extends VBox {
         Button button = new Button("Alle auswählen");
 
         button.setOnAction((ActionEvent event) -> {
-            for (ParcelBox parcel : parcels) {
-                int id = parcel.getParcelId();
-                if (!selectedParcels.contains(id)) {
-                    selectedParcels.add(id);
-                }
-            }
-            updateStyle();
+            selectAll();
         });
 
         return button;
@@ -464,12 +463,26 @@ public class ParcelMap extends VBox {
         Button button = new Button("Alle abwählen");
 
         button.setOnAction((ActionEvent event) -> {
-            for (ParcelBox parcel : parcels) {
-                selectedParcels.remove(new Integer(parcel.getParcelId()));
-            }
-            updateStyle();
+            deselectAll();
         });
 
         return button;
+    }
+
+    public void selectAll() {
+        for (ParcelBox parcel : parcels) {
+            int id = parcel.getParcelId();
+            if (!selectedParcels.contains(id)) {
+                selectedParcels.add(id);
+            }
+        }
+        updateStyle();
+    }
+
+    public void deselectAll() {
+        for (ParcelBox parcel : parcels) {
+            selectedParcels.remove(new Integer(parcel.getParcelId()));
+        }
+        updateStyle();
     }
 }

@@ -1,9 +1,8 @@
 com\potatodocumentation\administration\ui\task\CreateNewTask.class
+com\potatodocumentation\administration\ui\property\CreateNewProp.class
 com\potatodocumentation\administration\utils\QrUtils.class
 RecursiveTreeItem.class
-com\potatodocumentation\administration\PropertyPane.class
 com\potatodocumentation\administration\ui\field\FieldBox.class
-com\potatodocumentation\administration\CreateNewProp.class
 com\potatodocumentation\administration\utils\ThreadUtils$1.class
 com\potatodocumentation\administration\ui\field\FieldStage.class
 com\potatodocumentation\administration\ui\field\map\ParcelMap.class
@@ -23,6 +22,7 @@ com\potatodocumentation\administration\ui\field\ParcelPane.class
 com\potatodocumentation\administration\utils\MiscUtils.class
 com\potatodocumentation\administration\utils\AnimationUtils.class
 com\potatodocumentation\administration\ui\FootPane.class
+com\potatodocumentation\administration\ui\property\PropertyPane.class
 com\potatodocumentation\administration\FXMLController.class
 com\potatodocumentation\administration\ui\NumericControlBox.class
 com\potatodocumentation\administration\utils\ThreadUtils.class

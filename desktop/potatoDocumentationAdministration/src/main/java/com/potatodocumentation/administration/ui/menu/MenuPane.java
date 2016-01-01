@@ -10,7 +10,7 @@ import com.potatodocumentation.administration.ui.field.FieldPane;
 import com.potatodocumentation.administration.MainApplication;
 import com.potatodocumentation.administration.ui.field.ParcelPane;
 import com.potatodocumentation.administration.ui.sort.PotatoSpeciesPane;
-import com.potatodocumentation.administration.PropertyPane;
+import com.potatodocumentation.administration.ui.property.PropertyPane;
 import com.potatodocumentation.administration.ui.TestPane;
 import java.util.ArrayList;
 import java.util.Random;
@@ -33,6 +33,8 @@ import javafx.util.Duration;
 public class MenuPane extends TilePane {
 
     private ArrayList<MenuButton> menuButtons;
+    
+    private MenuButton activeMenuButton;
 
     public ArrayList<MenuButton> getMenuButtons() {
         return menuButtons;
@@ -64,10 +66,13 @@ public class MenuPane extends TilePane {
             //set onClick event
             button.setOnAction((ActionEvent event) -> {
                 mainApp.setContent(button.getPane());
+                setActiveMenuButton(button);
             });
 
             getChildren().add(button);
         }
+        
+        setActiveMenuButton(menuButtons.get(0));
     }
 
     public static ArrayList<MenuButton> menuButtons() {
@@ -117,6 +122,16 @@ public class MenuPane extends TilePane {
 
             rt.play();
         }
+    }
+
+    private void setActiveMenuButton(MenuButton button) {
+        if(activeMenuButton != null){
+            //Delete old style
+            activeMenuButton.setId("");
+        }
+        
+        activeMenuButton = button;
+        button.setId("active-menuButton");
     }
 
 }

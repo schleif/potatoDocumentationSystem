@@ -10,9 +10,6 @@ import com.potatodocumentation.administration.ui.FootPane;
 import com.potatodocumentation.administration.ui.menu.MenuPane;
 import com.potatodocumentation.administration.ui.task.AufgabenPane;
 import javafx.application.Application;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
-import javafx.event.EventType;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.layout.BorderPane;
@@ -24,9 +21,9 @@ import javafx.stage.Stage;
  * @author Ochi
  */
 public class MainApplication extends Application {
-    
+
     private static MainApplication instance;
-    
+
     MenuPane menu;
     BorderPane mainPane;
     Pane contentPane;
@@ -36,58 +33,65 @@ public class MainApplication extends Application {
     public void start(Stage primaryStage) throws Exception {
         //set the global instance
         instance = this;
-        
+
         mainPane = new BorderPane();
-        
+
         footer = new FootPane();
         menu = new MenuPane(this);
-        contentPane = new AufgabenPane();        
+        contentPane = new AufgabenPane();
 
         //Add panes/nodes
         mainPane.setBottom(footer);
         mainPane.setLeft(menu);
-        mainPane.setCenter(contentPane);        
-        
+        mainPane.setCenter(contentPane);
+
         BorderPane.setMargin(contentPane, new Insets(10, 10, 10, 10));
-        
+
         Scene scene = new Scene(mainPane, 1250, 555);
-        
+
         //Add css
-        scene.getStylesheets().add(getClass()
-                .getResource("/styles/potatoStyle.css").toExternalForm());
-        
-         scene.getStylesheets().add(getClass()
-                .getResource("/styles/scrollBarStyle.css").toExternalForm());
-        
+        setCSS(scene);
+
         primaryStage.setTitle("PotatoDocumetation");
         primaryStage.setScene(scene);
         primaryStage.show();
 
     }
-    
-    public void setContent(Pane contentPane){
+
+    public void setCSS(Scene scene) {
+        scene.getStylesheets().add(getClass()
+                .getResource("/styles/potatoStyle.css").toExternalForm());
+
+        scene.getStylesheets().add(getClass()
+                .getResource("/styles/scrollBarStyle.css").toExternalForm());
+        
+        scene.getStylesheets().add(getClass()
+                .getResource("/styles/menu.css").toExternalForm());
+    }
+
+    public void setContent(Pane contentPane) {
         this.contentPane = contentPane;
         mainPane.setCenter(contentPane);
         BorderPane.setMargin(contentPane, new Insets(10, 10, 10, 10));
     }
-    
-    public void showLoadBar(boolean isLoading){
+
+    public void showLoadBar(boolean isLoading) {
         ((FootPane) footer).setWork(isLoading);
     }
-    
-    public void updateConnections(){
+
+    public void updateConnections() {
         ((FootPane) footer).updateConnections();
     }
-    
-    public static MainApplication getInstance(){
+
+    public static MainApplication getInstance() {
         return instance;
     }
-    
-    public static void main(String[] args){
-            launch(args);
+
+    public static void main(String[] args) {
+        launch(args);
     }
-    
-    public void go(){
+
+    public void go() {
         menu.rotateAll();
         TestPane.mediaPlayer.play();
     }

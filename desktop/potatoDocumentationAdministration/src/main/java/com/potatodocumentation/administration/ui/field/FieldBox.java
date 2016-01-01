@@ -6,6 +6,7 @@
 package com.potatodocumentation.administration.ui.field;
 
 import com.potatodocumentation.administration.ui.field.map.ParcelMap;
+import com.potatodocumentation.administration.utils.MiscUtils;
 import com.potatodocumentation.administration.utils.ThreadUtils;
 import java.util.List;
 import java.util.Observable;
@@ -96,6 +97,15 @@ public class FieldBox extends VBox {
 
     public int getFieldId() {
         return fieldID;
+    }
+    
+    public boolean isFullySelected(){
+        
+        Boolean bool = MiscUtils.isSubset(selectedParcels, getParcels());
+        
+        boolean result = (bool != null) && bool.equals(Boolean.TRUE);
+        
+        return result;
     }
 
 }

@@ -1,0 +1,33 @@
+/*
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+*/
+/* 
+    Created on : 01.01.2016, 17:28:08
+    Author     : Ochi
+*/
+
+MenuPane{
+    -fx-background-color: lightgrey;
+}
+
+MenuButton {
+    -fx-text-alignment: left;
+    -fx-font-family: sans-serif;
+    -fx-background-radius: 0;
+    -fx-border-style: solid inside;
+    -fx-border-width: 0 0 1 1;
+    -fx-border-color: grey;
+    -fx-background-color: lightgrey;
+    -fx-text-fill: grey;
+}
+
+#active-menuButton{
+    -fx-border-width: 0 0 1 3;
+    -fx-border-color: indianred;
+    -fx-text-fill: indianred;
+    -fx-font-style: italic;
+    -fx-font-weight: bold;
+}
+

@@ -7,6 +7,8 @@ package com.potatodocumentation.administration.ui.task;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.potatodocumentation.administration.MainApplication;
+import com.potatodocumentation.administration.ui.field.map.FieldMap;
 import static com.potatodocumentation.administration.utils.DateUtils.*;
 import static com.potatodocumentation.administration.utils.JsonUtils.*;
 import com.potatodocumentation.administration.utils.ThreadUtils;
@@ -31,6 +33,7 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.control.SelectionMode;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.FlowPane;
@@ -53,6 +56,8 @@ public class CreateNewTask extends Stage {
     Button cancelButton;
     ListView<String> propertyList;
     Label multiSelectLabel;
+    FieldMap map = new FieldMap(false, true);
+    ScrollPane mapPane = new ScrollPane(map);
 
     public CreateNewTask() {
         super();
@@ -71,13 +76,10 @@ public class CreateNewTask extends Stage {
 
         // Init the Layout
         VBox flow = new VBox();
-        // flow.setOrientation(Orientation.VERTICAL);
         flow.setPadding(new Insets(5, 5, 5, 5));
-        // flow.setVgap(4);
-        // flow.setHgap(4);
 
         // Adding the Components
-        Scene scene = new Scene(flow, 300, 400);
+        Scene scene = new Scene(flow, 400, 700);
         flow.getChildren().add(nameField);
         flow.getChildren().add(fromDP);
         flow.getChildren().add(toDP);
@@ -85,6 +87,7 @@ public class CreateNewTask extends Stage {
         flow.getChildren().add(repeatCB);
         flow.getChildren().add(multiSelectLabel);
         flow.getChildren().add(propertyList);
+        flow.getChildren().add(mapPane);
 
         // Button Box
         FlowPane buttonLine = new FlowPane();
@@ -98,6 +101,7 @@ public class CreateNewTask extends Stage {
         flow.getChildren().add(buttonLine);
 
         this.setTitle("Neue Aufgabe hinzufügen");
+        MainApplication.getInstance().setCSS(scene);
         this.setScene(scene);
 
         //Make sure no field is focused per default

@@ -104,7 +104,9 @@ public class PotatoSpeciesPane extends HBox {
     }
 
     private Label initSpeciesLabel() {
-        return new Label("Eigenschaften:");
+        Label title = new Label("Sorten");
+        title.setId("title");
+        return title;
     }
 
     private ListView<String> initSpeciesList() {
@@ -188,15 +190,15 @@ public class PotatoSpeciesPane extends HBox {
 
         return null;
     }
-    
-        private Void updateMap() {
+
+    private Void updateMap() {
 
         Platform.runLater(() -> mapPane.setContent(new Label("Lädt...")));
 
         HashMap params = new HashMap();
         params.put("sorte", activeSpecies);
         ObservableList<String> selectedParcels = getJsonResultObservableList(
-                        "parz_id", "selectParzelleBySorte.php", params);
+                "parz_id", "selectParzelleBySorte.php", params);
 
         //Parse Strings to Integer
         Collection<Integer> parsedCol
@@ -276,7 +278,7 @@ public class PotatoSpeciesPane extends HBox {
     }
 
     private VBox initSpeciesBox() {
-        VBox vBox = new VBox(speciesBoxHeader, speciesList, createButton);
+        VBox vBox = new VBox(speciesLabel, speciesBoxHeader, speciesList, createButton);
 
         vBox.getChildren().stream().forEach((child) -> {
             VBox.setMargin(child, new Insets(10));
@@ -286,7 +288,7 @@ public class PotatoSpeciesPane extends HBox {
     }
 
     private AnchorPane initSpeciesBoxHeader() {
-        AnchorPane anchorPane = new AnchorPane(speciesLabel, updateButton);
+        AnchorPane anchorPane = new AnchorPane(updateButton);
 
         AnchorPane.setLeftAnchor(speciesLabel, 10.0);
         AnchorPane.setRightAnchor(updateButton, 10.0);

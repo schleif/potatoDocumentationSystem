@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.potatodocumentation.administration;
+package com.potatodocumentation.administration.ui.property;
 
 import static com.potatodocumentation.administration.utils.JsonUtils.*;
 import com.potatodocumentation.administration.utils.ThreadUtils;
@@ -103,25 +103,26 @@ public class PropertyPane extends HBox {
     }
 
     private Label initPropertyLabel() {
-        return new Label("Eigenschaften:");
+        Label title = new Label("Eigenschaften");
+        title.setId("title");
+        return title;
     }
 
     private ListView<String> initPropertyList() {
-        
+
         ListView<String> listView = new ListView<>();
 
         //Add listener on change of selected value
         listView.getSelectionModel().selectedItemProperty()
                 .addListener(
-                        (ObservableValue<? extends String>
-                                observable,
+                        (ObservableValue<? extends String> observable,
                                 String oldValue,
                                 String newValue) -> {
-            onPropertyListValueChanged();
-        });
+                            onPropertyListValueChanged();
+                        });
 
         return listView;
-        
+
     }
 
     private VBox initDetailBox() {
@@ -129,7 +130,7 @@ public class PropertyPane extends HBox {
 
         //Set ID for the css
         vBox.setId("detailBox");
-        
+
         setHgrow(vBox, Priority.ALWAYS);
 
         return vBox;
@@ -164,7 +165,7 @@ public class PropertyPane extends HBox {
 
         deleteButton.setDisable(false);
 
-        detailLabel.setText("Details (" + activeProperty +")");
+        detailLabel.setText("Details (" + activeProperty + ")");
     }
 
     /**
@@ -173,11 +174,11 @@ public class PropertyPane extends HBox {
      * UI of the Application.
      */
     private Void updatePropertyList() {
-        
+
         Platform.runLater(() -> updateButton.setDisable(true));
-        
-        ObservableList<String> items =
-                FXCollections.observableArrayList("Lädt...");
+
+        ObservableList<String> items
+                = FXCollections.observableArrayList("Lädt...");
         Platform.runLater(() -> propertyList.setItems(items));
 
         ObservableList<String> newItems = getJsonResultObservableList(
@@ -188,8 +189,6 @@ public class PropertyPane extends HBox {
 
         return null;
     }
-
-
 
     private Label initDetailLabel() {
         Label label = new Label("Details");
@@ -202,7 +201,7 @@ public class PropertyPane extends HBox {
     private Button initDeleteButton() {
         Image deleteIcon = new Image(
                 getClass().getResourceAsStream(
-                                "/drawables/deleteIcon.png"),
+                        "/drawables/deleteIcon.png"),
                 16.0, 16.0, true, true);
 
         Button button = new Button("Löschen", new ImageView(deleteIcon));
@@ -227,7 +226,7 @@ public class PropertyPane extends HBox {
         button.setOnAction((ActionEvent event) -> {
             CreateNewProp stage = new CreateNewProp();
             stage.initModality(Modality.APPLICATION_MODAL);
-            
+
             //Refresh the TaskList after the window is closed
             stage.setOnCloseRequest((WindowEvent event1) -> {
                 ThreadUtils.runAsTask(() -> updatePropertyList());
@@ -253,7 +252,7 @@ public class PropertyPane extends HBox {
     }
 
     private VBox initPropertyBox() {
-        VBox vBox = new VBox(propertyBoxHeader, propertyList, createButton);
+        VBox vBox = new VBox(propertyLabel, propertyBoxHeader, propertyList, createButton);
 
         vBox.getChildren().stream().forEach((child) -> {
             VBox.setMargin(child, new Insets(10));
@@ -263,7 +262,7 @@ public class PropertyPane extends HBox {
     }
 
     private AnchorPane initPropertyBoxHeader() {
-        AnchorPane anchorPane = new AnchorPane(propertyLabel, updateButton);
+        AnchorPane anchorPane = new AnchorPane(updateButton);
 
         AnchorPane.setLeftAnchor(propertyLabel, 10.0);
         AnchorPane.setRightAnchor(updateButton, 10.0);
@@ -289,10 +288,10 @@ public class PropertyPane extends HBox {
 
         button.setOnAction((ActionEvent event) -> {
             ThreadUtils.runAsTask(() -> updatePropertyList());
-            
+
             //Rotate the icon
-            RotateTransition rotate =
-                    new RotateTransition(Duration.seconds(2), imageView);
+            RotateTransition rotate
+                    = new RotateTransition(Duration.seconds(2), imageView);
             rotate.setFromAngle(0);
             rotate.setToAngle(360);
             rotate.setCycleCount(1);
@@ -309,10 +308,10 @@ public class PropertyPane extends HBox {
      * UI of the Application.
      */
     private Void updateTaskList() {
-        ObservableList<String> items =
-                FXCollections.observableArrayList("Lädt...");
+        ObservableList<String> items
+                = FXCollections.observableArrayList("Lädt...");
         Platform.runLater(() -> taskList.setItems(items));
-        
+
         HashMap params = new HashMap();
         params.put("eig_name", activeProperty);
 
@@ -323,7 +322,6 @@ public class PropertyPane extends HBox {
                         params);
 
         Platform.runLater(() -> taskList.setItems(tasks));
-
 
         return null;
     }
