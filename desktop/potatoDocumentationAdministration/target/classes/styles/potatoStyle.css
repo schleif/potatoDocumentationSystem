@@ -9,13 +9,14 @@ and open the template in the editor.
 */
 .root{
     -fx-font-family: 'monospaced';
+    -fx-background-color: white;
 }
 
 #title{
     -fx-text-fill: grey;
     -fx-font-family: sans-serif;
     -fx-font-size: 30;
-    -fx-font-style: italic;
+    -fx-font-weight: lighter;
 }
 
 Button{
@@ -25,10 +26,8 @@ Button{
 
 
 #detailBox{
-    -fx-background-color: #e8e8e8;
-    -fx-border-style: solid;
-    -fx-border-width: 1;
-    -fx-border-color: #999999;
+    -fx-background-color: lightgrey;
+    -fx-background-radius: 5;
 }
 
 .ListView{
@@ -43,7 +42,7 @@ Button{
 ParcelBox{
     -fx-background-color: white;
     -fx-background-radius: 2;
-    -fx-border-color: black;
+    -fx-border-color: lightgrey;
     -fx-border-width: 3;
     -fx-border-radius: 2;
     -fx-cursor: hand;
@@ -51,6 +50,10 @@ ParcelBox{
 
 ParcelBox:hover{
     -fx-background-color: lightcoral;
+}
+
+.marked-parcel-box{
+    -fx-border-color: lightsalmon;
 }
 
 ScrollPane{
@@ -76,17 +79,13 @@ ScrollPane{
     -fx-text-fill: white;
 }
 
-.marked-parcel-box{
-    -fx-border-color: #ff9900;
-}
-
 //FieldBox styles
 
 FieldBox{
     -fx-background-color: white;
     -fx-background-radius: 5; 
     -fx-border-width: 3;
-    -fx-border-color: black;
+    -fx-border-color: lightgrey;
     -fx-border-radius: 5;
     -fx-cursor: hand;
 }
@@ -96,16 +95,16 @@ FieldBox:hover{
 }
 
 #selectedFieldBox{
-    -fx-border-color: orange;
+    -fx-border-color: lightsalmon;
 }
 
 #partialSelectedFieldBox{
-    -fx-border-color: orange;
+    -fx-border-color: lightsalmon;
     -fx-border-style: dotted;
 }
 
 .marked-field{
-    -fx-border-color: #ff9900;
+    -fx-border-color: lightsalmon;
 }
 
 FootPane{

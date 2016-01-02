@@ -23,7 +23,9 @@ import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.Label;
@@ -104,6 +106,11 @@ public class ParcelMap extends VBox {
                 });
 
         getChildren().addAll(buttonBox, loadLabel, parcelBox);
+        
+        //Add margin to all children
+        for(Node n : getChildren()){
+            VBox.setMargin(n, new Insets(10));
+        }
     }
 
     //Updates the parcels
@@ -125,6 +132,7 @@ public class ParcelMap extends VBox {
         //Iterate trough all rows
         for (String row : rows) {
             HBox rowBox = new HBox(2);
+            rowBox.setAlignment(Pos.CENTER_LEFT);
 
             params.put("parz_row", row);
             ArrayList<Map<String, Object>> resultArray

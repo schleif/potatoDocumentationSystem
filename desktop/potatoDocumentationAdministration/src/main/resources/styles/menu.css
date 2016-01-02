@@ -9,7 +9,9 @@ and open the template in the editor.
 */
 
 MenuPane{
-    -fx-background-color: lightgrey;
+    -fx-background-color: white;
+    -fx-border-width: 0 1 0 0;
+    -fx-border-color: lightgrey;
 }
 
 MenuButton {
@@ -17,17 +19,21 @@ MenuButton {
     -fx-font-family: sans-serif;
     -fx-background-radius: 0;
     -fx-border-style: solid inside;
-    -fx-border-width: 0 0 1 1;
-    -fx-border-color: grey;
-    -fx-background-color: lightgrey;
+    -fx-border-width: 0 0 0 0;
+    -fx-background-color: white;
     -fx-text-fill: grey;
+    -fx-cursor: hand;
 }
 
 #active-menuButton{
-    -fx-border-width: 0 0 1 3;
+/*    -fx-border-width: 0 0 1 3;
     -fx-border-color: indianred;
     -fx-text-fill: indianred;
     -fx-font-style: italic;
+    -fx-font-weight: bold;*/
+
+    -fx-border-width: 0 0 0 3;
+    -fx-border-color: lightgrey;
     -fx-font-weight: bold;
 }
 
