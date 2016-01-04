@@ -29,6 +29,9 @@ $properties = $jsonArray['eigenschaften'];
 //Create array of all dates
 $dates = $jsonArray['dates'];
 
+//Get all parcels
+$parcels = $jsonArray['parcels'];
+
 //Begin inserting
 $db->beginTransaction();
 
@@ -54,6 +57,14 @@ for ($i = 0; $i < $length; $i++) {
 
     include './insertAufg_termin.php';
     $success = $success && json_decode($jsonResult, true)['success'];
+}
+
+// insert all parcels
+foreach ($parcels as $parcel){
+	$_POST['parz_id'] = $parcel;
+	
+	include './insertAufg_gehoert_zu_parz.php';
+	$success = $success && json_decode($jsonResult, true)['success'];
 }
 
 if ($success) {
