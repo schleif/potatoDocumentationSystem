@@ -171,16 +171,19 @@ public class CreateNewTask extends Stage {
         boolean nameIsValid = !propName.isEmpty();
 
         //check if dates are set
-        boolean timeIsset = (toDP.getValue() != null) && (fromDP.getValue() != null);
+        boolean timeIsset = (toDP.getValue() != null) 
+                && (fromDP.getValue() != null);
 
         //check if propeties are selected and get them
-        ObservableList<String> properties = propertyList.getSelectionModel().getSelectedItems();
+        ObservableList<String> properties = propertyList.getSelectionModel()
+                .getSelectedItems();
         boolean propsSelected = (properties != null) && !(properties.isEmpty());
 
         //get repeatCB value
         String repeat = (String) repeatCB.getValue();
 
-        if (nameIsValid && timeIsset && propsSelected) {
+        if (nameIsValid && timeIsset && propsSelected 
+                && !map.getSelectedParcels().isEmpty()) {
 
             //Prepare the get-paramter as json
             HashMap<String, Object> jsonValues = new HashMap<>();
@@ -190,6 +193,8 @@ public class CreateNewTask extends Stage {
             jsonValues.put("eigenschaften", properties);
 
             jsonValues.put("dates", getAllDates());
+            
+            jsonValues.put("parcels", map.getSelectedParcels());
 
             //Create JSON
             ObjectMapper mapper = new ObjectMapper();
@@ -200,6 +205,8 @@ public class CreateNewTask extends Stage {
             } catch (JsonProcessingException ex) {
                 Logger.getLogger(CreateNewTask.class.getName()).log(Level.SEVERE, null, ex);
             }
+            
+            System.out.println(jsonRequest);
 
             //Send to server
             HashMap<String, String> values = new HashMap<>();

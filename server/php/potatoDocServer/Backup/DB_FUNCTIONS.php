@@ -48,13 +48,13 @@
 		
 		foreach ((array)$values as $value) {
 			// If all values set
-			if (!isset($_POST[$value])) {
+			if (!isset($_GET[$value])) {
 				$isset_param = false;
 				break;
 			}
 			
 			//filling bind_params
-			array_push($bind_params, $_POST[$value]);
+			array_push($bind_params, $_GET[$value]);
 		}
 		
 		if(!$isset_param){
@@ -124,13 +124,13 @@
 		$isset_param = true;
 		foreach ($values as $value) {
 			// If all values set
-			if (!isset($_POST[$value])) {
+			if (!isset($_GET[$value])) {
 				$isset_param = false;
 				break;
 			}
 			
 			//filling bind_params
-			array_push($bind_params, $_POST[$value]);
+			array_push($bind_params, $_GET[$value]);
 		}
 		
 		if ($isset_param) {
@@ -194,13 +194,13 @@
 		
 		foreach ($values as $value) {
 			// If all values set
-			if (!isset($_POST[$value])) {
+			if (!isset($_GET[$value])) {
 				$isset_param = false;
 				break;
 			}
 			
 			//filling bind_params
-			array_push($bind_params, $_POST[$value]);
+			array_push($bind_params, $_GET[$value]);
 		}
 		
 		if ($isset_param) {

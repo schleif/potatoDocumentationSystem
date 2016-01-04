@@ -20,7 +20,7 @@ import javafx.collections.ObservableList;
  * @author Ochi
  */
 public class JsonUtils {
-    
+
     private static final AtomicInteger openConnections = new AtomicInteger(0);
 
     /**
@@ -64,7 +64,7 @@ public class JsonUtils {
         mainApp.showLoadBar(true);
         openConnections.incrementAndGet();
         mainApp.updateConnections();
-        
+
         //Create connection to get URL
         Connection connection;
         if (params == null) {
@@ -73,14 +73,13 @@ public class JsonUtils {
             connection = new Connection(serviceURL, params);
         }
 
-        URL url = connection.getServiceURL();
-
         //Map the Json result
         ObjectMapper mapper = new ObjectMapper();
         Map<String, Object> jsonResult = null;
 
         try {
-            jsonResult = mapper.readValue(url, Map.class);
+            jsonResult
+                    = mapper.readValue(connection.getResponseStream(), Map.class);
         } catch (IOException ex) {
         }
 
@@ -93,13 +92,12 @@ public class JsonUtils {
         if (success) {
             resultList = (ArrayList<Map<String, Object>>) jsonResult.get(resultTag);
         }
-        
-        if(openConnections.decrementAndGet() <= 0){
+
+        if (openConnections.decrementAndGet() <= 0) {
             mainApp.showLoadBar(false);
         }
         mainApp.updateConnections();
 
-        
         return resultList;
     }
 
@@ -166,14 +164,13 @@ public class JsonUtils {
             connection = new Connection(serviceURL, params);
         }
 
-        URL url = connection.getServiceURL();
-
         //Map the Json result
         ObjectMapper mapper = new ObjectMapper();
         Map<String, Object> jsonResult = null;
 
         try {
-            jsonResult = mapper.readValue(url, Map.class);
+            jsonResult
+                    = mapper.readValue(connection.getResponseStream(), Map.class);
         } catch (IOException ex) {
         }
 
@@ -233,7 +230,7 @@ public class JsonUtils {
         } else {
             observables.add("Ladefehler!");
         }
-        
+
         return observables;
 
     }

@@ -209,8 +209,6 @@ public class PotatoSpeciesPane extends HBox {
 
         FieldMap fieldMap = new FieldMap(parsedList, false, false);
 
-        fieldMap.setStyle("-fx-font-size: 9;");
-
         Platform.runLater(() -> mapPane.setContent(fieldMap));
 
         return null;

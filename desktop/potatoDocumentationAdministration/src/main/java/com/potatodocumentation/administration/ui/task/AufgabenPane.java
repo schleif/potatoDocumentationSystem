@@ -353,7 +353,7 @@ public class AufgabenPane extends HBox implements EventHandler<KeyEvent> {
         vBox.getChildren().stream().forEach((child) -> {
             VBox.setMargin(child, new Insets(10));
         });
-
+        
         return vBox;
     }
 

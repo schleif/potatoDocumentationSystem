@@ -3,7 +3,7 @@
 $response = array();
 
 //abort if json is not parsed
-if (!isset($_POST['json'])) {
+if (!isset($_GET['json'])) {
     $response['success'] = 0;
     echo json_encode($response);
     return;
@@ -19,7 +19,7 @@ require_once DB_FUNCTIONS;
 $printDirect = 1;
 
 //get all variables
-$jsonArray = json_decode($_POST['json'], true);
+$jsonArray = json_decode($_GET['json'], true);
 
 $aufg_name = $jsonArray['aufg_name'];
 
@@ -33,7 +33,7 @@ $dates = $jsonArray['dates'];
 $db->beginTransaction();
 
 //insert aufgabe
-$_POST['aufg_name'] = $aufg_name;
+$_GET['aufg_name'] = $aufg_name;
 include 'insertAufgabe.php';
 $wasInserted = json_decode($jsonResult, true)['success'];
 $success = $wasInserted;
@@ -41,7 +41,7 @@ $success = $wasInserted;
 
 //insert all properties
 foreach ($properties as $value) {
-    $_POST['eig_name'] = $value;
+    $_GET['eig_name'] = $value;
     include './insertAufg_beinhaltet_eig.php';
     $success = $success && json_decode($jsonResult, true)['success'];
 }
@@ -49,8 +49,8 @@ foreach ($properties as $value) {
 //insert all dates
 $length = count($dates);
 for ($i = 0; $i < $length; $i++) {
-    $_POST['fromDate'] = $dates[$i];
-    $_POST['toDate'] = $dates[++$i];
+    $_GET['fromDate'] = $dates[$i];
+    $_GET['toDate'] = $dates[++$i];
 
     include './insertAufg_termin.php';
     $success = $success && json_decode($jsonResult, true)['success'];

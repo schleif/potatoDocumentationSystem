@@ -22,7 +22,7 @@ import javafx.scene.text.FontPosture;
  * @author Ochi
  */
 public class ParcelBox extends VBox {
-    
+
     /**
      * Indicated the width of all ParcelBoxes t
      */
@@ -52,9 +52,9 @@ public class ParcelBox extends VBox {
 
         getChildren().add(header);
         getChildren().add(sortLabel);
-        
+
         bindWidth();
-        
+
     }
 
     private AnchorPane initHeader() {
@@ -67,7 +67,6 @@ public class ParcelBox extends VBox {
 
         return ap;
     }
-
 
     private Label initSortLabel() {
         Label label = new Label();
@@ -88,9 +87,6 @@ public class ParcelBox extends VBox {
         return new Label("ID: " + id);
     }
 
-
-
-
     public int getParcelId() {
         return id;
     }
@@ -98,11 +94,15 @@ public class ParcelBox extends VBox {
     private void bindWidth() {
         //Set maxWidth on width change
         widthProperty().addListener((ObservableValue<? extends Number> ov, Number oldValue, Number newValue) -> {
-            if(newValue.doubleValue() > maxWidth.doubleValue()){
-                maxWidth.setValue(newValue);
+            if (newValue.doubleValue() > maxWidth.doubleValue()) {
+                try {
+                    maxWidth.setValue(newValue);
+                } catch (Exception e) {
+
+                }
             }
         });
-        
+
         minWidthProperty().bind(maxWidth);
     }
 

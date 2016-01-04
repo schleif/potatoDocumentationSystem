@@ -2,7 +2,7 @@
 	
 	$response = array();
 	
-	if(!isset($_POST["par_per_row"])){
+	if(!isset($_GET["par_per_row"])){
 		$response['success'] = 0;
 		$response['message'] = 'Nicht erfolgreich!';
 		echo json_encode($response);
@@ -19,18 +19,18 @@
 	$printDirect = 1;
 	
 	//get all variables
-	$par_per_row = $_POST["par_per_row"];
+	$par_per_row = $_GET["par_per_row"];
 	
 	//Begin inserting
 	$db->beginTransaction();
 	
 	$success = true;
 	
-	$targetRow = $_POST["parz_row"];
+	$targetRow = $_GET["parz_row"];
 	
-	for($nrOfRows = 0; $nrOfRows < $_POST["nr_of_rows"]; $nrOfRows++){
+	for($nrOfRows = 0; $nrOfRows < $_GET["nr_of_rows"]; $nrOfRows++){
 		//adjust parz_row
-		$_POST["parz_row"] = $targetRow + $nrOfRows;
+		$_GET["parz_row"] = $targetRow + $nrOfRows;
 		
 		for($i = 0; $i < $par_per_row; $i++){
 			include 'insertParzelleIntoRow.php';
