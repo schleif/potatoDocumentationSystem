@@ -1,16 +1,20 @@
 package com.potatodoc.potatodocumentation.gui;
 
+
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.app.ActionBar;
-import android.support.v4.app.Fragment;
+
 import android.support.v4.app.FragmentManager;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.support.v4.widget.DrawerLayout;
+import android.view.ViewGroup;
 
 import com.potatodoc.potatodocumentation.R;
+import com.potatodoc.potatodocumentation.utils.StopTourWarningDialog;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationDrawerFragment.NavigationDrawerCallbacks {
@@ -42,33 +46,44 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onNavigationDrawerItemSelected(int position) {
+
+
+        // update the main content by replacing fragments
+        FragmentManager fragmentManager = getSupportFragmentManager();
+
+        if (fragmentManager.findFragmentById(R.id.container) instanceof TaskFragment) {
+
+            StopTourWarningDialog Warning = new StopTourWarningDialog();
+            Warning.show(getSupportFragmentManager(), "Warnung");
+
+        }
+
         //Call onSectionAttached to update the ActionBar Title
         onSectionAttached(position + 1);
 
         //Selecting selected Fragment
         Fragment fragment = NavigationItem.getAllNavigationItems().get(position).getFragment();
 
-        // update the main content by replacing fragments
-        FragmentManager fragmentManager = getSupportFragmentManager();
-
         //Make the backstack work right
         String backStackName = fragment.getClass().getName();
 
         Boolean isPopped = fragmentManager.popBackStackImmediate(backStackName, 0);
 
-        if(!isPopped){
+        if (!isPopped) {
             FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
             fragmentTransaction.replace(R.id.container, fragment);
             fragmentTransaction.addToBackStack(backStackName);
             fragmentTransaction.commit();
+
+
         }
     }
+
 
     public void onSectionAttached(int number) {
         //Set the proper Title
         mTitle = getString(NavigationItem.getAllNavigationItems().get(number - 1).getName());
     }
-
     public void restoreActionBar() {
         ActionBar actionBar = getSupportActionBar();
         actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
@@ -128,4 +143,5 @@ public class MainActivity extends AppCompatActivity
 
         restoreActionBar();
     }
+
 }
