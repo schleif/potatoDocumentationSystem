@@ -5,7 +5,6 @@
     // Permission
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    <uses-permission android:name="android.permission.AUTHENTICATE_ACCOUNTS" />
 
     <application
         android:name=".utils.App"
@@ -23,15 +22,5 @@
             </intent-filter>
         </activity>
     </application>
-
-
-    <service android:name="AccountAuthenticatorService"
-        android:exported="true" android:process=":auth">
-        <intent-filter>
-            <action android:name="android.accounts.AccountAuthenticator" />
-        </intent-filter>
-        <meta-data android:name="android.accounts.AccountAuthenticator"
-            android:resource="@xml/authenticator" />
-    </service>
 
 </manifest>
