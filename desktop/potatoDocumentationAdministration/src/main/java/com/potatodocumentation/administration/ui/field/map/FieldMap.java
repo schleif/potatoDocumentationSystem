@@ -10,6 +10,7 @@ import com.potatodocumentation.administration.ui.field.ParcelBox;
 import static com.potatodocumentation.administration.utils.JsonUtils.getJsonResultObservableList;
 import static com.potatodocumentation.administration.utils.JsonUtils.getJsonSuccessStatus;
 import com.potatodocumentation.administration.utils.MiscUtils;
+import com.potatodocumentation.administration.utils.QrUtils;
 import com.potatodocumentation.administration.utils.ThreadUtils;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -364,5 +365,21 @@ public class FieldMap extends VBox {
 
     public List<FieldBox> getFields() {
         return fields;
+    }
+
+    public List<Integer> getAllParcelIds() {
+        List<Integer> allParcels = new ArrayList<>();
+        
+        for (FieldBox field : getFields()) {
+            for (Integer parId : field.getParcels()) {
+                allParcels.add(parId);
+            }
+        }
+        
+        return allParcels;
+    }
+    
+    public int parcelCount(){
+        return getAllParcelIds().size();
     }
 }

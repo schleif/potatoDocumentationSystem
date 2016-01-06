@@ -6,6 +6,8 @@
 package com.potatodocumentation.administration.ui.field;
 
 import com.potatodocumentation.administration.ui.field.map.FieldMap;
+import com.potatodocumentation.administration.ui.qr.GenerateQR;
+import com.potatodocumentation.administration.ui.task.CreateNewTask;
 import com.potatodocumentation.administration.utils.QrUtils;
 import com.potatodocumentation.administration.utils.ThreadUtils;
 import javafx.animation.Interpolator;
@@ -20,6 +22,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
+import javafx.stage.Modality;
 import javafx.util.Duration;
 
 /**
@@ -92,22 +95,14 @@ public class FieldPane extends VBox {
     }
 
     private Button initQrButton() {
-        Button button = new Button("QR");
+        Button button = new Button("QR Codes generieren");
 
         //Create QR-Codes for all parcels with header
         button.setOnAction((ActionEvent event) -> {
-            for (FieldBox field : fieldMap.getFields()) {
-                for (Integer parId : field.getParcels()) {
-
-                    String fileName = "f" + field.getFieldId() + "p" + parId;
-                    String path = QrUtils.qrPath + "f" + field.getFieldId()
-                            + "\\";
-                    String header = "Feld: " + field.getFieldId()
-                            + ", Parzelle :" + parId;
-                    QrUtils.generateQrFromString(fileName, path, header);
-
-                }
-            }
+            GenerateQR stage = new GenerateQR();
+            stage.initModality(Modality.APPLICATION_MODAL);
+            
+            stage.show();
         });
 
         return button;
