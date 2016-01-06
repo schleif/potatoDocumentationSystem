@@ -91,8 +91,8 @@ public class FieldMap extends VBox {
         selectedParcels.addListener((ListChangeListener.Change<? extends Integer> c) -> {
             updateStyle();
         });
-        
-        for(Node node : getChildren()){
+
+        for (Node node : getChildren()) {
             VBox.setMargin(node, new Insets(10));
         }
 
@@ -331,9 +331,10 @@ public class FieldMap extends VBox {
                 FieldBox field = (FieldBox) event.getSource();
                 if (!isEditable) {
                     /**
-                     * If the map is not editable add all parcels instead of 
+                     * If the map is not editable add all parcels instead of
                      * adding the fields to selectedFields
-                     **/
+                     *
+                     */
                     if (field.isFullySelected()) {
                         field.getParcel().deselectAll();
                     } else {
@@ -359,5 +360,9 @@ public class FieldMap extends VBox {
         }
 
         return fieldSelectionHandler;
+    }
+
+    public List<FieldBox> getFields() {
+        return fields;
     }
 }

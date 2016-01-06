@@ -6,10 +6,12 @@
 package com.potatodocumentation.administration.ui.field;
 
 import com.potatodocumentation.administration.ui.field.map.FieldMap;
+import com.potatodocumentation.administration.utils.QrUtils;
 import com.potatodocumentation.administration.utils.ThreadUtils;
 import javafx.animation.Interpolator;
 import javafx.animation.RotateTransition;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.scene.control.Button;
 import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.Label;
@@ -25,36 +27,39 @@ import javafx.util.Duration;
  * @author fiel
  */
 public class FieldPane extends VBox {
-    
+
     private Label title;
     private AnchorPane header;
     private FieldMap fieldMap;
     private ScrollPane mapPane;
+    Button qrButton;
 
     public FieldPane() {
         super(10);
 
         title = initTitle();
+        qrButton = initQrButton();
         header = initHeader();
         fieldMap = new FieldMap(true, true);
         mapPane = new ScrollPane(fieldMap);
 
         getChildren().add(header);
         getChildren().add(mapPane);
-        
+
         fieldMap.setStyle("-fx-font-size: " + 20 + ";");
     }
 
     private AnchorPane initHeader() {
-        AnchorPane anchorPane = new AnchorPane(title);
+        AnchorPane anchorPane = new AnchorPane(title, qrButton);
 
         AnchorPane.setLeftAnchor(title, 10.0);
+        AnchorPane.setRightAnchor(qrButton, 10.0);
 
         return anchorPane;
     }
 
     private Label initTitle() {
-        Label title= new Label("Felder");
+        Label title = new Label("Felder");
         title.setId("title");
         return title;
     }
@@ -84,6 +89,28 @@ public class FieldPane extends VBox {
 
         return button;
 
+    }
+
+    private Button initQrButton() {
+        Button button = new Button("QR");
+
+        //Create QR-Codes for all parcels with header
+        button.setOnAction((ActionEvent event) -> {
+            for (FieldBox field : fieldMap.getFields()) {
+                for (Integer parId : field.getParcels()) {
+
+                    String fileName = "f" + field.getFieldId() + "p" + parId;
+                    String path = QrUtils.qrPath + "f" + field.getFieldId()
+                            + "\\";
+                    String header = "Feld: " + field.getFieldId()
+                            + ", Parzelle :" + parId;
+                    QrUtils.generateQrFromString(fileName, path, header);
+
+                }
+            }
+        });
+
+        return button;
     }
 
 }
