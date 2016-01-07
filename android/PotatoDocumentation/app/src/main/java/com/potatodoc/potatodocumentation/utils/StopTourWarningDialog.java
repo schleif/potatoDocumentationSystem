@@ -19,7 +19,7 @@ import com.potatodoc.potatodocumentation.gui.NavigationItem;
  */
 public class StopTourWarningDialog extends DialogFragment {
 
-
+    private CharSequence mTitle;
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
@@ -31,6 +31,30 @@ public class StopTourWarningDialog extends DialogFragment {
                 .setPositiveButton(R.string.weiter, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
 
+                        int position = com.potatodoc.potatodocumentation.gui.MainActivity.positionGlobal;
+
+                        //Call onSectionAttached to update the ActionBar Title
+                        onSectionAttached(position + 1);
+
+                        // update the main content by replacing fragments
+                        FragmentManager fragmentManager = getFragmentManager();
+
+                        //Selecting selected Fragment
+                        Fragment fragment = NavigationItem.getAllNavigationItems().get(position).getFragment();
+
+                        //Make the backstack work right
+                        String backStackName = fragment.getClass().getName();
+
+                        Boolean isPopped = fragmentManager.popBackStackImmediate(backStackName, 0);
+
+                        if (!isPopped) {
+                            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                            fragmentTransaction.replace(R.id.container, fragment);
+                            fragmentTransaction.addToBackStack(backStackName);
+                            fragmentTransaction.commit();
+
+
+                        }
 
 
                         }
@@ -45,6 +69,10 @@ public class StopTourWarningDialog extends DialogFragment {
         return builder.create();
     }
 
+    public void onSectionAttached(int number) {
+        //Set the proper Title
+        mTitle = getString(NavigationItem.getAllNavigationItems().get(number - 1).getName());
+    }
 
 
 }

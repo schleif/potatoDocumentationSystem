@@ -28,6 +28,7 @@ public class MainActivity extends AppCompatActivity
      * Used to store the last screen title. For use in {@link #restoreActionBar()}.
      */
     private CharSequence mTitle;
+    public static int positionGlobal;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,46 +45,56 @@ public class MainActivity extends AppCompatActivity
                 (DrawerLayout) findViewById(R.id.drawer_layout));
     }
 
+    /**
+     * Make the position accessible for the WarningDialog
+     * @param p the currentpostion in the Navigationmenu
+     */
+    public void getPosition(int p) {
+        positionGlobal = p;
+    }
+
     @Override
     public void onNavigationDrawerItemSelected(int position) {
 
-
         // update the main content by replacing fragments
         FragmentManager fragmentManager = getSupportFragmentManager();
-
+        // if a task is edited , Warningdialog will be shown, otherwise it will be handle normally
         if (fragmentManager.findFragmentById(R.id.container) instanceof TaskFragment) {
 
+            getPosition(position); // for the Wanringdialog
             StopTourWarningDialog Warning = new StopTourWarningDialog();
             Warning.show(getSupportFragmentManager(), "Warnung");
 
+        } else {
+
+            //Call onSectionAttached to update the ActionBar Title
+            onSectionAttached(position + 1);
+
+            //Selecting selected Fragment
+            Fragment fragment = NavigationItem.getAllNavigationItems().get(position).getFragment();
+
+            //Make the backstack work right
+            String backStackName = fragment.getClass().getName();
+
+            Boolean isPopped = fragmentManager.popBackStackImmediate(backStackName, 0);
+
+            if (!isPopped) {
+                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                fragmentTransaction.replace(R.id.container, fragment);
+                fragmentTransaction.addToBackStack(backStackName);
+                fragmentTransaction.commit();
+
+
+            }
         }
 
-        //Call onSectionAttached to update the ActionBar Title
-        onSectionAttached(position + 1);
-
-        //Selecting selected Fragment
-        Fragment fragment = NavigationItem.getAllNavigationItems().get(position).getFragment();
-
-        //Make the backstack work right
-        String backStackName = fragment.getClass().getName();
-
-        Boolean isPopped = fragmentManager.popBackStackImmediate(backStackName, 0);
-
-        if (!isPopped) {
-            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-            fragmentTransaction.replace(R.id.container, fragment);
-            fragmentTransaction.addToBackStack(backStackName);
-            fragmentTransaction.commit();
-
-
-        }
     }
-
 
     public void onSectionAttached(int number) {
         //Set the proper Title
         mTitle = getString(NavigationItem.getAllNavigationItems().get(number - 1).getName());
     }
+
     public void restoreActionBar() {
         ActionBar actionBar = getSupportActionBar();
         actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);

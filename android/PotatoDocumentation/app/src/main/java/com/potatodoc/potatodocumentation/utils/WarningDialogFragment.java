@@ -23,8 +23,13 @@ public class WarningDialogFragment extends DialogFragment {
         builder.setMessage(R.string.dialog_warning)
                 .setPositiveButton(R.string.weiter, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-                        Intent newTask = new Intent(getActivity(), TaskFragment.class);
-                        startActivity(newTask);
+                        TaskFragment Task = new TaskFragment();
+
+                        android.support.v4.app.FragmentManager fragment = getFragmentManager();
+                        android.support.v4.app.FragmentTransaction fragmentTransaction = fragment.beginTransaction();
+                        fragmentTransaction.replace(R.id.container, Task);
+                        fragmentTransaction.addToBackStack(null);
+                        fragmentTransaction.commit();
                     }
                 })
                 .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
