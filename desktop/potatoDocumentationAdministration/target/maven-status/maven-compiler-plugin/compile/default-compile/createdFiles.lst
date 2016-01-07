@@ -18,7 +18,6 @@ com\potatodocumentation\administration\Connection.class
 com\potatodocumentation\administration\ui\sort\PotatoSpeciesPane.class
 com\potatodocumentation\administration\ui\field\map\FieldMap.class
 com\potatodocumentation\administration\MainApplication.class
-com\potatodocumentation\administration\ui\field\ParcelPane.class
 com\potatodocumentation\administration\utils\MiscUtils.class
 com\potatodocumentation\administration\ui\qr\GenerateQR.class
 com\potatodocumentation\administration\utils\AnimationUtils.class
