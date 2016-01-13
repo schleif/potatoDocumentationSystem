@@ -5,7 +5,9 @@
  */
 package com.potatodocumentation.administration.ui.task;
 
+import com.potatodocumentation.administration.LocalDateInterval;
 import com.potatodocumentation.administration.MainApplication;
+import com.potatodocumentation.administration.ui.controls.CalendarView;
 import com.potatodocumentation.administration.ui.field.map.FieldMap;
 import static com.potatodocumentation.administration.utils.JsonUtils.*;
 import com.potatodocumentation.administration.utils.MiscUtils;
@@ -56,6 +58,7 @@ public class AufgabenPane extends HBox implements EventHandler<KeyEvent> {
     ListView<String> taskList;
     ListView<String> propertyList;
     ListView<String> dateList;
+    CalendarView calendarView = new CalendarView();
     ScrollPane mapPane;
     FieldMap map;
     VBox detailBox;
@@ -204,7 +207,7 @@ public class AufgabenPane extends HBox implements EventHandler<KeyEvent> {
         propertyVBox.getChildren().addAll(propertyLabel, propertyList);
 
         VBox dateVBox = new VBox(10);
-        dateVBox.getChildren().addAll(dateLabel, dateList);
+        dateVBox.getChildren().addAll(dateLabel, calendarView);
 
         VBox parzellenVBox = new VBox(10);
         parzellenVBox.getChildren().addAll(parzellenLabel, mapPane);
@@ -273,6 +276,8 @@ public class AufgabenPane extends HBox implements EventHandler<KeyEvent> {
                 = getJsonResultArray("selectDateByAufgabe.php", params);
 
         ObservableList<String> newItems = FXCollections.observableArrayList();
+        
+        ArrayList<LocalDateInterval> dateIntervals = new ArrayList<>();
 
         //Check if both lists have the same length
         if (jsonResult != null) {
@@ -281,12 +286,15 @@ public class AufgabenPane extends HBox implements EventHandler<KeyEvent> {
                 String to = (String) date.get("toDate");
 
                 newItems.add(from + " - " + to);
+                
+                dateIntervals.add(LocalDateInterval.parse(from, to));
             });
         } else {
             newItems.add("Ladefehler!");
         }
 
         Platform.runLater(() -> dateList.setItems(newItems));
+        Platform.runLater(() -> calendarView.setDates(dateIntervals));
 
         return null;
     }

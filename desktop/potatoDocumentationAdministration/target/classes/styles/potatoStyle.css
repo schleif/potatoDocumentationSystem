@@ -111,3 +111,98 @@ FootPane{
     -fx-border-width: 1 0 0 0;
     -fx-border-color: lightgrey;
 }
+
+/*******************************************************************************
+ *                                                                             *
+ * DatePicker                                                                  *
+ *                                                                             *
+ ******************************************************************************/
+
+.date-picker-popup {
+    -fx-background-color: white;
+    -fx-effect: null;
+    -fx-border-radius: 5;
+    -fx-border-width: 2;
+    -fx-border-style: solid outside;
+    -fx-border-color: derive(-fx-control-inner-background, -20%);
+    -fx-background-radius: 5;
+    -fx-background-insets: 0;
+}
+
+.date-picker-popup > .month-year-pane {
+    -fx-background-color: white;
+    -fx-background-radius: 5 5 0 0;
+}
+
+.date-picker-popup > * > .spinner > .button {
+    -fx-border-radius: 2;
+    -fx-background-radius: 2;
+    -fx-background-insets: 0;
+}
+
+.date-picker-popup > * > .spinner {
+    
+}
+
+.date-picker-popup > * > .week-number-cell {
+    -fx-background-color: transparent;
+    -fx-border-radius: 5;
+    -fx-background-radius: 5;
+    -fx-border-width: 0;
+}
+
+.date-picker-popup > * > .today {
+    -fx-background-color: -fx-control-inner-background, derive(-fx-control-inner-background, -20%), -fx-control-inner-background;
+}
+
+.date-picker-popup > * > .today:hover,
+.date-picker-popup > * > .today.selected {
+    -fx-background-color: lightsalmon, derive(lightsalmon, -20%),lightsalmon;
+}
+
+.date-picker-popup > * > .day-cell {
+    -fx-border-radius: 5;
+    -fx-background-radius: 5;
+    -fx-cursor: hand;
+    -fx-insets: 0;
+    -fx-border-width: 0;
+    -fx-border-style: solid inside;
+}
+
+.date-picker-popup > * > .day-cell:hover,
+.date-picker-popup > * > .selected {
+    -fx-background-color: lightsalmon;
+}
+
+.included-date{
+    -fx-background-color: lightcoral;
+    -fx-border-width: 2 0 2 0;
+    -fx-border-color: darkred;
+    -fx-border-style: solid inside;
+    -fx-border-radius: 0;
+    -fx-background-radius: 0;
+}
+
+.beginning-date{
+    -fx-border-width: 2 0 2 2;
+    -fx-border-radius: 5 0 0 5;
+    -fx-background-radius: 5 0 0 5;
+    -fx-border-color: darkred;
+    -fx-background-color: lightcoral;
+}
+
+.ending-date{
+    -fx-border-width: 2 2 2 0;
+    -fx-border-radius: 0 5 5 0;
+    -fx-background-radius: 0 5 5 0;
+    -fx-border-color: darkred;
+    -fx-background-color: lightcoral;
+}
+
+.single-date{
+    -fx-border-width: 2;
+    -fx-border-radius: 5;
+    -fx-background-radius: 5;
+    -fx-border-color: darkred;
+    -fx-background-color: lightcoral;
+}
