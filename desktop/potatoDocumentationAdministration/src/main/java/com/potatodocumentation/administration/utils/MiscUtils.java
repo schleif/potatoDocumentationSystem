@@ -65,17 +65,17 @@ public class MiscUtils {
         return (!b.isEmpty()) && count == b.size();
     }
     
-    public static<T extends Comparable> T getMax(Collection<T> collection){
+    public static Integer getMax(Collection<String> collection){
 
-        T max = null; 
+        Integer max = null; 
         
-        for(T x : collection){
-            if(max == null || x.compareTo(max) > 0){
-                max = x;
+        for(String x : collection){
+            Integer  i = Integer.parseInt(x);
+            if(max == null || i.compareTo(max) > 0){
+                max = i;
             }
         }
         
-        System.out.println("Coll: " + collection + ", max: " + max);
         return max;
     }
     

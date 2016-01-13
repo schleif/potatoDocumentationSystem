@@ -44,7 +44,7 @@ public class FieldStage extends Stage {
         updateButton = initUpdateButton();
         this.map = map;
         
-        Scene scene = new Scene(new HBox(map));
+        Scene scene = new Scene(new HBox(map), 850, 700);
         
         scene.getStylesheets().add(getClass()
                 .getResource("/styles/potatoStyle.css").toExternalForm());

@@ -16,6 +16,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import javafx.application.Platform;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.ReadOnlyBooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
@@ -37,6 +40,8 @@ import javafx.scene.layout.VBox;
  * @author Ochi
  */
 public class FieldMap extends VBox {
+    
+    private BooleanProperty updating = new SimpleBooleanProperty(false);
 
     private List<FieldBox> fields = new ArrayList<>();
     private ObservableList<Integer> selectedParcels;
@@ -106,6 +111,8 @@ public class FieldMap extends VBox {
 
     //Should be called as new Task
     public Void update() {
+        
+        updating.set(true);
 
         //Indicate loading
         indicateLoading(true);
@@ -164,6 +171,8 @@ public class FieldMap extends VBox {
         indicateLoading(false);
 
         updateStyle();
+        
+        updating.set(false);
 
         return null;
     }
@@ -381,5 +390,9 @@ public class FieldMap extends VBox {
     
     public int parcelCount(){
         return getAllParcelIds().size();
+    }
+    
+    public ReadOnlyBooleanProperty isUpdating(){
+        return BooleanProperty.readOnlyBooleanProperty(updating);
     }
 }

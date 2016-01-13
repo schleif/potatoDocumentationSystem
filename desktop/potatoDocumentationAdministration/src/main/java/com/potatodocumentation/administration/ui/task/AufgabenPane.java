@@ -21,6 +21,11 @@ import javafx.animation.Interpolator;
 import javafx.animation.RotateTransition;
 import javafx.animation.TranslateTransition;
 import javafx.application.Platform;
+import javafx.beans.binding.Bindings;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.ReadOnlyIntegerProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -49,6 +54,12 @@ import javafx.util.Duration;
  * @author Ochi
  */
 public class AufgabenPane extends HBox implements EventHandler<KeyEvent> {
+    
+    private BooleanProperty updatingDates = new SimpleBooleanProperty(false);
+    private BooleanProperty updatingProperties = new SimpleBooleanProperty(false);
+    private BooleanProperty updatingMap = new SimpleBooleanProperty(false);
+    private BooleanProperty updating = new SimpleBooleanProperty(false);
+    private BooleanProperty updatingTasks = new SimpleBooleanProperty(false);
 
     Label taskLabel;
     Label propertyLabel;
@@ -77,6 +88,8 @@ public class AufgabenPane extends HBox implements EventHandler<KeyEvent> {
     public AufgabenPane() {
         super(10);
         setFillHeight(true);
+        
+        updating.bind(updatingMap.or(updatingProperties).or(updatingDates));
 
         //Initialize nodes
         //TaskBox
@@ -136,9 +149,13 @@ public class AufgabenPane extends HBox implements EventHandler<KeyEvent> {
         ListView<String> listView = new ListView<>();
 
         //Add listener on change of selected value
-        listView.getSelectionModel().selectedItemProperty().addListener((ObservableValue<? extends String> observable, String oldValue, String newValue) -> {
+        listView.getSelectionModel().selectedItemProperty()
+                .addListener((ObservableValue<? extends String> observable, 
+                        String oldValue, String newValue) -> {
             onTaskListValueChanged();
         });
+        
+        listView.disableProperty().bind(updating);
 
         return listView;
 
@@ -193,6 +210,12 @@ public class AufgabenPane extends HBox implements EventHandler<KeyEvent> {
         vBox.setId("detailBox");
         
         vBox.setDisable(true);
+        
+        ReadOnlyIntegerProperty taskValue = taskList.selectionModelProperty()
+                .getValue().selectedIndexProperty();
+        
+        //Disable detailBox if no task is selected
+        vBox.disableProperty().bind(taskValue.isEqualTo(-1));
 
         return vBox;
     }
@@ -222,7 +245,6 @@ public class AufgabenPane extends HBox implements EventHandler<KeyEvent> {
     }
 
     private void onTaskListValueChanged() {
-        detailBox.setDisable(false);
         
         activeTask = taskList.getSelectionModel().getSelectedItem();
 
@@ -232,8 +254,6 @@ public class AufgabenPane extends HBox implements EventHandler<KeyEvent> {
         ThreadUtils.runAsTask(() -> updatePropertyList());
         ThreadUtils.runAsTask(() -> updateDateList());
         ThreadUtils.runAsTask(() -> updateMap());
-
-        deleteButton.setDisable(false);
 
         detailLabel.setText("Details (" + activeTask + ")");
 
@@ -245,6 +265,9 @@ public class AufgabenPane extends HBox implements EventHandler<KeyEvent> {
      * UI of the Application.
      */
     private Void updatePropertyList() {
+        
+        updatingProperties.set(true);
+        
         ObservableList<String> items = FXCollections.observableArrayList("Lädt...");
         Platform.runLater(() -> propertyList.setItems(items));
 
@@ -256,6 +279,8 @@ public class AufgabenPane extends HBox implements EventHandler<KeyEvent> {
 
         Platform.runLater(() -> propertyList.setItems(newItems));
 
+        updatingProperties.set(false);
+        
         return null;
     }
 
@@ -265,6 +290,8 @@ public class AufgabenPane extends HBox implements EventHandler<KeyEvent> {
      * UI of the Application.
      */
     private Void updateDateList() {
+        updatingDates.set(true);
+        
         ObservableList<String> items = FXCollections.observableArrayList("Lädt...");
         Platform.runLater(() -> dateList.setItems(items));
 
@@ -295,6 +322,8 @@ public class AufgabenPane extends HBox implements EventHandler<KeyEvent> {
 
         Platform.runLater(() -> dateList.setItems(newItems));
         Platform.runLater(() -> calendarView.setDates(dateIntervals));
+        
+        updatingDates.set(false);
 
         return null;
     }
@@ -399,6 +428,8 @@ public class AufgabenPane extends HBox implements EventHandler<KeyEvent> {
             rotate.setInterpolator(Interpolator.EASE_BOTH);
             rotate.play();
         });
+        
+        button.disableProperty().bind(updatingTasks);
 
         return button;
     }
@@ -409,7 +440,7 @@ public class AufgabenPane extends HBox implements EventHandler<KeyEvent> {
      * UI of the Application.
      */
     private Void updateTaskList() {
-        Platform.runLater(() -> updateButton.setDisable(true));
+        updatingTasks.set(true);
 
         ObservableList<String> items = FXCollections.observableArrayList("Lädt...");
         Platform.runLater(() -> taskList.setItems(items));
@@ -418,7 +449,8 @@ public class AufgabenPane extends HBox implements EventHandler<KeyEvent> {
                 = getJsonResultObservableList("aufg_name", "selectAufgabe.php", null);
 
         Platform.runLater(() -> taskList.setItems(tasks));
-        Platform.runLater(() -> updateButton.setDisable(false));
+        
+        updatingTasks.set(false);
 
         return null;
     }
@@ -458,6 +490,8 @@ public class AufgabenPane extends HBox implements EventHandler<KeyEvent> {
     }
 
     private Void updateMap() {
+        
+       // updatingMap.set(true);
 
         Platform.runLater(() -> mapPane.setContent(new Label("Lädt...")));
 
@@ -478,12 +512,14 @@ public class AufgabenPane extends HBox implements EventHandler<KeyEvent> {
         fieldMap.setStyle("-fx-font-size: 9;");
 
         Platform.runLater(() -> mapPane.setContent(fieldMap));
+        
+        updatingMap.bind(fieldMap.isUpdating());
 
         return null;
     }
 
     private ScrollPane initMapPane() {
-        ScrollPane scrollPane = new ScrollPane(new FieldMap(false, false));
+        ScrollPane scrollPane = new ScrollPane(new Label("Aufgabe auswählen!"));
         
         return scrollPane;
     }

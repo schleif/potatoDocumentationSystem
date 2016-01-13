@@ -6,9 +6,11 @@
 package com.potatodocumentation.administration.ui.field;
 
 import com.potatodocumentation.administration.ui.NumericControlBox;
+import static com.potatodocumentation.administration.utils.JsonUtils.getJsonResultObservableList;
 import static com.potatodocumentation.administration.utils.JsonUtils.getJsonSuccessStatus;
 import java.util.HashMap;
 import java.util.Scanner;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -17,6 +19,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
@@ -24,6 +27,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 
 /**
  *
@@ -47,7 +51,7 @@ public class CreateNewParcel extends Stage {
 
     Node rowBox;
 
-    TextField sort;
+    ComboBox sort;
     HBox buttonBox;
     Button okButton;
     Button cancelButton;
@@ -100,7 +104,7 @@ public class CreateNewParcel extends Stage {
         values.put("feld_nr", Integer.toString(fieldNr));
         values.put("parz_row", Integer.toString(targetRow));
         values.put("par_per_row", Integer.toString(parPerRowBox.getValue()));
-        values.put("sorte", sort.getText());
+        values.put("sorte", sort.getValue().toString());
         //get the number of rows
         int rows = (fixedRows ? nrOfRows : 
                 ((NumericControlBox) rowBox).getValue());
@@ -119,7 +123,8 @@ public class CreateNewParcel extends Stage {
 
         //close window if parcels were inserted successfully
         if (success) {
-            close();
+            fireEvent(
+                new WindowEvent(this, WindowEvent.WINDOW_CLOSE_REQUEST));
         }
 
     }
@@ -148,11 +153,13 @@ public class CreateNewParcel extends Stage {
         return label;
     }
 
-    private TextField initSort() {
-        TextField textField = new TextField();
-        textField.setPromptText("Sorte eingeben");
+    private ComboBox initSort() {
+         ObservableList<String> sorts = getJsonResultObservableList(
+                "sort_name", "selectSorte.php", null);
+         
+        ComboBox comboBox = new ComboBox(sorts);
 
-        return textField;
+        return comboBox;
     }
 
     private HBox initButtonBox() {

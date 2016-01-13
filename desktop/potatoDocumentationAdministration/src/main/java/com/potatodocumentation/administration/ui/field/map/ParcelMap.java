@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.Map;
 import javafx.animation.Timeline;
 import javafx.application.Platform;
+import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -56,7 +57,7 @@ public class ParcelMap extends VBox {
     private final boolean isEditable;
 
     private int fieldID;
-    private List<ParcelBox> parcels;
+    private ObservableList<ParcelBox> parcels;
     private boolean isInSelectionMode = false;
     private final boolean isSelectable;
 
@@ -72,6 +73,7 @@ public class ParcelMap extends VBox {
     private VBox parcelBox;
 
     private Label loadLabel;
+    private Label noParcelsLabel = new Label("Keine Parzellen vorhanden!");
 
     private ImageView dragIcon = new ImageView();
 
@@ -83,7 +85,7 @@ public class ParcelMap extends VBox {
 
         this.isEditable = editable;
         this.isSelectable = selectable;
-        this.parcels = new ArrayList<>();
+        this.parcels = FXCollections.observableArrayList();
         this.selectedParcels = selectedParcels;
 
         updateButton = initUpdateButton();
@@ -159,15 +161,17 @@ public class ParcelMap extends VBox {
         //Add addButton to new Row 
         int maxRow = 1;
         if (!rows.isEmpty()) {
-            maxRow = Integer.parseInt(MiscUtils.getMax(rows));
+            maxRow = MiscUtils.getMax(rows);
+        } else {
+            Platform.runLater(() -> parcelBox.getChildren().add(noParcelsLabel));
         }
         Button addButton = newAddButton(++maxRow, false);
         Platform.runLater(() -> parcelBox.getChildren().add(addButton));
 
         updateStyle();
-
+        
         indicateLoading(false);
-
+        
         return null;
     }
 
@@ -344,6 +348,7 @@ public class ParcelMap extends VBox {
         stage.setOnCloseRequest((WindowEvent event1) -> {
             ThreadUtils.runAsTask(() -> updateParcelBox());
         });
+        
         stage.show();
     }
 
