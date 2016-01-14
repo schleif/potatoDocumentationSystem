@@ -8,8 +8,11 @@ package com.potatodocumentation.administration.ui.field;
 import com.potatodocumentation.administration.ui.NumericControlBox;
 import static com.potatodocumentation.administration.utils.JsonUtils.getJsonResultObservableList;
 import static com.potatodocumentation.administration.utils.JsonUtils.getJsonSuccessStatus;
+import com.potatodocumentation.administration.utils.ThreadUtils;
 import java.util.HashMap;
 import java.util.Scanner;
+import javafx.application.Platform;
+import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.geometry.Insets;
@@ -51,7 +54,7 @@ public class CreateNewParcel extends Stage {
 
     Node rowBox;
 
-    ComboBox sort;
+    ComboBox sort = new ComboBox(FXCollections.observableArrayList("Lädt..."));
     HBox buttonBox;
     Button okButton;
     Button cancelButton;
@@ -72,7 +75,8 @@ public class CreateNewParcel extends Stage {
 
         rowBox = initRowBox();
 
-        sort = initSort();
+        ThreadUtils.runAsTask(() -> updateComboBox());
+        
         okButton = initOkButton();
         cancelButton = initCancelButton();
         buttonBox = initButtonBox();
@@ -106,8 +110,8 @@ public class CreateNewParcel extends Stage {
         values.put("par_per_row", Integer.toString(parPerRowBox.getValue()));
         values.put("sorte", sort.getValue().toString());
         //get the number of rows
-        int rows = (fixedRows ? nrOfRows : 
-                ((NumericControlBox) rowBox).getValue());
+        int rows = (fixedRows ? nrOfRows
+                : ((NumericControlBox) rowBox).getValue());
         values.put("nr_of_rows", Integer.toString(rows));
         boolean success;
 
@@ -124,7 +128,7 @@ public class CreateNewParcel extends Stage {
         //close window if parcels were inserted successfully
         if (success) {
             fireEvent(
-                new WindowEvent(this, WindowEvent.WINDOW_CLOSE_REQUEST));
+                    new WindowEvent(this, WindowEvent.WINDOW_CLOSE_REQUEST));
         }
 
     }
@@ -153,15 +157,6 @@ public class CreateNewParcel extends Stage {
         return label;
     }
 
-    private ComboBox initSort() {
-         ObservableList<String> sorts = getJsonResultObservableList(
-                "sort_name", "selectSorte.php", null);
-         
-        ComboBox comboBox = new ComboBox(sorts);
-
-        return comboBox;
-    }
-
     private HBox initButtonBox() {
         HBox hBox = new HBox(10, okButton, cancelButton);
         hBox.setAlignment(Pos.CENTER_RIGHT);
@@ -188,5 +183,15 @@ public class CreateNewParcel extends Stage {
             return new NumericControlBox("Anzahl der Reihen:", 1, 1,
                     Integer.MAX_VALUE);
         }
+    }
+
+    private Void updateComboBox() {
+
+        ObservableList<String> sorts = getJsonResultObservableList(
+                "sort_name", "selectSorte.php", null);
+
+        Platform.runLater(() -> sort.setItems(sorts));
+
+        return null;
     }
 }
