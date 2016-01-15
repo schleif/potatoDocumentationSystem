@@ -66,14 +66,14 @@ public class localDBDataSource {
             values.put("fromDate", fromDate);
             values.put("toDate", toDate);
 
-            rowId = database.insert("aufgabe", null, aufgabe);
+            database.insert("aufg_termin", null, values);
+            //rowId = database.insert("aufgabe", null, aufgabe);
         } catch (SQLiteException e) {
             Log.e(LOG_TAG, "insert()", e);
         } finally {
             Log.d(LOG_TAG,"insert(): rowID =" + rowId);
         }
-        //database.insert("aufg_termin", null, values);
-        //database.execSQL("INSERT INTO aufg_termin(aufg_name, fromDate, toDate) VALUES (" + aufg_name + "," + fromDate + "," + toDate + ");");
+
 
 
     }
@@ -82,16 +82,15 @@ public class localDBDataSource {
     public Cursor queryForOutstandandingTasks() {
 
 
-        /*DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd"); //get the right Dateformat
+        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd"); //get the right Dateformat
         String date = dateFormat.format(new Date());                //get the current Date
 
         //Create a String-Array for the rawQuery
         String[] values = new String[1];
-        values[0] = date;*/
+        values[0] = date;
 
-        Cursor result = database.query("aufgabe",null,null,null,null,null,null);           //rawQuery("SELECT * FROM aufgabe", null);
 
-        //Cursor result = database.rawQuery("SELECT COUNT(aufg_name) FROM aufg_termin WHERE toDate = ? GROUP BY aufg_name", values);
+        Cursor result = database.rawQuery("SELECT COUNT(aufg_name) FROM aufg_termin WHERE toDate = ? GROUP BY aufg_name", values);
          return result;
     }
 

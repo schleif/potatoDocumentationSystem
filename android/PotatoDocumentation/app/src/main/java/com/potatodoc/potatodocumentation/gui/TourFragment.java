@@ -65,7 +65,7 @@ public class TourFragment extends Fragment {
         //create an database.
         localDBDataSource database = new localDBDataSource(getContext());
         database.open();
-        //database.insertTask("test2", "2015-12-20", "2016-01-12");
+        database.insertTask("test2", "2015-12-20", "2016-01-15");
 
         Log.d(LOG_TAG, "Insert wurde ausgeführt");
         Cursor query = database.queryForOutstandandingTasks();
@@ -74,7 +74,9 @@ public class TourFragment extends Fragment {
 
          if (query.getCount() != 0) {
 
-                outstandingTasks.setText("");
+
+                query.moveToFirst();
+                outstandingTasks.setText("Heute auszuführende Aufgaben: " + query.getString(0));
                  //outstandingTasks.setText("Heute sind noch "+ query.getCount() + " Aufgaben zu erledigen.");
 
 
