@@ -13,6 +13,7 @@
     <string name="dialog_warning">Wenn Sie Weiter drücken gehen alle nicht gespeicherten Änderungen verloren</string>
     <string name="weiter">Weiter</string>
     <string name="cancel">Abbrechen</string>
+    <string name="noConnection">Keine Datenbankverbindung vorhanden</string>
 
 <!-- TODO: Remove or change this placeholder text -->
     <string name="outstandingTasks">Ausstehende Aufgaben</string>

@@ -4,6 +4,7 @@ import android.app.Application;
 import android.content.Context;
 
 import com.potatodoc.potatodocumentation.data.localDB;
+import com.potatodoc.potatodocumentation.data.localDBDataSource;
 
 /**
  * Created by fiel on 20.11.2015.
@@ -15,6 +16,7 @@ public class App extends Application {
      * The App Context
      */
     private static Context mContext;
+    public localDBDataSource dataSource;
 
     @Override
     public void onCreate() {
@@ -23,7 +25,10 @@ public class App extends Application {
 
         // Init Database
         localDB dbhelper = new localDB(getContext());
+
     }
+
+
 
     /**
      * Use this Method to get the Context
