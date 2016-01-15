@@ -35,7 +35,6 @@ public class localDB extends SQLiteOpenHelper {
     public localDB(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
         Log.d(LOG_TAG, "DbHelper hat die Datenbank: " + getDatabaseName() + " erzeugt.");
-
     }
 
 
@@ -51,7 +50,10 @@ public class localDB extends SQLiteOpenHelper {
 
         while (sqlScanner.hasNext()) {
 
-            db.execSQL(sqlScanner.next());
+            String next = sqlScanner.next();
+            Log.d(LOG_TAG, next);
+
+            db.execSQL(next);
 
         }
 

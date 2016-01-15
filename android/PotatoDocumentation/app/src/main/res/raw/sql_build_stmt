@@ -49,11 +49,3 @@ CREATE TABLE IF NOT EXISTS `aufg_termin` (
   PRIMARY KEY (`aufg_name`,`fromDate`,`toDate`),
   CONSTRAINT `aufg_termin_ibfk_1` FOREIGN KEY (`aufg_name`) REFERENCES `aufgabe` (`aufg_name`) ON DELETE NO ACTION ON UPDATE CASCADE
 );
-
-
-
-
-
-
-
-
