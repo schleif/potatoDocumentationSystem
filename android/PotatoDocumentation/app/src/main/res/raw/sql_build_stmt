@@ -2,11 +2,13 @@ CREATE TABLE IF NOT EXISTS `feld` (
   `feld_id` int(11) NOT NULL,
   `row_nr` int(11) NOT NULL,
   `column_nr` int(11) NOT NULL,
+  `updated` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`feld_id`)
 );
 CREATE UNIQUE INDEX `row_column_integrity` ON `feld`(`row_nr`,`column_nr`);
 CREATE TABLE IF NOT EXISTS `sorte` (
   `sort_name` varchar(255) NOT NULL,
+  `updated` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`sort_name`)
 );
 CREATE TABLE IF NOT EXISTS `parzellen` (
@@ -15,6 +17,7 @@ CREATE TABLE IF NOT EXISTS `parzellen` (
   `sorte` varchar(255) DEFAULT NULL,
   `parz_row` int(11) NOT NULL,
   `parz_col` int(11) NOT NULL,
+  `updated` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`parz_id`),
   CONSTRAINT `parzellen_ibfk_1` FOREIGN KEY (`sorte`) REFERENCES `sorte` (`sort_name`) ON DELETE SET NULL ON UPDATE CASCADE,
   CONSTRAINT `parzellen_ibfk_2` FOREIGN KEY (`feld_nr`) REFERENCES `feld` (`feld_id`) ON DELETE NO ACTION ON UPDATE CASCADE
@@ -22,15 +25,18 @@ CREATE TABLE IF NOT EXISTS `parzellen` (
 CREATE UNIQUE INDEX `row_col_unique` ON `parzellen`(`parz_row`,`parz_col`,`feld_nr`);
 CREATE TABLE IF NOT EXISTS `eigenschaft` (
   `eig_name` varchar(255) NOT NULL,
+  `updated` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`eig_name`)
 );
 CREATE TABLE IF NOT EXISTS `aufgabe` (
   `aufg_name` varchar(255) NOT NULL,
+  `updated` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`aufg_name`)
 );
 CREATE TABLE IF NOT EXISTS `aufg_beinhaltet_eig` (
   `aufg_name` varchar(255) NOT NULL,
   `eig_name` varchar(255) NOT NULL,
+  `updated` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`aufg_name`,`eig_name`),
   CONSTRAINT `aufg_beinhaltet_eig_ibfk_1` FOREIGN KEY (`aufg_name`) REFERENCES `aufgabe` (`aufg_name`) ON DELETE NO ACTION ON UPDATE CASCADE,
   CONSTRAINT `aufg_beinhaltet_eig_ibfk_2` FOREIGN KEY (`eig_name`) REFERENCES `eigenschaft` (`eig_name`) ON DELETE NO ACTION ON UPDATE CASCADE
@@ -38,6 +44,7 @@ CREATE TABLE IF NOT EXISTS `aufg_beinhaltet_eig` (
 CREATE TABLE IF NOT EXISTS `aufg_gehoert_zu_parz` (
   `aufg_name` varchar(255) NOT NULL,
   `parz_id` int(11) NOT NULL,
+  `updated` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`aufg_name`,`parz_id`),
   CONSTRAINT `aufg_gehoert_zu_parz_ibfk_1` FOREIGN KEY (`aufg_name`) REFERENCES `aufgabe` (`aufg_name`) ON DELETE NO ACTION ON UPDATE CASCADE,
   CONSTRAINT `aufg_gehoert_zu_parz_ibfk_2` FOREIGN KEY (`parz_id`) REFERENCES `parzellen` (`parz_id`) ON DELETE NO ACTION ON UPDATE CASCADE
@@ -46,6 +53,7 @@ CREATE TABLE IF NOT EXISTS `aufg_termin` (
   `aufg_name` varchar(255) NOT NULL,
   `fromDate` date NOT NULL,
   `toDate` date NOT NULL,
+  `updated` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`aufg_name`,`fromDate`,`toDate`),
   CONSTRAINT `aufg_termin_ibfk_1` FOREIGN KEY (`aufg_name`) REFERENCES `aufgabe` (`aufg_name`) ON DELETE NO ACTION ON UPDATE CASCADE
 );
