@@ -34,7 +34,8 @@ USE potatoDB;
 --
 
 CREATE TABLE IF NOT EXISTS `aufgabe` (
-  `aufg_name` varchar(255) NOT NULL
+  `aufg_name` varchar(255) NOT NULL,
+  `updated` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
@@ -46,7 +47,8 @@ CREATE TABLE IF NOT EXISTS `aufgabe` (
 CREATE TABLE IF NOT EXISTS `aufg_termin` (
   `aufg_name` varchar(255) NOT NULL,
   `fromDate` DATE NOT NULL,
-  `toDate` DATE NOT NULL
+  `toDate` DATE NOT NULL,
+  `updated` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
@@ -59,6 +61,7 @@ CREATE TABLE IF NOT EXISTS `feld` (
  `feld_id` int(11) NOT NULL AUTO_INCREMENT,
  `row_nr` int(11) NOT NULL,
  `column_nr` int(11) NOT NULL,
+ `updated` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
  PRIMARY KEY (`feld_id`),
  UNIQUE KEY `row_column_integrity` (`row_nr`,`column_nr`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
@@ -71,7 +74,8 @@ CREATE TABLE IF NOT EXISTS `feld` (
 
 CREATE TABLE IF NOT EXISTS `aufg_beinhaltet_eig` (
   `aufg_name` varchar(255) NOT NULL,
-  `eig_name` varchar(255) NOT NULL
+  `eig_name` varchar(255) NOT NULL,
+  `updated` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
@@ -82,7 +86,8 @@ CREATE TABLE IF NOT EXISTS `aufg_beinhaltet_eig` (
 
 CREATE TABLE IF NOT EXISTS `aufg_gehoert_zu_parz` (
   `aufg_name` varchar(255) NOT NULL,
-  `parz_id` int(11) NOT NULL
+  `parz_id` int(11) NOT NULL,
+  `updated` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
@@ -92,7 +97,8 @@ CREATE TABLE IF NOT EXISTS `aufg_gehoert_zu_parz` (
 --
 
 CREATE TABLE IF NOT EXISTS `eigenschaft` (
-  `eig_name` varchar(255) NOT NULL
+  `eig_name` varchar(255) NOT NULL,
+  `updated` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
@@ -102,7 +108,8 @@ CREATE TABLE IF NOT EXISTS `eigenschaft` (
 --
 
 CREATE TABLE IF NOT EXISTS `sorte` (
-  `sort_name` varchar(255) NOT NULL
+  `sort_name` varchar(255) NOT NULL,
+  `updated` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
@@ -125,6 +132,7 @@ CREATE TABLE IF NOT EXISTS`parzellen` (
  `sorte` varchar(255) DEFAULT NULL,
  `parz_row` int(11) NOT NULL,
  `parz_col` int(11) NOT NULL,
+ `updated` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
  PRIMARY KEY (`parz_id`),
  UNIQUE KEY `row_col_unique` (`parz_row`,`parz_col`,`feld_nr`),
  KEY `sorte` (`sorte`),
