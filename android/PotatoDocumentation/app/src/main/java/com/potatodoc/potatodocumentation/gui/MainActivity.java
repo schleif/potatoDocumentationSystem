@@ -57,6 +57,7 @@ public class MainActivity extends AppCompatActivity
         // Get the content resolver for your app
         mResolver = getContentResolver();
         // Turn on automatic syncing for the default account and authority
+        // App will permanent broadcasting if an TCP/IP connection is availiable
         mResolver.setSyncAutomatically(mAccount, AUTHORITY, true);
 
         mNavigationDrawerFragment = (NavigationDrawerFragment)

@@ -59,7 +59,7 @@ public class TourFragment extends Fragment {
         //create an database.
         localDBDataSource database = new localDBDataSource(getContext());
         database.open();
-        database.insertTask("test2", "2015-12-20", "2016-01-15");
+        //database.insertTask("test2", "2015-12-20", "2016-01-15");
 
         Log.d(LOG_TAG, "Insert wurde ausgeführt");
         Cursor query = database.queryForOutstandandingTasks();

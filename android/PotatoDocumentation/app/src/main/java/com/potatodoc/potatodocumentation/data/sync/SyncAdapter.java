@@ -69,5 +69,6 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
      * Put the data transfer code here.
      * TODO: Conflicts must handle by an self-constructed algo
      */
+
     }
 }
