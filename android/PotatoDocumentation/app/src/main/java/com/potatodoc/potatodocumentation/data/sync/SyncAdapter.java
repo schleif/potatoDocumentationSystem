@@ -7,6 +7,11 @@ import android.content.ContentResolver;
 import android.content.Context;
 import android.content.SyncResult;
 import android.os.Bundle;
+import android.util.Log;
+
+import com.potatodoc.potatodocumentation.utils.JsonUtils;
+
+import java.util.ArrayList;
 
 
 /**
@@ -69,6 +74,12 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
      * Put the data transfer code here.
      * TODO: Conflicts must handle by an self-constructed algo
      */
+
+        ArrayList results = JsonUtils.getJsonResultArrayList("aufg_name", "selectAufgabe.php", null);
+
+        for(Object s : results){
+            Log.d("SYNC", s.toString());
+        }
 
     }
 }
