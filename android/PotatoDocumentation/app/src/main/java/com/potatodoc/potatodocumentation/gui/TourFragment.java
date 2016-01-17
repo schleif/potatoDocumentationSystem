@@ -2,7 +2,6 @@ package com.potatodoc.potatodocumentation.gui;
 
 
 import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -12,15 +11,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.LinearLayout;
-import android.widget.ScrollView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.potatodoc.potatodocumentation.R;
-import com.potatodoc.potatodocumentation.data.DatabaseElements.field;
-import com.potatodoc.potatodocumentation.data.localDB;
-import com.potatodoc.potatodocumentation.data.localDBDataSource;
+import com.potatodoc.potatodocumentation.data.database.localDBDataSource;
 
 
 

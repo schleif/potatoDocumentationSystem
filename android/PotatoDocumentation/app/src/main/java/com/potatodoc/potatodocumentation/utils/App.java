@@ -3,8 +3,8 @@ package com.potatodoc.potatodocumentation.utils;
 import android.app.Application;
 import android.content.Context;
 
-import com.potatodoc.potatodocumentation.data.localDB;
-import com.potatodoc.potatodocumentation.data.localDBDataSource;
+import com.potatodoc.potatodocumentation.data.database.localDB;
+import com.potatodoc.potatodocumentation.data.database.localDBDataSource;
 
 /**
  * Created by fiel on 20.11.2015.

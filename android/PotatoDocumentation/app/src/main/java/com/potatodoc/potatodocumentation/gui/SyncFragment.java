@@ -1,7 +1,5 @@
 package com.potatodoc.potatodocumentation.gui;
 
-import android.content.ContentValues;
-import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -14,10 +12,8 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.potatodoc.potatodocumentation.R;
-import com.potatodoc.potatodocumentation.data.Connection;
-import com.potatodoc.potatodocumentation.data.localDB;
-
-import java.util.LinkedList;
+import com.potatodoc.potatodocumentation.data.sync.Connection;
+import com.potatodoc.potatodocumentation.data.database.localDB;
 
 /**
  * Created by fiel on 30.09.2015.

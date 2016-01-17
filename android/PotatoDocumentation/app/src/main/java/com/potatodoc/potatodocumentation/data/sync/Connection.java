@@ -1,21 +1,15 @@
-package com.potatodoc.potatodocumentation.data;
+package com.potatodoc.potatodocumentation.data.sync;
 
 import android.os.AsyncTask;
 import android.util.Log;
-import android.widget.TextView;
 
-import com.potatodoc.potatodocumentation.gui.NavigationItem;
-import com.potatodoc.potatodocumentation.gui.SyncFragment;
 import com.potatodoc.potatodocumentation.utils.Misc;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
 /**
  * Created by fiel on 20.11.2015.

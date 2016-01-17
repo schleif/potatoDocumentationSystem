@@ -1,19 +1,14 @@
-package com.potatodoc.potatodocumentation.data;
+package com.potatodoc.potatodocumentation.data.database;
 
 import android.content.Context;
-import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.nfc.Tag;
 import android.util.Log;
 
 import com.potatodoc.potatodocumentation.R;
 import com.potatodoc.potatodocumentation.utils.App;
 
-import java.io.FileReader;
-import java.io.IOException;
 import java.io.InputStream;
-import java.util.Collection;
 import java.util.LinkedList;
 import java.util.Scanner;
 

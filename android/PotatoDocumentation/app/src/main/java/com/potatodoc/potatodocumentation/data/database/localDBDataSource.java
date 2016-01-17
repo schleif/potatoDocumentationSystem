@@ -1,4 +1,4 @@
-package com.potatodoc.potatodocumentation.data;
+package com.potatodoc.potatodocumentation.data.database;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -7,17 +7,11 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.support.annotation.Nullable;
 import android.util.Log;
-import android.widget.Toast;
-
-import com.potatodoc.potatodocumentation.R;
 
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
-import java.util.List;
 
 /**
  * Created by Marcel W on 09.01.2016.
@@ -94,18 +88,7 @@ public class localDBDataSource {
          return result;
     }
 
-    public String showTables() {
-        Cursor tables = database.rawQuery("SHOW TABLES;", null);
-        String s = "";
-        while (!tables.isAfterLast()) {
 
-            s += tables.getString(tables.getColumnCount())+"\n";
-            tables.moveToNext();
-
-        }
-        return s;
-
-    }
 
 
 }
