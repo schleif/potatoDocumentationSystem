@@ -144,6 +144,67 @@ CREATE TABLE IF NOT EXISTS`parzellen` (
 -- --------------------------------------------------------
 
 --
+-- Tabellenstruktur für Tabelle `messwert`
+--
+
+CREATE TABLE IF NOT EXISTS `messwert` (
+  `mess_id` int(11) NOT NULL AUTO_INCREMENT,
+  `protokoll` int(11) NOT NULL,
+  `eigenschaft` varchar(255) NOT NULL,
+  `updated` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`mess_id`),
+  KEY `eigenschaft` (`eigenschaft`),
+  KEY `protokoll` (`protokoll`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
+
+--
+-- RELATIONEN DER TABELLE `messwert`:
+--   `protokoll`
+--       `protokoll` -> `pro_id`
+--   `eigenschaft`
+--       `eigenschaft` -> `eig_name`
+--
+
+-- --------------------------------------------------------
+
+--
+-- Tabellenstruktur für Tabelle `protokoll`
+--
+
+CREATE TABLE IF NOT EXISTS `protokoll` (
+  `pro_id` int(11) NOT NULL AUTO_INCREMENT,
+  `date` date NOT NULL,
+  `aufg_name` varchar(255) NOT NULL,
+  `updated` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`pro_id`),
+  KEY `protokoll_ibfk1` (`aufg_name`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
+
+--
+-- RELATIONEN DER TABELLE `protokoll`:
+--   `aufg_name`
+--       `aufgabe` -> `aufg_name`
+--
+
+--
+-- Constraints der exportierten Tabellen
+--
+
+--
+-- Constraints der Tabelle `messwert`
+--
+ALTER TABLE `messwert`
+  ADD CONSTRAINT `messwert_ibfk_1` FOREIGN KEY (`protokoll`) REFERENCES `protokoll` (`pro_id`) ON DELETE NO ACTION ON UPDATE CASCADE,
+  ADD CONSTRAINT `messwert_ibfk_2` FOREIGN KEY (`eigenschaft`) REFERENCES `eigenschaft` (`eig_name`) ON DELETE NO ACTION ON UPDATE CASCADE;
+
+--
+-- Constraints der Tabelle `protokoll`
+--
+ALTER TABLE `protokoll`
+  ADD CONSTRAINT `protokoll_ibfk1` FOREIGN KEY (`aufg_name`) REFERENCES `aufgabe` (`aufg_name`) ON DELETE NO ACTION ON UPDATE CASCADE;
+
+
+--
 -- Indizes der exportierten Tabellen
 --
 
