@@ -1,0 +1,20 @@
+Milestones – potatoDoc
+Für Versuchsstation Dethlingen Versuchsfeld
+
+Desktop Applikation – Prototyp: 08.02.16 – Fertigstellung mit Commit in Master
+
+Abnahmespezifikationen:
+1.	Versuche mit Namen Speichern
+2.	Feldansicht zur Parzellenplanung
+3.	Parzellen Versuchen zuordnen
+4.	Parzellen Aufgaben zuordnen
+5.	Export für händische Datenverarbeitung
+
+Handheld Applikation – Prototyp: 29.02.16 – Fertigstellung mit Commit in Master
+
+Abnahmespezifikationen:
+1.	Daten werden aus der Datenbank auf das Gerät geladen
+2.	Gerät zeigt Feldansicht und markiert die Bereiche in denen Aufgaben anstehen
+3.	Gerät zeigt Nahansicht zum Dokumentieren
+4.	Bei Klick auf Parzelle werden die zu Dokumentierenden Aufgaben angezeigt und können gefüllt werden
+5.	Nach Abschluss der Dokumentation werden die Daten in die Datenbank zurück geladen werden.
