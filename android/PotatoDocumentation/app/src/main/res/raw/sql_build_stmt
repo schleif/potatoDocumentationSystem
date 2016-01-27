@@ -57,3 +57,40 @@ CREATE TABLE IF NOT EXISTS `aufg_termin` (
   PRIMARY KEY (`aufg_name`,`fromDate`,`toDate`),
   CONSTRAINT `aufg_termin_ibfk_1` FOREIGN KEY (`aufg_name`) REFERENCES `aufgabe` (`aufg_name`) ON DELETE NO ACTION ON UPDATE CASCADE
 );
+CREATE TABLE IF NOT EXISTS `variante` (
+   `var_name` varchar(255) PRIMARY KEY
+);
+CREATE TABLE IF NOT EXISTS `partner` (
+  `firmname` varchar(255) NOT NULL ,
+   `id` int(11) PRIMARY KEY,
+   `standort` varchar(255) NOT NULL
+);
+CREATE TABLE IF NOT EXISTS `versuch`(
+  `name` varchar(255) NOT NULL,
+  `versuchsnr` int(11) PRIMARY KEY,
+  `jahr` YEAR NOT NULL,
+  `partner_id` int(11) NOT NULL,
+  INDEX (`partner_id`),
+  CONSTRAINT `partner_fk2`FOREIGN KEY(`partner_id`) REFERENCES `partner`(`id`)ON DELETE NO ACTION ON UPDATE CASCADE
+);
+CREATE TABLE IF NOT EXISTS `versuch_beinhaltet_var`(
+    `versuchs_nr` int(11) NOT NULL,
+    `variante` varchar(255) NOT NULL,
+    `legedatum` date NOT NULL,
+    `pflanzenanzahl` int(4) NOT NULL,
+    PRIMARY KEY(`versuchs_nr`,`variante`),
+    CONSTRAINT `versuchsnr_fk1` FOREIGN KEY(`versuchs_nr`) REFERENCES `versuch` (`versuchsnr`) ON DELETE NO ACTION ON UPDATE CASCADE,
+    CONSTRAINT `var_name_fk2` FOREIGN KEY(`variante`) REFERENCES `variante` (`var_name`) ON DELETE NO ACTION ON UPDATE CASCADE
+);
+CREATE TABLE IF NOT EXISTS `wiederholung` (
+    `versuchs_nr` int(11) NOT NULL,
+    `wiederholung` char(1) NOT NULL,
+    `feld_nr` int(11) NOT NULL,
+    `parz_nr` int(11) NOT NULL,
+    PRIMARY KEY (`versuchs_nr`,`wiederholung`),
+    INDEX (`feld_nr`),
+    INDEX (`parz_nr`),
+    CONSTRAINT `versuchs_nr_fk1` FOREIGN KEY(`versuchs_nr`) REFERENCES `versuch`(`versuchsnr`) ON DELETE NO ACTION ON UPDATE CASCADE,
+    CONSTRAINT `feld_nr_fk2` FOREIGN KEY(`feld_nr`) REFERENCES `feld` (`feld_id`) ON DELETE NO ACTION ON UPDATE CASCADE,
+    CONSTRAINT `parz_nr_fk3` FOREIGN KEY(`parz_nr`) REFERENCES `parzellen`(`parz_id`) ON DELETE NO ACTION ON UPDATE CASCADE
+);
